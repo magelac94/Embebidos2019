@@ -1,5 +1,7 @@
 #define LEDXON(x) setOutput( PuertoParaleloA, x , 1 )
 #define LEDXOFF(y) setOutput( PuertoParaleloA, y , 0 )
+#define BUTTOMSTATE(x) getInput(PuertoParaleloB, x )
+#define BUTTOMBOOLEAN(y) getInput(PuertoParaleloB,y )    // terminar el if
 
 enum portName {
 	PuertoParaleloA = PADR ,
@@ -100,11 +102,11 @@ int main(){
    delay1();
 
    // Pruebas Botones
-//   while(1){
+   while(1){
 	   delay1();
-      printf("%d",PB2);
-   	printf("%d",getInput(PuertoParaleloB, PB2 ));
-  // }
+   	printf("\nPuerto: %d, valor: %d",PB2, getInput(PuertoParaleloB, PB2 ));
+
+   }
 
   	// Pruebas Potenciometro
 
