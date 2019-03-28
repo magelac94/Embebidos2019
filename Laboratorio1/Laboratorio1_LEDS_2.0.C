@@ -107,14 +107,15 @@ int main(){
   // }
 
   	// Pruebas Potenciometro
-   
+
+   /*
 	 r = serAopen(9600);
     if (r==1){
     	printf("Es 1");
    } else   {
     	printf("Es 0");
       }
-
+      */
 
 
    while(1);
