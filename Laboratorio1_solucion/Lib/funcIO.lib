@@ -1,0 +1,440 @@
+//********************************************************
+//////////////////////////////////////////////////////////
+// ----------------- Embebidos 2018 ------------------- //
+//////////////////////////////////////////////////////////
+//--------------- funcIO.lib - v0.2 --------------------//
+//----- Funciones basicas para placa desarrollo UCU ----//
+//--------------------- PCB v 1.0 ----------------------//
+////////////////////////////////////////////////////////// 
+
+/* 
+FUNCIONES DEFINIDAS EN ESTA LIBRERIA:  
+
+>>DIGITALES
+	int Wr_Output(int output, int value);	//Funcion para setear salidas digitales.
+	int Rd_Output(int output);				//Funcion para ver el valor seteado en una salida
+	int Rd_Input(int input); 				//Devuelve el valor de la entrada
+	
+	Opcional:
+	int LEDstatus(int status);				//Funcion para setear el LED de status.
+	
+>>ANALOGICAS								//Usan las libreria Modbus_master_javier.lib y Modbus
+	int Rd_Analog(int channel);				//Lee el resultado absoluto de la medida analogica del canal channel.
+
+>>VARIOS:
+	void Init_Placa(long Baud_C);	//Inicializa la placa de desarrollo del curso de Sistemas Embebidos.
+	void Delay_ms(long tiempo); 			//Funcion de retardo en mili segundos.
+	void clearIO(void);						//Limpiar las salidas (apgaga todos los LEDs)
+	void ClearScreen();						//Borrar la pantalla de la consola
+	void DispStr(int x, int y, char *s);	//Mostrar un string en la consola
+	
+	Opcional:
+	ASCIItoCharNum(char p_input);
+	
+*/
+
+/*** BeginHeader */
+#define INPUT_DIR			0
+#define OUTPUT_DIR			1
+
+#define STX 				0x02
+#define ETX 				0x03
+
+#define PIC_COM_TIMEOUT		100		//45:  (1/9600)x10x(29)x1.5)x1000
+#define PIC_MSG_LENGTH		29
+
+#ifndef CINBUFSIZE
+#define CINBUFSIZE      	127
+#endif
+#ifndef COUTBUFSIZE
+#define COUTBUFSIZE  		127
+#endif
+
+
+/*** EndHeader */
+
+
+
+
+/*** BeginHeader Init_Placa */
+void Init_Placa(long Baud_C);
+/*** EndHeader  */
+
+/*
+ *      Inicializar la placa de desarrollo
+ *
+ */
+
+/* START FUNCTION DESCRIPTION ********************************************
+Init_Placa                  <Func_IO.LIB>
+
+SYNTAX:        void Init_Placa(long Baud_C, long Baud_GPRS, long Baud_GPS)
+
+PARAMETER1:    Baudaje puerto C, com. con el PIC
+
+DESCRIPTION:   Inicializa la placa de desarrollo del curso de Sistemas Embebidos 2018.
+
+RETURN VALUE:	Void.
+
+END DESCRIPTION **********************************************************/
+nodebug void Init_Placa(long Baud_C)
+{
+	// PORT A
+	WrPortI(SPCR, &SPCRShadow, 0x84);		//Setea el puerto Port_A como todo salidas
+
+	// PORT B
+	BitWrPortI(PBDDR, &PBDDRShadow, INPUT_DIR, 2); 	//Entrada 0
+	BitWrPortI(PBDDR, &PBDDRShadow, INPUT_DIR, 3); 	//Entrada 1
+	BitWrPortI(PBDDR, &PBDDRShadow, INPUT_DIR, 4); 	//Entrada 2
+	BitWrPortI(PBDDR, &PBDDRShadow, INPUT_DIR, 5); 	//Entrada 3
+
+	// PORT F
+	BitWrPortI(PFDDR, &PFDDRShadow, INPUT_DIR, 4); 	//Entrada 4
+	BitWrPortI(PFDDR, &PFDDRShadow, INPUT_DIR, 5); 	//Entrada 5
+	BitWrPortI(PFDDR, &PFDDRShadow, INPUT_DIR, 6); 	//Entrada 6
+	BitWrPortI(PFDDR, &PFDDRShadow, INPUT_DIR, 7); 	//Entrada 7
+	
+	// PORT E
+	BitWrPortI(PEDDR, &PEDDRShadow, 1, 5);	//Led rojo STATUS
+
+	serCopen(Baud_C);		//Abro el puerto de comunicacion entre el PIC y el RABBIT
+	serCrdFlush();
+	serCwrFlush();
+
+	//OUT_L = 0;
+	//OUT_H = 0;
+
+	return;
+}
+
+/*** BeginHeader Rd_Input */
+int Rd_Input(unsigned char input);
+/*** EndHeader  */
+
+/* START FUNCTION DESCRIPTION ********************************************
+Rd_Input                  <Func_IO.LIB>
+
+SYNTAX:        int Rd_Input(unsigned char input)
+
+PARAMETER1:    input: Numero de entrada a leer. Valido de 0 a 7.
+
+DESCRIPTION:	Lee una entrada y devuelve el valor leido.  NO INCLUYE DEBOUNCE!!!.
+RETURN VALUE:	0 boton sin presionar. 1 Boton presionado. -1 Parametro Input fuera de rango.
+
+END DESCRIPTION **********************************************************/
+nodebug int Rd_Input(unsigned char input)
+{
+	char port;
+	
+	if(input > 7)
+		return -1;					//El parametro que nos pasaron es incorrecto.
+	
+	if(input>3){
+		port=PFDR;
+	}
+	else{
+		port=PBDR;
+		input=input+2;
+	}
+	
+	if(BitRdPortI(port, input) == 0)	//invierto la lectura para que boton presionado sea = 1
+		return 1;
+	else
+		return 0;
+
+}
+
+/*** BeginHeader Rd_Output */
+int Rd_Output(int output);
+/*** EndHeader   Rd_Output */
+/*
+ *      Escribe una salida de la placa.
+ *
+ */
+
+/* START FUNCTION DESCRIPTION ********************************************
+Rd_Output                  <Func_IO.LIB>
+
+SYNTAX:        int Rd_Output(int output)
+
+
+PARAMETER2:    Numero de salida a leer. Valido de 0 a 7 para los leds de salida y 8 para el LED Rojo de status.
+
+DESCRIPTION:   Leer una salida.
+RETURN VALUE:	-1 Parametro entrada fuera de rango.
+
+END DESCRIPTION **********************************************************/
+ int Rd_Output(int output)
+{
+	if(output == 8){		//
+		return BitRdPortI(PEDR, 5);	//Estado del LEd rojo de status
+	}
+	if(output >= 0 && output < 8){
+		return BitRdPortI(PADR, output);
+	}
+	
+	return -1;	//Si llegue hasta aca hay algun parametro mal.
+	
+}
+
+
+
+/*** BeginHeader Wr_Output */
+int Wr_Output(int output, int value);
+/*** EndHeader   Wr_Output */
+/*
+ *      Escribe una salida de la placa.
+ *
+ */
+
+/* START FUNCTION DESCRIPTION ********************************************
+Wr_Output                  <Func_IO.LIB>
+
+SYNTAX:        int Wr_Output(int output, int value)
+
+PARAMETER1:    Estado a escribir en la salida (0 para apagado, 1 para encendido)
+
+PARAMETER2:    Numero de salida a escribir. Valido de 0 a 7 para los leds de salida y 8 para el LED Rojo de status.
+
+DESCRIPTION:   Escribe una salida.
+RETURN VALUE:	-1 Parametro entrada fuera de rango.
+
+END DESCRIPTION **********************************************************/
+nodebug int Wr_Output(int output, int value)
+{
+	if(output == 8){		//
+		BitWrPortI(PEDR, &PEDRShadow, (value != 0), 5);
+		return 1;
+	}
+	if(output >= 0 && output < 8){
+		BitWrPortI( PADR, &PADRShadow, (value != 0), output );
+		return 1;
+	}
+	
+	return -1;	//Si llegue hasta aca hay algun parametro mal.
+	
+}
+
+/*** BeginHeader LEDstatus */
+void LEDstatus(int status);
+/*** EndHeader   LEDstatus */
+/* START FUNCTION DESCRIPTION ********************************************
+LEDstatus                  <Func_IO.LIB>
+
+SYNTAX:        void LEDstatus(int status)
+
+PARAMETER1:    Valor de estado a escribir en el LED de STATUS. 
+				Si "Status" es negativo, invierte el estado
+
+DESCRIPTION:   Cambia el estado del LED de STATUS.
+
+END DESCRIPTION **********************************************************/
+void LEDstatus(int status)
+{
+	if(status < 0){
+		if(Rd_Output(8))
+			Wr_Output(8, 0);
+		else
+			Wr_Output(8, 1);
+	}
+	else{
+		Wr_Output(8, status);
+	}
+}
+
+
+
+
+
+/*** BeginHeader Rd_Analog */
+int Rd_Analog(int channel);	
+/*** EndHeader */
+
+/* START FUNCTION DESCRIPTION ********************************************
+Rd_Analog                  <Func_IO.LIB>
+
+SYNTAX:        int Rd_Analog(int channel)
+
+PARAMETER1:    channel: Numero de entrada analogica a leer. 0-1.
+
+RETURNS: 	Devuelve el valor de la entrada analogica.
+			-1 Numero de Entrada invalido
+			-2 timeout o paquete de tamaño incorrecto
+			-3 Error de CRC
+			
+
+DESCRIPTION:   Lee el estado de la entrada analogica #channel.
+
+END DESCRIPTION **********************************************************/
+	int Rd_Analog(int channel)
+{
+	unsigned long time;
+	char crc, preg[5], datos[PIC_MSG_LENGTH];
+	int valor, i;
+
+	if(channel > 1 || channel < 0)	//Entrada pedida fuera de rango.
+		return -1;
+
+	serCrdFlush();
+	serCwrFlush();
+		
+	preg[0] = STX;
+	preg[1] = '0';
+	preg[2] = '1';
+	preg[3] = ETX; 
+	preg[4] = preg[0] + preg[1] + preg[2] + preg[3]; // CRC
+
+	serCwrite(&preg,5); // le mandamos la pregunta al puerto C
+
+	serCrdFlush();      // inicializa en 0 el buffer de entrada C
+
+	time = MS_TIMER + PIC_COM_TIMEOUT;
+	while( (serCrdUsed() != PIC_MSG_LENGTH) && ((long)(MS_TIMER-time) < 0));
+	if( serCrdUsed() != PIC_MSG_LENGTH)
+	{
+		return -2;
+	}
+	
+	serCread(datos, PIC_MSG_LENGTH, 500);
+
+	//Confirmo CRC
+	crc = 0;
+	for( i=0; i<PIC_MSG_LENGTH-1; i++ )
+	{
+		crc += datos[i];
+	}
+	if( crc != datos[PIC_MSG_LENGTH-1] )
+	{
+		datos[28] = '\0';
+		printf(datos);		//devuelvo el mensaje para analizar
+		printf("\n");
+		return -3;
+	}
+	
+	valor = ASCIIHextoNum(datos[3+3*channel])<<8;
+	valor += ASCIIHextoNum(datos[4+3*channel])<<4;
+	valor += ASCIIHextoNum(datos[5+3*channel]);
+	
+	return valor;
+}
+
+
+/*** BeginHeader Delay_ms */
+void Delay_ms(long mili);
+/*** EndHeader   Delay_ms */
+/* START FUNCTION DESCRIPTION ********************************************
+Delay_ms                  <Func_IO.LIB>
+
+SYNTAX:        void Delay_ms(long mili)
+
+PARAMETER1:    Tiempo en milisegundos
+
+
+DESCRIPTION:   Genera un delay de milisegundos
+RETURN VALUE:	Void.
+
+END DESCRIPTION **********************************************************/
+nodebug void Delay_ms(long mili){
+	unsigned int min, seg, ms;
+	#ifdef _UCOS2_VERS
+		min = (mili>59999?1:0);
+		seg = (mili/1000) - (min * 60);
+		ms = (int) (mili - (min * 60000) - (seg * 1000));
+		OSTimeDlyHMSM(0,min,seg,ms);
+	#else
+		mili += MS_TIMER;
+		while((long)(MS_TIMER - mili) < 0);		//Revisar Cast si no va:(long)(MS_TIMER - mili)
+	#endif
+	return;
+}
+
+/*** BeginHeader  clearIO*/
+void clearIO();	//Declaracion de la funcion.
+/*** EndHeader */
+/* START FUNCTION DESCRIPTION ********************************************
+clearIO                  <Func_IO.LIB>
+
+SYNTAX:        void clearIO();	
+
+DESCRIPTION:   Apaga todos los lEDs (pone las salidas en 0)
+RETURN VALUE:	Void.
+END DESCRIPTION **********************************************************/
+void clearIO()	{
+
+	for(i=0;i<8;i++)
+	{
+		Wr_Output(i,0);
+	}
+	LEDstatus(0);			//especifico de esta placa
+}
+
+/*** BeginHeader  ClearScreen*/
+void ClearScreen();	
+/*** EndHeader */
+/* START FUNCTION DESCRIPTION ********************************************
+ClearScreen                  <Func_IO.LIB>
+
+SYNTAX:        void ClearScreen();	
+
+DESCRIPTION:   Ejecuta un clear en la consola stdio
+RETURN VALUE:	Void.
+END DESCRIPTION **********************************************************/
+void ClearScreen()
+{
+   printf ( "\x1Bt" );            	// Space Opens Window
+}
+
+
+/*** BeginHeader  DispStr*/
+void DispStr(int x, int y, char *s);
+/*** EndHeader */
+/* START FUNCTION DESCRIPTION ********************************************
+DispStr                  <Func_IO.LIB>
+
+SYNTAX:        void DispStr(int x, int y, char *s)
+
+PARAMETER1:		coordenada x   
+PARAMETER2:  	coordenada y
+PARAMETER3:		String de caracteres a imprimir
+
+RETURNS: 	void			
+
+DESCRIPTION:   Imprime el string "s" en la posicion "x,y" de la consola stdio
+
+END DESCRIPTION **********************************************************/
+void DispStr(int x, int y, char *s)
+{
+   x += 0x20;
+   y += 0x20;
+   printf ("\x1B=%c%c%s", x, y, s);
+}
+
+/*** BeginHeader ASCIIHextoNum */
+char ASCIIHextoNum( char input );
+/*** EndHeader */
+/* START FUNCTION DESCRIPTION ********************************************
+ASCIIHextoNum                  <Func_IO.LIB>
+
+SYNTAX:        char ASCIIHextoNum( char input )
+PARAMETER1:		caracteres ASCII (de 0 a F)  
+
+RETURNS: 	El numero entero equivalente
+			-1 si el parametro1 no era un caracter valido hexadecimal
+
+DESCRIPTION:   Convierte un ASCII (de 0 a F) en numero entero
+END DESCRIPTION **********************************************************/
+char ASCIIHextoNum( char input )
+{
+	if( input >= '0' && input <= '9' )
+	{
+		return (input-'0');
+	}
+	else if( input >= 'A' && input <= 'F')
+	{
+		return (input + 10 - 'A');
+	}
+	else
+	{
+		return -1;
+	}
+}
