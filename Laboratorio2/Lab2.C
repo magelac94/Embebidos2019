@@ -11,6 +11,6 @@ main()
 
 	while(1)
 	{
-		
+		prueba 1 
 	}
 }
