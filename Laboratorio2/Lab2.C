@@ -11,10 +11,12 @@ main()
 
 	while(1)
 	{
-		
+
 
 		switch(){
 			balb ladkjdklfjas
 		}
+
+		prueba 1 
 	}
 }
