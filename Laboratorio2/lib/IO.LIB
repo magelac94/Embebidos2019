@@ -59,7 +59,7 @@ void HW_init( void )
 	BitWrPortI(PFDDR, &PFDDRShadow, INPUT_DIR, BIT_7); 	//Entrada 7
 	
 	// PORT E
-	BitWrPortI(PEDDR, &PEDDRShadow, INPUT_DIR, BIT_5); 	//Entrada 5
+	BitWrPortI(PEDDR, &PEDDRShadow, OUTPUT_DIR, BIT_5); //Entrada 5
 	
 	// Puerto Serie PIC
 	serCopen(PIC_PROTOCOL_BAUDRATE);
