@@ -11,6 +11,20 @@ enum opcionMenu {
 	OPCION_4,
 	OPCION_5
 };
+
+struct tm						// Legacy Dynamic C time definition
+		{
+			char tm_sec;				// seconds 0-59
+			char tm_min;				// 0-59
+			char tm_hour;				// 0-59
+			char tm_mday;				// 1-31
+			char tm_mon;				// 1-12
+			char tm_year;				// 00-150 (1900-2050)
+			char tm_wday;				// 0-6 0==sunday
+		};
+// https://github.com/digidotcom/DCRabbit_10/blob/master/include/time.h
+		
+
 // Definicion de variables
 
 /*** EndHeader */
@@ -28,4 +42,30 @@ void mostrarMenuPrincipal(){
 			printf("4 - Quitar evento del calendario\n");
 			printf("5 - Consultar lista de eventos activos\n");
 			printf("6 - Salir\n");
+}
+
+/*** BeginHeader MENU_pedirHora */
+void PedirHora();
+/*** EndHeader */
+void PedirHora(){
+
+	// falta definir la variable HORA Y MINUTOS
+	printf("Opcion 1 - Fijar Hora del reloj\n");
+	printf("Ingrese la hora: \n");
+	getswf( hora )
+	if ( hora <= 0 || hora > 23 ){		// Valido que hora sea correcta
+		printf("Valor Erroneo debe estar entre 0 y 23\n");
+	} else {
+		printf("Ingrese los minutos: \n");
+		if ( minutos <= 0 || minutos > 59 ){ // Valido que los minutos sean correctos
+			printf("Valor Erroneo debe estar entre 0 y 59\n");
+		} else {
+			
+			pasamos la hora y minutos a timestamp - unsigned long mktime (struct tm *timeptr) -
+			y lo seteamos con la funcion que nos da la libreria rtclock.lib
+			-> void write_rtc (unsigned long int time)
+			TIME es en formato timestamp
+			
+		}
+	}
 }
