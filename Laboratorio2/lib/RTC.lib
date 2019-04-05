@@ -1,0 +1,36 @@
+/*** BeginHeader */
+// Librerias a incluir
+#use IO.LIB
+
+// Definicion de macros
+#define RTC_PORT		PORT_A
+#define LED_SET(x)   	IO_setOutput( LED_PORT, x, LED_ON)
+
+// Definicion de estructuras
+
+// Definicion de variables
+
+/*** EndHeader */
+
+// Metodos
+/*** BeginHeader RTC_fijarHora */
+void RTC_fijarHora();
+/*** EndHeader */
+void RTC_fijarHora(){
+	printf("Opcion 1 - Fijar Hora del reloj\n");
+	printf("Ingrese Una hora\n");
+	getswf(hora)
+	if (hora <= 0 || hora > 23 ){		// Valido que hora sea correcta
+		printf("Valor Erroneo debe estar entre 0 y 23\n");
+	}else{
+		// FIJAR LA HORA EN EL RELOJ  y volver al menu
+	}
+}
+
+/*** BeginHeader RTC_consultarHora */
+void RTC_consultarHora();
+/*** EndHeader */
+void RTC_consultarHora(){
+	printf("Opcion 2 - Consultar Hora del reloj\n");
+	// Mostrar Hora
+}

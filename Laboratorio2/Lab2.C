@@ -2,104 +2,22 @@
 #use BTN.LIB
 #use LED.LIB
 #use UTILITIES.LIB
-
+#use RTC.LIB		//falta implementar
+#use MENU.LIB		//falta implementar
+#use EVENTOS.LIB	//falta implementar
 
 #define ON_TIME	400
 #define OFF_TIME	800
 #define ONE_SECOND	1000
-#define MAX_EVENTS 5
-typedef struct {		// Struct de eventos
-	char command;
-	char param;
-	unsigned long time;
-} Event;
 
-Event eventos[MAX_EVENTS];		// Lista de Eventos
-	
-void mostrarMenuPrincipal(){
-	printf("Elija una opcion\n");
-			printf("-----------------------------------------\n");
-			printf("1 - Fijar la hora del reloj\n");
-			printf("2 - Consultar la hora del reloj\n");
-			printf("3 - Agregar evento del calendario\n");
-			printf("4 - Quitar evento del calendario\n");
-			printf("5 - Consultar lista de eventos activos\n");
-			printf("6 - Salir\n");
-}
-
-void fijarHora(){
-	printf("Opcion 1 - Fijar Hora del reloj\n");
-	printf("Ingrese Una hora\n");
-	getswf(hora)
-	if (hora <= 0 || hora > 23 ){		// Valido que hora sea correcta
-		printf("Valor Erroneo debe estar entre 0 y 23\n");
-	}else{
-		// FIJAR LA HORA EN EL RELOJ  y volver al menu
-	}
-}
-
-void consultarHora(){
-	printf("Opcion 2 - Consultar Hora del reloj\n");
-	// Mostrar Hora
-}
-
-void agregarEvento(){
-
-	while(1){
-		printf("Opcion 3 - Agregar Evento en Calendario\n");
-		printf("Tipo de Evento (1 o 2):\n");
-		getswf(evento);
-		if (evento < 0 || evento > 1){
-			printf("Debe elegir 1 o 2, volver a ingresar\n");
-		}else{
-			printf("Led a Encender(0-6):\n");
-			getswf(led);
-			if (led < 0 || led > 6){
-					printf("Debe elegir un numero entre  0 y 6");
-			}else{
-				printf("Ingrese Hora:\n");
-				getswf(hora);
-				if (hora <0 || hora>23){
-					printf("Debe elegir un numero entre  0 y 23");
-
-				}else{		// Configuro el evento con los datos ingresados
-					
-					eventos[0].command = evento;		// ver el tema de donde ingresar el evento dentro del array
-					eventos[0].param = led;
-					eventos[0].time = hora
-				}
-				
-			}
-
-		}
-
-	}
-}
-
-void eliminarEvento(){
-	// ver como ubicar el evento
-}
-
-void listarEventos(){
-	int j;
-	j = 0;
-	for (i=0;i<MAX_EVENTS;i++){ // verificar final de datos para no recorrer todo el array
-		printf("----------------------------------------:\n", );
-		printf("EVENTO %s:\n", j);
-		printf("Comando: %s\n", eventos[i].command);
-		printf("LED : %s\n", eventos[i].param);
-		printf("Hora: %s\n", eventos[i].time);
-
-		j++;
-	}
-}
 
 main(){
-	char opcion;
+	enum opcionMenu opcion;
 	HW_init();
 
 	while(1)
 	{
+		// Parte 1 - Maquina de estado para verificar que no estamos colgados
 		costate RED_LED always_on
 		{
 			LED_RED_SET();
@@ -108,38 +26,42 @@ main(){
 			waitfor(DelayMs(OFF_TIME));
 		}
 
+		// Parte 2 - Maquina de estado para mostrar menu y manipular hora y eventos
 		costate MENU always_on
 		{
-			printf("loop");
-			waitfor(DelayMs(ONE_SECOND));
-
-			mostrarMenuPrincipal();
-			waitfor(getswf(opcionMenu));
+			MENU_mostrarMenuPrincipal();
+			waitfor(getswf(opcion));
 			printf("\n");
-			switch(opcionMenu){
-				case("1"):					// Fijar hora del reloj
-					fijarHora();
+			switch( opcion ){
+				case( OPCION_1 ):					// Fijar hora del reloj
+					RTC_fijarHora();
 					break;
 
-				case("2"):
-					consultarHora();
+				case( OPCION_2 ):
+					RTC_consultarHora();
 					break;
 
-				case("3"):
-					agregarEvento();
+				case( OPCION_3 ):
+					EVENTO_agregarEvento();
 					break;
 
-				case("3"):
-					eliminarEvento();
+				case( OPCION_4 ):
+					EVENTO_eliminarEvento();
 					break;
 
-				case("3"):
-					consultarEventos();
+				case( OPCION_5 ):
+					EVENTO_consultarEventos();
 					break;
 
 				default: printf("Vuelva a ingresar\n");
 
 			}
+		}
+		
+		// Parte 3 - Maquina de estado para checkear si es momento de ejecutar algun evento programado
+		costate EVENT_CHECKER always_on
+		{
+			
 		}
 
 	}

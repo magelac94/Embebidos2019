@@ -1,0 +1,31 @@
+/*** BeginHeader */
+// Librerias a incluir
+
+// Definicion de macros
+
+// Definicion de estructuras
+enum opcionMenu {
+	OPCION_1 = 1,
+	OPCION_2,
+	OPCION_3,
+	OPCION_4,
+	OPCION_5
+};
+// Definicion de variables
+
+/*** EndHeader */
+
+// Metodos
+/*** BeginHeader MENU_mostrarMenuPrincipal */
+void mostrarMenuPrincipal();
+/*** EndHeader */
+void mostrarMenuPrincipal(){
+	printf("Elija una opcion\n");
+			printf("-----------------------------------------\n");
+			printf("1 - Fijar la hora del reloj\n");
+			printf("2 - Consultar la hora del reloj\n");
+			printf("3 - Agregar evento del calendario\n");
+			printf("4 - Quitar evento del calendario\n");
+			printf("5 - Consultar lista de eventos activos\n");
+			printf("6 - Salir\n");
+}
