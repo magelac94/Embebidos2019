@@ -1,6 +1,7 @@
 /*** BeginHeader */
 // Librerias a incluir
 #use IO.LIB
+#use rtclock.lib
 
 // Definicion de macros
 #define RTC_PORT		PORT_A
@@ -17,14 +18,26 @@
 void RTC_fijarHora();
 /*** EndHeader */
 void RTC_fijarHora(){
+	// falta definir la variable HORA Y MINUTOS
 	printf("Opcion 1 - Fijar Hora del reloj\n");
-	printf("Ingrese Una hora\n");
-	getswf(hora)
-	if (hora <= 0 || hora > 23 ){		// Valido que hora sea correcta
+	printf("Ingrese la hora: \n");
+	getswf( hora )
+	if ( hora <= 0 || hora > 23 ){		// Valido que hora sea correcta
 		printf("Valor Erroneo debe estar entre 0 y 23\n");
-	}else{
-		// FIJAR LA HORA EN EL RELOJ  y volver al menu
+	} else {
+		printf("Ingrese los minutos: \n");
+		if ( minutos <= 0 || minutos > 59 ){ // Valido que los minutos sean correctos
+			printf("Valor Erroneo debe estar entre 0 y 59\n");
+		} else {
+			/**
+			pasamos la hora y minutos a timestamp - unsigned long mktime (struct tm *timeptr) -
+			y lo seteamos con la funcion que nos da la libreria rtclock.lib
+			-> void write_rtc (unsigned long int time)
+			TIME es en formato timestamp
+			**/
+		}
 	}
+	
 }
 
 /*** BeginHeader RTC_consultarHora */
