@@ -30,7 +30,7 @@ main(){
 		costate MENU always_on
 		{
 			MENU_mostrarMenuPrincipal();
-			waitfor(getswf(opcion));
+			waitfor(getswf( opcion ));
 			printf("\n");
 			switch( opcion ){
 				case( OPCION_1 ):					// Fijar hora del reloj

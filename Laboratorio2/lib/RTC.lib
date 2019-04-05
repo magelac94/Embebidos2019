@@ -17,6 +17,7 @@
 /*** BeginHeader RTC_fijarHora */
 void RTC_fijarHora();
 /*** EndHeader */
+/*
 void RTC_fijarHora(){
 	// falta definir la variable HORA Y MINUTOS
 	printf("Opcion 1 - Fijar Hora del reloj\n");
@@ -29,16 +30,15 @@ void RTC_fijarHora(){
 		if ( minutos <= 0 || minutos > 59 ){ // Valido que los minutos sean correctos
 			printf("Valor Erroneo debe estar entre 0 y 59\n");
 		} else {
-			/**
+			
 			pasamos la hora y minutos a timestamp - unsigned long mktime (struct tm *timeptr) -
 			y lo seteamos con la funcion que nos da la libreria rtclock.lib
 			-> void write_rtc (unsigned long int time)
 			TIME es en formato timestamp
-			**/
+			
 		}
 	}
-	
-}
+} */
 
 /*** BeginHeader RTC_consultarHora */
 void RTC_consultarHora();
