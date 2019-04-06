@@ -132,14 +132,22 @@ void MENU_fijarFechaHora(){
 	printf(" Ingrese el minuto: ");
 	gets( minuto );
 	validarminuto(minuto);
+	
+	// ojo esta todo en char
+	p_FechaHora->tm_hour = hora;
+	p_FechaHora->tm_min = minuto;
+	p_FechaHora->tm_mday =dia;
+	p_FechaHora->tm_mon = mes;
+	p_FechaHora->tm_year = ano;
+
 	/*
 		Aca es donde va la logica para leer los valores
-	*/
+	
 	p_FechaHora->tm_hour = 1;
 	p_FechaHora->tm_min = 23;
 	p_FechaHora->tm_mday = 6;
 	p_FechaHora->tm_mon = 4;
-	p_FechaHora->tm_year = 19;
+	p_FechaHora->tm_year = 19;*/
    //RTC_fijarFechaHora( p_FechaHora ); // ESto anda si en el test pero aca no anda por eso esta comentado
    printFechaHora( p_FechaHora );		// Imprimo la Fecha y hora modificados
 }

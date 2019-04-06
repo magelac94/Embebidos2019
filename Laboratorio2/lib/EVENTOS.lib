@@ -28,7 +28,7 @@ void EVENTOS_agregarEvento();
 /*** EndHeader */
 void EVENTOS_agregarEvento()
 {
-	while(1){
+	while(1){   // pasar esto a MENU y que llegan solo los datos.
 		printf("Opcion 3 - Agregar Evento en Calendario\n");
 		printf("Tipo de Evento (1 o 2):\n");
 		getswf(evento);
