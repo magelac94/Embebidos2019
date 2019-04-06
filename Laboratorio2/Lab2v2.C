@@ -35,7 +35,7 @@ main(){
 					// y la maquina EVENT_CHECKER pueda hacer su trabajo de ver si es hora de correr algun
 					// evento programado (prender/apagar led). Por ahora va asi por un error de compilacion
 					//Cuando termine, sigue y hace el brak y vuelve al menu principal.
-					MENU_fijarFechaHora();
+					MENU_pedirFechaHora();
 					break;
 
 				case( OPCION_2 ):
