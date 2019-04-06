@@ -1,0 +1,23 @@
+#use IO.LIB
+#use RTC.LIB
+#use utilities.lib
+
+char* p_entrada;
+
+main(){
+
+	HW_init();
+	struct tm* p_FechaHora;				//Declaro variable
+	RTC_leerFechaHora( p_FechaHora );	// Leo el RTC
+	printFechaHora( p_FechaHora );		// Imprimo la Fecha y hora
+   while(1);
+
+////	Test basico de comunicacion con consola serial
+//	while(1){
+//		printf("Comienza el loop...\n");
+//		printf("Espero por entrada: ");
+//		gets( p_entrada );
+//		printf("\nLa entrada fue: %s", p_entrada);
+//      printf("\n");
+//	}
+}

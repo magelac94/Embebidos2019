@@ -1,49 +1,26 @@
 /*** BeginHeader */
-// Librerias a incluir
-#use IO.LIB
-#use rtclock.lib
-
-// Definicion de macros
-#define RTC_PORT		PORT_A
-#define LED_SET(x)   	IO_setOutput( LED_PORT, x, LED_ON)
-
-// Definicion de estructuras
-
-// Definicion de variables
 
 /*** EndHeader */
 
-// Metodos
-/*** BeginHeader RTC_fijarHora */
-void RTC_fijarHora();
+//// Metodos
+/*** BeginHeader RTC_fijarFechaHora */
+void RTC_fijarFechaHora( struct tm* p_FechaHora );
 /*** EndHeader */
-/*
-void RTC_fijarHora(){
-	// falta definir la variable HORA Y MINUTOS
-	printf("Opcion 1 - Fijar Hora del reloj\n");
-	printf("Ingrese la hora: \n");
-	getswf( hora )
-	if ( hora <= 0 || hora > 23 ){		// Valido que hora sea correcta
-		printf("Valor Erroneo debe estar entre 0 y 23\n");
-	} else {
-		printf("Ingrese los minutos: \n");
-		if ( minutos <= 0 || minutos > 59 ){ // Valido que los minutos sean correctos
-			printf("Valor Erroneo debe estar entre 0 y 59\n");
-		} else {
-			
-			pasamos la hora y minutos a timestamp - unsigned long mktime (struct tm *timeptr) -
-			y lo seteamos con la funcion que nos da la libreria rtclock.lib
-			-> void write_rtc (unsigned long int time)
-			TIME es en formato timestamp
-			
-		}
-	}
-} */
+// Toma un puntero a una estructura TM lo convierte a
+// timestamp y lo guarda en el RTC
+void RTC_fijarFechaHora( struct tm* p_FechaHora ){
+	unsigned long timestamp;
+	timestamp = mktime( p_FechaHora );
+	write_rtc( timestamp );
+}
 
-/*** BeginHeader RTC_consultarHora */
-void RTC_consultarHora();
+/*** BeginHeader RTC_leerFechaHora */
+void RTC_leerFechaHora( struct tm* p_FechaHora );
 /*** EndHeader */
-void RTC_consultarHora(){
-	printf("Opcion 2 - Consultar Hora del reloj\n");
-	// Mostrar Hora
+// Lee un timestamp desde el RTC y lo convierte en una
+// estructura tm devolviendolo en el puntero p_FechaHora
+void RTC_leerFechaHora( struct tm* p_FechaHora ){
+	unsigned long timestamp;
+	timestamp = read_rtc();
+	mktm( p_FechaHora, timestamp );
 }

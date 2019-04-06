@@ -1,3 +1,6 @@
+/*** BeginHeader */
+
+/*** EndHeader */
 
 /*** BeginHeader UT_delay */
 void UT_delay( long p_ms );
@@ -28,4 +31,18 @@ char UT_ASCIItoCharNum( char p_input )
 	{
 		return -1;
 	}
+}
+
+/*** BeginHeader printFechaHora */
+void printFechaHora ( struct tm* p_FechaHora );
+/*** EndHeader */
+// Imprime la fecha y la hora de una estructura tm
+void printFechaHora ( struct tm* p_FechaHora ){
+	printf("\nFecha: %d/%d/%d\nHora actual: %d:%d",
+		p_FechaHora->tm_mday,
+		p_FechaHora->tm_mon,
+		p_FechaHora->tm_year,
+		p_FechaHora->tm_hour,
+		p_FechaHora->tm_min
+		);
 }
