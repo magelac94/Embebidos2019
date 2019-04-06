@@ -34,6 +34,7 @@ main(){
 			printf("\n");
 			switch( opcion ){
 				case( OPCION_1 ):					// Fijar hora del reloj
+					MENU_pedirHoraFecha();
 					RTC_fijarHora();
 					break;
 

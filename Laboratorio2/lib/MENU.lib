@@ -102,9 +102,9 @@ void MENU_mostrarMenuPrincipal( char* p_opcion ){
 
 
 /*** BeginHeader MENU_fijarFechaHora */
-void MENU_fijarFechaHora();
+void MENU_pedriHoraFecha();
 /*** EndHeader */
-void MENU_fijarFechaHora(){
+void MENU_pedriHoraFecha(){   // devolver el struct
    struct tm* p_FechaHora;
    char dia;
    char mes;
