@@ -1,6 +1,4 @@
 /*** BeginHeader */
-// Librerias a incluir
-#use IO.LIB
 
 // Definicion de macros
 #define MAX_EVENTS 5
@@ -16,7 +14,15 @@ typedef struct {		// Struct de eventos
 Event eventos[MAX_EVENTS];		// Lista de Eventos
 /*** EndHeader */
 
-// Metodos
+//// Metodos
+/*** BeginHeader */
+void EVENTOS_initEventos();
+/*** EndHeader */
+void EVENTOS_initEventos(){
+	
+}
+
+
 /*** BeginHeader EVENTOS_agregarEvento */
 void EVENTOS_agregarEvento();
 /*** EndHeader */

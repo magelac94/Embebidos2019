@@ -1,8 +1,9 @@
+#use Utilities.lib
+#use RTC.lib
+
 /*** BeginHeader */
 // Librerias a incluir
-
 // Definicion de macros
-
 // Definicion de estructuras
 enum opcionMenu {
 	OPCION_1 = 1,
@@ -11,61 +12,74 @@ enum opcionMenu {
 	OPCION_4,
 	OPCION_5
 };
-
-struct tm						// Legacy Dynamic C time definition
-		{
-			char tm_sec;				// seconds 0-59
-			char tm_min;				// 0-59
-			char tm_hour;				// 0-59
-			char tm_mday;				// 1-31
-			char tm_mon;				// 1-12
-			char tm_year;				// 00-150 (1900-2050)
-			char tm_wday;				// 0-6 0==sunday
-		};
-// https://github.com/digidotcom/DCRabbit_10/blob/master/include/time.h
-		
-
-// Definicion de variables
-
 /*** EndHeader */
 
 // Metodos
 /*** BeginHeader MENU_mostrarMenuPrincipal */
-void mostrarMenuPrincipal();
+void MENU_mostrarMenuPrincipal( char* p_opcion );
 /*** EndHeader */
-void mostrarMenuPrincipal(){
-	printf("Elija una opcion\n");
-			printf("-----------------------------------------\n");
-			printf("1 - Fijar la hora del reloj\n");
-			printf("2 - Consultar la hora del reloj\n");
-			printf("3 - Agregar evento del calendario\n");
-			printf("4 - Quitar evento del calendario\n");
-			printf("5 - Consultar lista de eventos activos\n");
-			printf("6 - Salir\n");
+void MENU_mostrarMenuPrincipal( char* p_opcion ){
+	printf("\n          Elija una opcion\n");
+	printf("-----------------------------------------\n");
+	printf(" 1 - Fijar la hora del reloj\n");
+	printf(" 2 - Consultar la hora del reloj\n");
+	printf(" 3 - Agregar evento del calendario\n");
+	printf(" 4 - Quitar evento del calendario\n");
+	printf(" 5 - Consultar lista de eventos activos\n");
+	printf(" 6 - Salir\n\n");
+	printf(" >> ");
+	gets( p_opcion );
 }
 
-/*** BeginHeader MENU_pedirHora */
-void PedirHora();
-/*** EndHeader */
-void PedirHora(){
 
-	// falta definir la variable HORA Y MINUTOS
-	printf("Opcion 1 - Fijar Hora del reloj\n");
-	printf("Ingrese la hora: \n");
-	getswf( hora )
-	if ( hora <= 0 || hora > 23 ){		// Valido que hora sea correcta
-		printf("Valor Erroneo debe estar entre 0 y 23\n");
-	} else {
-		printf("Ingrese los minutos: \n");
-		if ( minutos <= 0 || minutos > 59 ){ // Valido que los minutos sean correctos
-			printf("Valor Erroneo debe estar entre 0 y 59\n");
-		} else {
-			
-			pasamos la hora y minutos a timestamp - unsigned long mktime (struct tm *timeptr) -
-			y lo seteamos con la funcion que nos da la libreria rtclock.lib
-			-> void write_rtc (unsigned long int time)
-			TIME es en formato timestamp
-			
-		}
-	}
+
+/*** BeginHeader MENU_fijarFechaHora */
+void MENU_fijarFechaHora();
+/*** EndHeader */
+void MENU_fijarFechaHora(){
+   struct tm* p_FechaHora;
+	printf("-------- CONFIGURACION: FIJAR HORA -------\n");
+	printf(" Ingrese el dia: ");
+	printf(" Ingrese el mes: ");
+	printf(" Ingrese el ano: ");
+	printf(" Ingrese el hora: ");
+	printf(" Ingrese el minuto: ");
+	/*
+		Aca es donde va la logica para leer los valores
+	*/
+	p_FechaHora->tm_hour = 1;
+	p_FechaHora->tm_min = 23;
+	p_FechaHora->tm_mday = 6;
+	p_FechaHora->tm_mon = 4;
+	p_FechaHora->tm_year = 19;
+   //RTC_fijarFechaHora( p_FechaHora ); // ESto anda si en el test pero aca no anda por eso esta comentado
+   printFechaHora( p_FechaHora );		// Imprimo la Fecha y hora modificados
+}
+
+/*** BeginHeader MENU_consultarHora */
+void MENU_consultarHora();
+/*** EndHeader */
+void MENU_consultarHora(){
+	// FALTA
+}
+
+/*** BeginHeader MENU_agregarEvento */
+void MENU_agregarEvento();
+/*** EndHeader */
+void MENU_agregarEvento(){
+	// FALTA
+}
+
+/*** BeginHeader MENU_eliminarEvento */
+void MENU_eliminarEvento();
+/*** EndHeader */
+void MENU_eliminarEvento(){
+	// FALTA
+}
+
+/*** BeginHeader MENU_consultarEventos */
+void MENU_consultarEventos();
+/*** EndHeader */
+void MENU_consultarEventos(){
+	// FALTA
 }

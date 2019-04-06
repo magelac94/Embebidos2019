@@ -3,6 +3,7 @@
 /*** EndHeader */
 
 //// Metodos
+
 /*** BeginHeader RTC_fijarFechaHora */
 void RTC_fijarFechaHora( struct tm* p_FechaHora );
 /*** EndHeader */

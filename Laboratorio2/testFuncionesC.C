@@ -2,6 +2,7 @@
 #use RTC.lib
 #use Utilities.lib
 
+#define TEN		10
 char* p_entrada;
 struct tm* p_FechaHora;
 main(){
@@ -19,11 +20,14 @@ main(){
 	p_FechaHora->tm_mon = 4;
 	p_FechaHora->tm_year = 19;
 	RTC_fijarFechaHora( p_FechaHora );
-	printFechaHora( p_FechaHora );		// Imprimo la Fecha y hora modificados
-	
+   costate {
+   	   waitfor(DelayMs(TEN));
+   }
+   printFechaHora( p_FechaHora );		// Imprimo la Fecha y hora modificados
+
 	// Prueba de insertar eventos
-	
-	
+
+
 	while(1){
 
 	};
