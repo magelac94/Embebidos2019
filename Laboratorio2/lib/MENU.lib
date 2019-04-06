@@ -15,6 +15,74 @@ enum opcionMenu {
 /*** EndHeader */
 
 // Metodos
+
+int bisiesto(ano){
+	return ((ano % 4 == 0 && ano % 100 != 0) || ano % 400   == 0);
+}
+bool validarano( char ano);
+bool validarano( char ano){
+	while(1){
+		if (ano > "1900" && ano < "5000"){
+			return true;
+		}
+	}
+}
+
+bool validarmes( char mes);
+bool validarmes( char mes){
+	while(1){
+		if (mes > "0" && ano < "13"){
+			return true;
+		}
+	}
+}
+
+bool validardia( char dia, char mes, char ano);
+bool validardia( char dia, char mes, char ano){
+	while(1){
+		if (mes == '4' || mes== '6' || mes == '9' || mes == "12"){
+			if (dia > 0 && dia < 31){
+				return true;
+			}
+		}
+		if (mes == '2'){
+			if (bisiesto(ano)){
+				if (dia > 0 && dia < 30){
+				return true;
+			}else{
+				if (dia > 0 && dia < 29){
+				return true;
+			}
+			
+			
+		}
+		else {
+			if (dia > 0 && dia < 32){
+				return true;
+			}
+		}
+	}
+}
+
+bool validarhora( char hora);
+bool validarhora( char hora){
+	while(1){
+		if (hora > "0" && hora < "25"){
+			return true
+		}
+	}
+}
+
+bool validarminuto( char minuto);
+bool validarminuto( char minuto){
+	while(1){
+		if (minuto > "0" && minuto < "60"){
+			return true;
+		}
+	}
+}
+
+
 /*** BeginHeader MENU_mostrarMenuPrincipal */
 void MENU_mostrarMenuPrincipal( char* p_opcion );
 /*** EndHeader */
@@ -38,12 +106,32 @@ void MENU_fijarFechaHora();
 /*** EndHeader */
 void MENU_fijarFechaHora(){
    struct tm* p_FechaHora;
+   char dia;
+   char mes;
+   char ano;
+   char hora;
+   char minuto;
 	printf("-------- CONFIGURACION: FIJAR HORA -------\n");
-	printf(" Ingrese el dia: ");
-	printf(" Ingrese el mes: ");
+	
 	printf(" Ingrese el ano: ");
+	gets( ano );
+	validarano(ano);
+
+	printf(" Ingrese el mes: ");
+	gets( mes );
+	validarmes(mes);
+
+	printf(" Ingrese el dia: ");
+	gets( dia );
+	validardia(dia,mes,ano);
+
 	printf(" Ingrese el hora: ");
+	gets( hora );
+	validarhora(hora);
+
 	printf(" Ingrese el minuto: ");
+	gets( minuto );
+	validarminuto(minuto);
 	/*
 		Aca es donde va la logica para leer los valores
 	*/
