@@ -12,6 +12,8 @@ enum opcionMenu {
 	OPCION_4,
 	OPCION_5
 };
+
+char[3] auxiliarParaDatosEventos;
 /*** EndHeader */
 
 // Metodos
@@ -53,8 +55,8 @@ bool validardia( char dia, char mes, char ano){
 				if (dia > 0 && dia < 29){
 				return true;
 			}
-			
-			
+
+
 		}
 		else {
 			if (dia > 0 && dia < 32){
@@ -101,38 +103,44 @@ void MENU_mostrarMenuPrincipal( char* p_opcion ){
 
 
 
-/*** BeginHeader MENU_fijarFechaHora */
-void MENU_pedriHoraFecha();
+/*** BeginHeader MENU_pedirFechaHora */
+void MENU_pedirHoraFecha();
 /*** EndHeader */
-void MENU_pedriHoraFecha(){   // devolver el struct
+void MENU_pedirHoraFecha(){   // devolver el struct
    struct tm* p_FechaHora;
    char dia;
    char mes;
    char ano;
    char hora;
    char minuto;
+
+   dia = 1;
+   mes = 2;
+   ano = 2013;
+   hora = 4;
+   minuto = 5;
 	printf("-------- CONFIGURACION: FIJAR HORA -------\n");
-	
+
 	printf(" Ingrese el ano: ");
-	gets( ano );
+ //	gets( ano );
 	validarano(ano);
 
 	printf(" Ingrese el mes: ");
-	gets( mes );
+ //	gets( mes );
 	validarmes(mes);
 
 	printf(" Ingrese el dia: ");
-	gets( dia );
+ //	gets( dia );
 	validardia(dia,mes,ano);
 
 	printf(" Ingrese el hora: ");
-	gets( hora );
+ //	gets( hora );
 	validarhora(hora);
 
 	printf(" Ingrese el minuto: ");
-	gets( minuto );
+ //	gets( minuto );
 	validarminuto(minuto);
-	
+
 	// ojo esta todo en char
 	p_FechaHora->tm_hour = hora;
 	p_FechaHora->tm_min = minuto;
@@ -142,7 +150,7 @@ void MENU_pedriHoraFecha(){   // devolver el struct
 
 	/*
 		Aca es donde va la logica para leer los valores
-	
+
 	p_FechaHora->tm_hour = 1;
 	p_FechaHora->tm_min = 23;
 	p_FechaHora->tm_mday = 6;
@@ -159,11 +167,35 @@ void MENU_consultarHora(){
 	// FALTA
 }
 
-/*** BeginHeader MENU_agregarEvento */
-void MENU_agregarEvento();
+/*** BeginHeader MENU_pedirDatosEvento */
+char[] MENU_pedirDatosEvento();
 /*** EndHeader */
-void MENU_agregarEvento(){
-	// FALTA
+char[] MENU_pedirDatosEvento(){
+	
+	while(1){
+		printf("------- Agregar Evento en Calendario  ----------\n");
+		printf("Tipo de Evento (1-Encender o 2-Apagar):\n");
+		getswf(evento);
+		if (evento < 0 || evento > 1){
+			printf("Debe elegir 1 o 2, volver a ingresar\n");
+		}else{
+			printf("Led a Encender(0-6):\n");
+			getswf(led);
+			if (led < 0 || led > 6){
+					printf("Debe elegir un numero entre  0 y 6");
+			}else{
+				printf("Ingrese Hora:\n");
+				getswf(hora);
+				if (hora <0 || hora>23){
+					printf("Debe elegir un numero entre  0 y 23");
+
+				}else{		// Guardo los datos del evento en un array para ser procesado por EVENTOS
+					
+					auxiliarParaDatosEventos[0] = evento;		// ver el tema de donde ingresar el evento dentro del array
+					auxiliarParaDatosEventos[1] = led;
+					auxiliarParaDatosEventos[2] = hora
+
+					return auxiliarParaDatosEventos;
 }
 
 /*** BeginHeader MENU_eliminarEvento */

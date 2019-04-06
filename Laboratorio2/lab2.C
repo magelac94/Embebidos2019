@@ -12,6 +12,7 @@
 
 
 main(){
+	char* p_opcion;
 	enum opcionMenu opcion;
 	HW_init();
 
@@ -29,28 +30,27 @@ main(){
 		// Parte 2 - Maquina de estado para mostrar menu y manipular hora y eventos
 		costate MENU always_on
 		{
-			MENU_mostrarMenuPrincipal();
-			waitfor(getswf( opcion ));
+			MENU_mostrarMenuPrincipal( p_opcion );
+			waitfor(getswf( p_opcion ));
 			printf("\n");
 			switch( opcion ){
 				case( OPCION_1 ):					// Fijar hora del reloj
-					MENU_pedirHoraFecha();
-					RTC_fijarHora();
+					RTC_fijarFechaHora(MENU_pedirHoraFecha());
 					break;
 
-				case( OPCION_2 ):
+				case( OPCION_2 ):					// Consultar Hora del reloj
 					RTC_consultarHora();
 					break;
 
-				case( OPCION_3 ):
-					EVENTO_agregarEvento();
+				case( OPCION_3 ):					// Agregar evento en el calendario
+					EVENTO_agregarEvento(MENU_pedirEvento());
 					break;
 
-				case( OPCION_4 ):
+				case( OPCION_4 ):					// Eliminar evento en el calendario
 					EVENTO_eliminarEvento();
 					break;
 
-				case( OPCION_5 ):
+				case( OPCION_5 ):					// Consultar evento en el calendario
 					EVENTO_consultarEventos();
 					break;
 
@@ -58,11 +58,11 @@ main(){
 
 			}
 		}
-		
+
 		// Parte 3 - Maquina de estado para checkear si es momento de ejecutar algun evento programado
 		costate EVENT_CHECKER always_on
 		{
-			
+
 		}
 
 	}
