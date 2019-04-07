@@ -15,6 +15,19 @@ Event eventos[MAX_EVENTS];		// Lista de Eventos
 /*** EndHeader */
 
 //// Metodos
+int posicionLibre(){  	// Devuelve primer posicion libre del array de eventos
+	int i;
+	for (i=0;i<MAX_EVENTS;i++){ 
+		if (eventos[i].command == 0xFF){
+			return i;
+		}
+	}
+	if (i==MAX_EVENTS-1){	// Indica que el array esta lleno
+		return -1;
+	}
+
+}
+
 /*** BeginHeader */
 void EVENTOS_initEventos();
 /*** EndHeader */
@@ -26,36 +39,18 @@ void EVENTOS_initEventos(){
 /*** BeginHeader EVENTOS_agregarEvento */
 void EVENTOS_agregarEvento(char evento);
 /*** EndHeader */
-void EVENTOS_agregarEvento(char evento)
+void EVENTOS_agregarEvento(char datosEvento)
 {
-	while(1){   // pasar esto a MENU y que llegan solo los datos.
-		printf("Opcion 3 - Agregar Evento en Calendario\n");
-		printf("Tipo de Evento (1 o 2):\n");
-		getswf(evento);
-		if (evento < 0 || evento > 1){
-			printf("Debe elegir 1 o 2, volver a ingresar\n");
-		}else{
-			printf("Led a Encender(0-6):\n");
-			getswf(led);
-			if (led < 0 || led > 6){
-					printf("Debe elegir un numero entre  0 y 6");
-			}else{
-				printf("Ingrese Hora:\n");
-				getswf(hora);
-				if (hora <0 || hora>23){
-					printf("Debe elegir un numero entre  0 y 23");
+	int posicion;
+	posicion = posicionLibre() ;
+	if (posicion == -1){
+		printf("No se puede ingresar evento, calendario lleno \n");
+	}else{
+		eventos[posicion].command = datosEvento[0]
+		eventos[posicion].param = datosEvento[1]
+		eventos[posicion].time = datosEvento[2]
 
-				}else{		// Configuro el evento con los datos ingresados
-					
-					eventos[0].command = evento;		// ver el tema de donde ingresar el evento dentro del array
-					eventos[0].param = led;
-					eventos[0].time = hora
-				}
-				
-			}
-
-		}
-
+		printf("Evento Agregado Correctamente\n");
 	}
 }
 
@@ -71,6 +66,7 @@ void EVENTOS_listarEventos();
 /*** EndHeader */
 void EVENTOS_listarEventos(){
 	int j;
+	int i;
 	j = 0;
 	for (i=0;i<MAX_EVENTS;i++){ // verificar final de datos para no recorrer todo el array
 		printf("----------------------------------------:\n", );

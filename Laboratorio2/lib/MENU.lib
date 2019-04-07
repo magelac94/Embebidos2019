@@ -50,10 +50,12 @@ bool validardia( char dia, char mes, char ano){
 		if (mes == '2'){
 			if (bisiesto(ano)){
 				if (dia > 0 && dia < 30){
-				return true;
+					return true;
+				}
 			}else{
 				if (dia > 0 && dia < 29){
-				return true;
+					return true;
+				}
 			}
 
 
@@ -171,9 +173,11 @@ void MENU_consultarHora(){
 char[] MENU_pedirDatosEvento();
 /*** EndHeader */
 char[] MENU_pedirDatosEvento(){
-	
+	char evento;
+	char led;
+	tm hora;	// verificar
 	while(1){
-		printf("------- Agregar Evento en Calendario  ----------\n");
+		printf("-------- CONFIGURACION: AGREGAR EVENTO -------\n");
 		printf("Tipo de Evento (1-Encender o 2-Apagar):\n");
 		getswf(evento);
 		if (evento < 0 || evento > 1){
@@ -184,16 +188,12 @@ char[] MENU_pedirDatosEvento(){
 			if (led < 0 || led > 6){
 					printf("Debe elegir un numero entre  0 y 6");
 			}else{
-				printf("Ingrese Hora:\n");
-				getswf(hora);
-				if (hora <0 || hora>23){
-					printf("Debe elegir un numero entre  0 y 23");
-
+					hora = MENU_pedirHoraFecha()  // tiene que dar un stuct de la horaFecha para ele evento, falta resolver que pedirHoraFecha devuelva eso.
 				}else{		// Guardo los datos del evento en un array para ser procesado por EVENTOS
 					
-					auxiliarParaDatosEventos[0] = evento;		// ver el tema de donde ingresar el evento dentro del array
+					auxiliarParaDatosEventos[0] = evento;
 					auxiliarParaDatosEventos[1] = led;
-					auxiliarParaDatosEventos[2] = hora
+					auxiliarParaDatosEventos[2] = hora;
 
 					return auxiliarParaDatosEventos;
 }
@@ -202,7 +202,16 @@ char[] MENU_pedirDatosEvento(){
 void MENU_eliminarEvento();
 /*** EndHeader */
 void MENU_eliminarEvento(){
-	// FALTA
+	char evento;
+	printf("-------- CONFIGURACION: ELIMINAR EVENTO -------\n");
+	printf("Para eliminar ingrese numero de evento (0 para listar los eventos):\n");
+	getswf(evento);
+	if (evento == 0){
+		EVENTOS_listarEventos();
+	}else{
+		
+	}
+
 }
 
 /*** BeginHeader MENU_consultarEventos */
