@@ -151,7 +151,6 @@ void MENU_pedirHoraFecha(){   // devolver el struct
 	p_FechaHora->tm_year = ano;
 
 	/*
-		Aca es donde va la logica para leer los valores
 
 	p_FechaHora->tm_hour = 1;
 	p_FechaHora->tm_min = 23;
@@ -160,6 +159,8 @@ void MENU_pedirHoraFecha(){   // devolver el struct
 	p_FechaHora->tm_year = 19;*/
    //RTC_fijarFechaHora( p_FechaHora ); // ESto anda si en el test pero aca no anda por eso esta comentado
    printFechaHora( p_FechaHora );		// Imprimo la Fecha y hora modificados
+
+   // return p_FechaHora
 }
 
 /*** BeginHeader MENU_consultarHora */
@@ -175,7 +176,7 @@ char[] MENU_pedirDatosEvento();
 char[] MENU_pedirDatosEvento(){
 	char evento;
 	char led;
-	tm hora;	// verificar
+	struct tm* hora;	// verificar
 	while(1){
 		printf("-------- CONFIGURACION: AGREGAR EVENTO -------\n");
 		printf("Tipo de Evento (1-Encender o 2-Apagar):\n");
@@ -188,7 +189,7 @@ char[] MENU_pedirDatosEvento(){
 			if (led < 0 || led > 6){
 					printf("Debe elegir un numero entre  0 y 6");
 			}else{
-					hora = MENU_pedirHoraFecha()  // tiene que dar un stuct de la horaFecha para ele evento, falta resolver que pedirHoraFecha devuelva eso.
+					hora = MENU_pedirHoraFecha();  // tiene que dar un stuct de la horaFecha para ele evento, falta resolver que pedirHoraFecha devuelva eso.
 				}else{		// Guardo los datos del evento en un array para ser procesado por EVENTOS
 					
 					auxiliarParaDatosEventos[0] = evento;

@@ -49,9 +49,9 @@ void EVENTOS_agregarEvento(char datosEvento)
 	if (posicion == -1){
 		printf("No se puede ingresar evento, calendario lleno \n");
 	}else{
-		eventos[posicion].command = datosEvento[0]
-		eventos[posicion].param = datosEvento[1]
-		eventos[posicion].time = datosEvento[2]
+		eventos[posicion].command = datosEvento[0];
+		eventos[posicion].param = datosEvento[1];
+		eventos[posicion].time = datosEvento[2];
 
 		printf("Evento Agregado Correctamente\n");
 	}
