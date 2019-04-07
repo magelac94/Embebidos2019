@@ -32,7 +32,10 @@ int posicionLibre(){  	// Devuelve primer posicion libre del array de eventos
 void EVENTOS_initEventos();
 /*** EndHeader */
 void EVENTOS_initEventos(){
-	
+	int i;
+	for (i=0;i<MAX_EVENTS;i++){ 
+		eventos[i].command = 0xFF;
+	}
 }
 
 
@@ -68,7 +71,7 @@ void EVENTOS_listarEventos(){
 	int j;
 	int i;
 	j = 1;
-	for (i=0;i<MAX_EVENTS;i++){ // verificar final de datos para no recorrer todo el array
+	for (i=0;i<MAX_EVENTS;i++){ 
 		printf("----------------------------------------:\n", );
 		printf("NUMERO DE EVENTO %s:\n", j);
 		printf("Comando: %s\n", eventos[i].command);
@@ -77,4 +80,27 @@ void EVENTOS_listarEventos(){
 
 		j++;
 	}
+}
+
+/*** BeginHeader EVENTOS_ejecutarEventos */
+void EVENTO_ejecutarEventos();
+/*** EndHeader */
+void EVENTO_ejecutarEventos(){
+	int i;
+	for (i=0;i<MAX_EVENTS;i++){ 
+		if (eventos[i] != 0xFF){
+
+			// verifico hora
+			if (eventos[i].time < RTC_leerFechaHora)  { /// LA COMPARACION ESTA MAL REALIZARLA BIEN CON EL STRUC CORREPONDIENTE
+														/// DEBE COMPARAR SI LA FECHA DEL EVENTO ES MAS CHICA QUE LA ACTUAL PARA EJECUTAR EL COMANDO
+				// verifico si debe encender o apagar el led
+				if (eventos[i].command == 0){
+					LED_RESET(eventos[i].param);
+				}else{
+					LED_SET(eventos[i])
+				}
+			}
+		}
+	}
+	printf("No hay mas Eventos\n");
 }

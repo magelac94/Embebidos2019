@@ -30,6 +30,7 @@ main(){
 		// Parte 2 - Maquina de estado para mostrar menu y manipular hora y eventos
 		costate MENU always_on
 		{
+			EVENTOS_initEventos();
 			MENU_mostrarMenuPrincipal( p_opcion );
 			waitfor(getswf( p_opcion ));
 			printf("\n");
@@ -47,10 +48,11 @@ main(){
 					break;
 
 				case( OPCION_4 ):					// Eliminar evento en el calendario
-					EVENTO_eliminarEvento();
+					EVENTO_eliminarEvento(MENU_eliminarEvento());
 					break;
 
 				case( OPCION_5 ):					// Consultar evento en el calendario
+					MENU_listarEventos();
 					EVENTO_consultarEventos();
 					break;
 
@@ -62,7 +64,7 @@ main(){
 		// Parte 3 - Maquina de estado para checkear si es momento de ejecutar algun evento programado
 		costate EVENT_CHECKER always_on
 		{
-
+			EVENTO_ejecutarEventos();
 		}
 
 	}

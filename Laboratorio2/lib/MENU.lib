@@ -201,7 +201,7 @@ char[] MENU_pedirDatosEvento(){
 /*** BeginHeader MENU_eliminarEvento */
 void MENU_eliminarEvento();
 /*** EndHeader */
-void MENU_eliminarEvento(){
+int MENU_eliminarEvento(){
 	while(1){
 		char numEvento;
 		printf("-------- CONFIGURACION: ELIMINAR EVENTO -------\n");
@@ -225,5 +225,5 @@ void MENU_eliminarEvento(){
 void MENU_consultarEventos();
 /*** EndHeader */
 void MENU_consultarEventos(){
-	// FALTA
+	printf("-------- CONFIGURACION: LISTAR EVENTOS -------\n");
 }
