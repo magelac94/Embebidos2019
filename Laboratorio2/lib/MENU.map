@@ -1,7 +1,7 @@
 // Compilers view of MMU. Note these values are determined by the origin statements in the BIOS.
 //Segment           Origin     Size
-Root Code           00:0000    001b41
-Root Data           8e:c615    fffffffd
+Root Code           00:0000    001b19
+Root Data           8e:c616    fffffffe
 Xmem Code           f8:ea2a    000000
 
 
@@ -9,16 +9,14 @@ Xmem Code           f8:ea2a    000000
 // Function mapping and source reference.
 // * The size of labels is indeterminate and so is denoted with an asterisk.
 //  Addr     Size   Function                        File                         Line Num
-    1b19       50   bisiesto                        \MENU.LIB                          20
 
 
 // Global/static data symbol mapping and source reference.
 //  Addr     Size   Symbol                          File                         Line Num  Type
- 8e:c616        3   auxiliarParaDatosEventos        \MENU.LIB                          16  char[]          
+ 8e:c617        2   auxiliarParaDatosEventos        \MENU.LIB                          16  char[]          
 
 // Parameter and local auto symbol mapping and source reference.
 //Offset Rel. to     Size   Symbol                          File                         Line Num  Type
-       2      SP        2   bisiesto:ano                    \MENU.LIB                          21  int             
 
 
 // Macro listing and source reference.

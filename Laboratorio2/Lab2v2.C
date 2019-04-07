@@ -9,8 +9,8 @@
 #define OFF_TIME	800
 #define ONE_SECOND	1000
 
-struct tm* p1_FechaHora;
-struct tm* p2_FechaHora;
+  struct tm* p1_FechaHora;
+	struct tm* p2_FechaHora;
 
 main(){
 	char p_opcion[3];    // Array para opcion del menu principal.
@@ -41,7 +41,7 @@ main(){
          printf("PRUEBA GET: --- %s ---- \n",&p_opcion[0]);
 
 			switch(p_opcion[0]){
-				case '1':
+				case '1':       // DA ERROR, ANTES ANDABA !
             	// FIJAR HORA EN EL RELOJ
 
                //  MENU_pedirFechaHora();   // CHEQUEAR QUE NO FUNCIONA
@@ -59,7 +59,7 @@ main(){
 				case '2':
                   // CONSULTAR HORA ACTUAL
 
-                  MENU_consultarHora();
+                  wfd MENU_consultarHora();
                   RTC_leerFechaHora( p2_FechaHora );	// Leo el RTC
 						printFechaHora( p2_FechaHora );		// Imprimo la Fecha y hora
                   				// NO esta devolviendo la fecha ingresada en punto 1-revisar
@@ -67,22 +67,24 @@ main(){
 
 				case '3':
 						//	AGREGAR EVENTO
-					  MENU_pedirDatosEvento();
+			//		  MENU_pedirDatosEvento();         NO FUNKA
+				//  EVENTOS_agregarEvento
 					break;
 
 				case '4':
-  //					MENU_eliminarEvento();
-  						printf("Estoy en OPCION 4");
+            		// ELIMINAR EVENTO SEGUN EL NUMERO DE EVENTO (ES DE 1 EN adelante segun posicion en el array))
+    					wfd MENU_eliminarEvento();
 					break;
 
 				case '5':
-	//				MENU_consultarEventos();
-  					printf("Estoy en OPCION 5");
+
+            	// CONSULTAR EVENTO
+					wfd MENU_consultarEventos();
 					break;
 
             case '6':
 
-   				printf("Salir");
+   				printf("Salir");       // Ejecutar para salir
 					break;
 
 		 		default:
@@ -93,10 +95,11 @@ main(){
 		}
 
 		// Parte 3 - Maquina de estado para checkear si es momento de ejecutar algun evento programado
-//		costate EVENT_CHECKER always_on
-//		{
-//
-//		}
+		costate EVENT_CHECKER always_on
+		{
+	  		wfd MENU_consultarEventos();
+    //     EVENTO_ejecutarEventos();
+		}
 
 	}
 }

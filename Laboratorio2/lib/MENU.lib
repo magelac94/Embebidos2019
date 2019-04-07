@@ -20,7 +20,9 @@ char auxiliarParaDatosEventos[2];
 
 /*int bisiesto(ano){
 	return ((ano % 4 == 0 && ano % 100 != 0) || ano % 400   == 0);
-}              */
+}
+             */
+             /*
 bool validarano( char ano);
 bool validarano( char ano){
 	while(1){
@@ -42,7 +44,7 @@ bool validarmes( char mes){
 bool validardia( char dia, char mes, char ano);
 bool validardia( char dia, char mes, char ano){
 	while(1){
-		if (mes == '4' || mes== '6' || mes == '9' || mes == "12"){
+		if (mes == '4' || mes== '6' || mes == '9' || mes == "11"){
 			if (dia > 0 && dia < 31){
 				return true;
 			}
@@ -85,7 +87,7 @@ bool validarminuto( char minuto){
 		}
 	}
 }
-
+     */
 
 /*** BeginHeader MENU_mostrarMenuPrincipal */
 void MENU_mostrarMenuPrincipal();   //char* p_opcion
@@ -167,9 +169,9 @@ void MENU_pedirFechaHora(){   // devolver el struct
 }
 
 /*** BeginHeader MENU_consultarHora */
-void MENU_consultarHora();
+cofunc void MENU_consultarHora();
 /*** EndHeader */
-void MENU_consultarHora(){
+cofunc void MENU_consultarHora(){
 	printf("\n-------- CONFIGURACION: CONSULTAR HORA ACTUAL -------\n");
 }
 
@@ -203,19 +205,20 @@ char MENU_pedirDatosEvento(){
 }
 
 /*** BeginHeader MENU_eliminarEvento */
-void MENU_eliminarEvento();
+cofunc int MENU_eliminarEvento();
 /*** EndHeader */
-int MENU_eliminarEvento(){
-	while(1){
-		char numEvento;
+cofunc int MENU_eliminarEvento(){
+	char numEvento[2];
+	while(1){		
 		printf("-------- CONFIGURACION: ELIMINAR EVENTO -------\n");
 		printf("Para eliminar ingrese numero de evento (0 para listar los eventos):\n");
-		getswf(numEvento);
-		if (numEvento == 0){
+		waitfor(getswf( numEvento ));
+		printf("EVENTO ELEGIDO: --- %s ---- \n",&numEvento[0]);
+		if (numEvento[0] == '0'){
 			EVENTOS_listarEventos();
 		}else{
-			if (numEvento > 0 && numEvento < MAX_EVENTS ){
-				return numEvento-1;
+			if (numEvento[0] > 0 && numEvento[0] < MAX_EVENTS ){
+				return numEvento[0]-1;
 			}else{
 				printf("Numero de Evento Incorrecto \n");
 			}
@@ -226,8 +229,8 @@ int MENU_eliminarEvento(){
 }
 
 /*** BeginHeader MENU_consultarEventos */
-void MENU_consultarEventos();
+cofunc void MENU_consultarEventos();
 /*** EndHeader */
-void MENU_consultarEventos(){
+cofunc void MENU_consultarEventos(){
 	printf("-------- CONFIGURACION: LISTAR EVENTOS -------\n");
 }

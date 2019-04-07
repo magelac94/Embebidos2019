@@ -1,9 +1,3 @@
-f3:eb19[  4] -> d9 00 00 00 
-f3:eb1d[ 16] -> ef 00 00 00 eb b7 ed 52 cc 2b cc 00 00 00 00 00 
-                00 eb b7 ed 52 cc 
-f3:eb28[  3] -> ca 33 1b 
-f3:eb33[  e] -> cc 00 00 00 00 00 00 eb b7 ed 52 cc 2b cc 
-f3:eb34[  3] -> c2 41 1b 
 *1AB2scod_base
 *0000roms
 *0000version=dcw
