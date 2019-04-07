@@ -36,6 +36,7 @@ void EVENTOS_initEventos(){
 	for (i=0;i<MAX_EVENTS;i++){ 
 		eventos[i].command = 0xFF;
 	}
+	printf("Eventos iniciados correctamente");
 }
 
 

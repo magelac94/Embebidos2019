@@ -2,16 +2,23 @@
 #use LED.LIB
 #use UTILITIES.LIB
 #use MENU.LIB
+#use EVENTOS.LIB
+#use RTC.lib
 
 #define ON_TIME	400
 #define OFF_TIME	800
 #define ONE_SECOND	1000
 
+struct tm* p1_FechaHora;
+struct tm* p2_FechaHora;
 
 main(){
-	char p_opcion[3];
+	char p_opcion[3];    // Array para opcion del menu principal.
+   char datosEvento[2];
 
 	HW_init();
+   EVENTOS_initEventos();
+//   struct tm* p_FechaHora;
 
 	while(1)
 	{
@@ -34,24 +41,33 @@ main(){
          printf("PRUEBA GET: --- %s ---- \n",&p_opcion[0]);
 
 			switch(p_opcion[0]){
-				case '1':					// Fijar hora del reloj
-					//Es el modulo menu el encargado de mostrar lo que debe ingresar el usuario
-					//tenemos podriamos hacer un wait for para que la maquina MENU libere el CPU
-					// y la maquina EVENT_CHECKER pueda hacer su trabajo de ver si es hora de correr algun
-					// evento programado (prender/apagar led). Por ahora va asi por un error de compilacion
-					//Cuando termine, sigue y hace el brak y vuelve al menu principal.
-				//	MENU_pedirFechaHora();
-              	printf("-------------------------------------------------Estoy en OPCION 1-------------------------------------------");
-					break;
+				case '1':
+            	// FIJAR HORA EN EL RELOJ
+
+               //  MENU_pedirFechaHora();   // CHEQUEAR QUE NO FUNCIONA
+               p1_FechaHora->tm_hour = 1;
+					p1_FechaHora->tm_min = 23;
+					p1_FechaHora->tm_mday = 6;
+					p1_FechaHora->tm_mon = 4;
+					p1_FechaHora->tm_year = 19;
+
+            	RTC_fijarFechaHora( p1_FechaHora );
+  					printFechaHora( p1_FechaHora );		// Imprimo la Fecha y hora modificadoS
+
+               break;
 
 				case '2':
-  //					MENU_consultarHora();
-  						printf("Estoy en OPCION 2");
+                  // CONSULTAR HORA ACTUAL
+
+                  MENU_consultarHora();
+                  RTC_leerFechaHora( p2_FechaHora );	// Leo el RTC
+						printFechaHora( p2_FechaHora );		// Imprimo la Fecha y hora
+                  				// NO esta devolviendo la fecha ingresada en punto 1-revisar
 					break;
 
 				case '3':
-	//				MENU_agregarEvento();
-   				printf("Estoy en OPCION 3");
+						//	AGREGAR EVENTO
+					  MENU_pedirDatosEvento();
 					break;
 
 				case '4':

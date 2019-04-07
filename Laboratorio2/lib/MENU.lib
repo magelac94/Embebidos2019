@@ -13,14 +13,14 @@ enum opcionMenu {
 	OPCION_5
 };
 
-char auxiliarParaDatosEventos[3];
+char auxiliarParaDatosEventos[2];
 /*** EndHeader */
 
 // Metodos
 
-int bisiesto(ano){
+/*int bisiesto(ano){
 	return ((ano % 4 == 0 && ano % 100 != 0) || ano % 400   == 0);
-}
+}              */
 bool validarano( char ano);
 bool validarano( char ano){
 	while(1){
@@ -107,43 +107,45 @@ void MENU_mostrarMenuPrincipal(){       // char* p_opcion
 
 
 /*** BeginHeader MENU_pedirFechaHora */
-void MENU_pedirHoraFecha();
+void MENU_pedirFechaHora();
 /*** EndHeader */
-void MENU_pedirHoraFecha(){   // devolver el struct
-   struct tm* p_FechaHora;
+void MENU_pedirFechaHora(){   // devolver el struct
+	struct tm* pp_FechaHora;
+ /*  struct tm* p_FechaHora{
    char dia;
    char mes;
    char ano;
    char hora;
    char minuto;
+}; */
 
-   dia = 1;
-   mes = 2;
-   ano = 2013;
-   hora = 4;
-   minuto = 5;
+   pp_FechaHora->tm_hour = 1;
+	pp_FechaHora->tm_min = 23;
+	pp_FechaHora->tm_mday = 6;
+	pp_FechaHora->tm_mon = 4;
+	pp_FechaHora->tm_year = 19;
 	printf("-------- CONFIGURACION: FIJAR HORA -------\n");
 
 	printf(" Ingrese el ano: ");
  //	gets( ano );
-	validarano(ano);
+	//validarano(ano);
 
 	printf(" Ingrese el mes: ");
  //	gets( mes );
-	validarmes(mes);
+ //	validarmes(mes);
 
 	printf(" Ingrese el dia: ");
  //	gets( dia );
-	validardia(dia,mes,ano);
+//	validardia(dia,mes,ano);
 
 	printf(" Ingrese el hora: ");
  //	gets( hora );
-	validarhora(hora);
+ //	validarhora(hora);
 
 	printf(" Ingrese el minuto: ");
  //	gets( minuto );
-	validarminuto(minuto);
-
+  //	validarminuto(minuto);
+  /*
 	// ojo esta todo en char
 	p_FechaHora->tm_hour = hora;
 	p_FechaHora->tm_min = minuto;
@@ -159,16 +161,16 @@ void MENU_pedirHoraFecha(){   // devolver el struct
 	p_FechaHora->tm_mon = 4;
 	p_FechaHora->tm_year = 19;*/
    //RTC_fijarFechaHora( p_FechaHora ); // ESto anda si en el test pero aca no anda por eso esta comentado
-   printFechaHora( p_FechaHora );		// Imprimo la Fecha y hora modificados
+   printFechaHora( pp_FechaHora );		// Imprimo la Fecha y hora modificados
 
-   // return p_FechaHora
+  // return pp_FechaHora;
 }
 
 /*** BeginHeader MENU_consultarHora */
 void MENU_consultarHora();
 /*** EndHeader */
 void MENU_consultarHora(){
-	// FALTA
+	printf("\n-------- CONFIGURACION: CONSULTAR HORA ACTUAL -------\n");
 }
 
 /*** BeginHeader MENU_pedirDatosEvento */
@@ -179,7 +181,7 @@ char MENU_pedirDatosEvento(){
 	char led;
 	struct tm* hora;	// verificar
 	while(1){
-		printf("-------- CONFIGURACION: AGREGAR EVENTO -------\n");
+		printf("\n-------- CONFIGURACION: AGREGAR EVENTO -------\n");
 		printf("Tipo de Evento (1-Encender o 2-Apagar):\n");
 		getswf(evento);
 		if (evento < 0 || evento > 1){
