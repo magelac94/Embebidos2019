@@ -13,7 +13,7 @@ enum opcionMenu {
 	OPCION_5
 };
 
-char[3] auxiliarParaDatosEventos;
+char auxiliarParaDatosEventos[3];
 /*** EndHeader */
 
 // Metodos
@@ -88,9 +88,9 @@ bool validarminuto( char minuto){
 
 
 /*** BeginHeader MENU_mostrarMenuPrincipal */
-void MENU_mostrarMenuPrincipal( char* p_opcion );
+void MENU_mostrarMenuPrincipal();   //char* p_opcion
 /*** EndHeader */
-void MENU_mostrarMenuPrincipal( char* p_opcion ){
+void MENU_mostrarMenuPrincipal(){       // char* p_opcion
 	printf("\n          Elija una opcion\n");
 	printf("-----------------------------------------\n");
 	printf(" 1 - Fijar la hora del reloj\n");
@@ -100,7 +100,8 @@ void MENU_mostrarMenuPrincipal( char* p_opcion ){
 	printf(" 5 - Consultar lista de eventos activos\n");
 	printf(" 6 - Salir\n\n");
 	printf(" >> ");
-	gets( p_opcion );
+ //  waitfor(getswf(p_opcion));
+	//gets( p_opcion );
 }
 
 
@@ -171,9 +172,9 @@ void MENU_consultarHora(){
 }
 
 /*** BeginHeader MENU_pedirDatosEvento */
-char[] MENU_pedirDatosEvento();
+char MENU_pedirDatosEvento();
 /*** EndHeader */
-char[] MENU_pedirDatosEvento(){
+char MENU_pedirDatosEvento(){
 	char evento;
 	char led;
 	struct tm* hora;	// verificar
@@ -191,7 +192,7 @@ char[] MENU_pedirDatosEvento(){
 			}else{
 					hora = MENU_pedirHoraFecha();  // tiene que dar un stuct de la horaFecha para ele evento, falta resolver que pedirHoraFecha devuelva eso.
 				}else{		// Guardo los datos del evento en un array para ser procesado por EVENTOS
-					
+
 					auxiliarParaDatosEventos[0] = evento;
 					auxiliarParaDatosEventos[1] = led;
 					auxiliarParaDatosEventos[2] = hora;

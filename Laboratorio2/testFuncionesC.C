@@ -4,25 +4,25 @@
 
 #define TEN		10
 char* p_entrada;
-struct tm* p_FechaHora;
+struct tm p_FechaHora;
 main(){
 
 	HW_init();
 
 	// Prueba de lectura de RTC
-	RTC_leerFechaHora( p_FechaHora );	// Leo el RTC
-	printFechaHora( p_FechaHora );		// Imprimo la Fecha y hora
+//	RTC_leerFechaHora( p_FechaHora );	// Leo el RTC
+//	printFechaHora( p_FechaHora );		// Imprimo la Fecha y hora
 
 	// Reuso la estructura fecha hora donde lei la hora actual
-	p_FechaHora->tm_hour = 1;
+	*p_FechaHora->tm_hour = 1;
 	p_FechaHora->tm_min = 23;
 	p_FechaHora->tm_mday = 6;
 	p_FechaHora->tm_mon = 4;
 	p_FechaHora->tm_year = 19;
 	RTC_fijarFechaHora( p_FechaHora );
-   costate {
-   	   waitfor(DelayMs(TEN));
-   }
+ //  costate {
+  // 	   waitfor(DelayMs(TEN));
+  // }
    printFechaHora( p_FechaHora );		// Imprimo la Fecha y hora modificados
 
 	// Prueba de insertar eventos
