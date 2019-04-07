@@ -2,9 +2,9 @@
 #use BTN.LIB
 #use LED.LIB
 #use UTILITIES.LIB
-#use RTC.LIB		//falta implementar
-#use MENU.LIB		//falta implementar
-#use EVENTOS.LIB	//falta implementar
+#use RTC.LIB		
+#use MENU.LIB		
+#use EVENTOS.LIB	
 
 #define ON_TIME	400
 #define OFF_TIME	800
