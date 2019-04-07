@@ -88,7 +88,7 @@ void EVENTO_ejecutarEventos();
 void EVENTO_ejecutarEventos(){
 	int i;
 	for (i=0;i<MAX_EVENTS;i++){ 
-		if (eventos[i] != 0xFF){
+		if (eventos[i].command != 0xFF){
 
 			// verifico hora
 			if (eventos[i].time < RTC_leerFechaHora)  { /// LA COMPARACION ESTA MAL REALIZARLA BIEN CON EL STRUC CORREPONDIENTE
@@ -97,8 +97,9 @@ void EVENTO_ejecutarEventos(){
 				if (eventos[i].command == 0){
 					LED_RESET(eventos[i].param);
 				}else{
-					LED_SET(eventos[i])
+					LED_SET(eventos[i].param);
 				}
+				EVENTOS_eliminarEvento(i); // Borro el elemento
 			}
 		}
 	}
