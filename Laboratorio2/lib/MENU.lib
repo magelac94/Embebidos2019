@@ -202,14 +202,21 @@ char[] MENU_pedirDatosEvento(){
 void MENU_eliminarEvento();
 /*** EndHeader */
 void MENU_eliminarEvento(){
-	char evento;
-	printf("-------- CONFIGURACION: ELIMINAR EVENTO -------\n");
-	printf("Para eliminar ingrese numero de evento (0 para listar los eventos):\n");
-	getswf(evento);
-	if (evento == 0){
-		EVENTOS_listarEventos();
-	}else{
-		
+	while(1){
+		char numEvento;
+		printf("-------- CONFIGURACION: ELIMINAR EVENTO -------\n");
+		printf("Para eliminar ingrese numero de evento (0 para listar los eventos):\n");
+		getswf(numEvento);
+		if (numEvento == 0){
+			EVENTOS_listarEventos();
+		}else{
+			if (numEvento > 0 && numEvento < MAX_EVENTS ){
+				return numEvento-1;
+			}else{
+				printf("Numero de Evento Incorrecto \n");
+			}
+		}
+
 	}
 
 }
