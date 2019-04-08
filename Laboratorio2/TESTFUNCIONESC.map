@@ -420,8 +420,8 @@ Xmem Code           f8:e200    00456a
  8e:c353        1   dkSUval                         \DKCORE.LIB                       320  char            
  8e:c351        2   _sys_exit_ret                   \SYS.LIB                           46  int             
  8e:c34f        2   _sys_exit_err                   \SYS.LIB                           47  int             
- 8e:c34d        2   main:biossp                     \STACK.LIB                        726  int             
- 8e:c34b        2   main:biossr                     \STACK.LIB                        726  int             
+ 8e:c34d        2   GLOBAL:biossp                   \STACK.LIB                        726  int             
+ 8e:c34b        2   GLOBAL:biossr                   \STACK.LIB                        726  int             
  8e:c349        2   FSP                             \SLICE.LIB                         20  void*           
  8e:c347        2   DBGFSP                          \SLICE.LIB                         20  void*           
     292b       32   __f_divxmemwrapper:_divtable    \MUTILFP.LIB                     1106  const char[]    

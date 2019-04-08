@@ -2,8 +2,6 @@
 #use RTC.lib
 
 /*** BeginHeader */
-// Librerias a incluir
-// Definicion de macros
 // Definicion de estructuras
 enum opcionMenu {
 	OPCION_1 = 1,
@@ -18,82 +16,11 @@ char auxiliarParaDatosEventos[2];
 
 // Metodos
 
-/*int bisiesto(ano){
-	return ((ano % 4 == 0 && ano % 100 != 0) || ano % 400   == 0);
-}
-             */
-             /*
-bool validarano( char ano);
-bool validarano( char ano){
-	while(1){
-		if (ano > "1900" && ano < "5000"){
-			return true;
-		}
-	}
-}
-
-bool validarmes( char mes);
-bool validarmes( char mes){
-	while(1){
-		if (mes > "0" && ano < "13"){
-			return true;
-		}
-	}
-}
-
-bool validardia( char dia, char mes, char ano);
-bool validardia( char dia, char mes, char ano){
-	while(1){
-		if (mes == '4' || mes== '6' || mes == '9' || mes == "11"){
-			if (dia > 0 && dia < 31){
-				return true;
-			}
-		}
-		if (mes == '2'){
-			if (bisiesto(ano)){
-				if (dia > 0 && dia < 30){
-					return true;
-				}
-			}else{
-				if (dia > 0 && dia < 29){
-					return true;
-				}
-			}
-
-
-		}
-		else {
-			if (dia > 0 && dia < 32){
-				return true;
-			}
-		}
-	}
-}
-
-bool validarhora( char hora);
-bool validarhora( char hora){
-	while(1){
-		if (hora > "0" && hora < "25"){
-			return true
-		}
-	}
-}
-
-bool validarminuto( char minuto);
-bool validarminuto( char minuto){
-	while(1){
-		if (minuto > "0" && minuto < "60"){
-			return true;
-		}
-	}
-}
-     */
-
 /*** BeginHeader MENU_mostrarMenuPrincipal */
 void MENU_mostrarMenuPrincipal();   //char* p_opcion
 /*** EndHeader */
 void MENU_mostrarMenuPrincipal(){       // char* p_opcion
-	printf("\n          Elija una opcion\n");
+	printf("\n\n\n          Elija una opcion\n");
 	printf("-----------------------------------------\n");
 	printf(" 1 - Fijar la hora del reloj\n");
 	printf(" 2 - Consultar la hora del reloj\n");
@@ -102,77 +29,84 @@ void MENU_mostrarMenuPrincipal(){       // char* p_opcion
 	printf(" 5 - Consultar lista de eventos activos\n");
 	printf(" 6 - Salir\n\n");
 	printf(" >> ");
- //  waitfor(getswf(p_opcion));
-	//gets( p_opcion );
 }
 
 
-
 /*** BeginHeader MENU_pedirFechaHora */
-void MENU_pedirFechaHora();
+cofunc void MENU_pedirFechaHora( struct tm* p_FechaHora );
 /*** EndHeader */
-void MENU_pedirFechaHora(){   // devolver el struct
-	struct tm* pp_FechaHora;
- /*  struct tm* p_FechaHora{
-   char dia;
-   char mes;
-   char ano;
-   char hora;
-   char minuto;
+ /*  struct tm {
+		char tm_sec; // seconds 0-59
+		char tm_min; // 0-59
+		char tm_hour; // 0-23
+		char tm_mday; // 1-31
+		char tm_mon; // 1-12
+		char tm_year; // 80-147 (1980-2047)
+		char tm_wday; // 0-6 0==sunday
+};
 }; */
+cofunc void MENU_pedirFechaHora( struct tm* p_FechaHora ){   // devolver el struct
+	char *p_anio; //, *p_mes, *p_dia, *p_hora, *p_minuto;
+	char mes[10], *p_mes;
+   char dia[10], *p_dia;
+   char hora[10], *p_hora;
+   char minuto[10], *p_minuto;
 
-   pp_FechaHora->tm_hour = 1;
-	pp_FechaHora->tm_min = 23;
-	pp_FechaHora->tm_mday = 6;
-	pp_FechaHora->tm_mon = 4;
-	pp_FechaHora->tm_year = 19;
-	printf("-------- CONFIGURACION: FIJAR HORA -------\n");
+   int int_anio; //, int_mes, int_dia, int_hora, int_minuto;
+	int int_mes;
+	int int_dia;
+   int int_hora;
+   int int_minuto;
 
-	printf(" Ingrese el ano: ");
- //	gets( ano );
-	//validarano(ano);
+   p_mes = &mes[0];
+   p_dia = &dia[0];
+   p_hora = &hora[0];
+   p_minuto = &minuto[0];
 
-	printf(" Ingrese el mes: ");
- //	gets( mes );
- //	validarmes(mes);
+	printf("\n\n-------- CONFIGURACION: FIJAR HORA -------\n");
+	printf(" Ingrese el anio: ");
+	waitfor( getswf( p_anio ));
+   // Convertimos a int
+   int_anio = atoi( p_anio );
+   printf("\nDEBUG: El valor de int_anio es: %d", int_anio);
+//   printf("\nDEBUG: El dato al que apunta p_anio es: %d", *p_anio);
+//   printf("\nDEBUG: La dir de moria de p_anio es: %p", p_anio);
+   int_anio = ( int_anio - 1900 ); // char tm_year; 80-147 (1980-2047)
+   printf("\nDEBUG: El valor de int_anio ahora es: %d", int_anio);
+   p_FechaHora->tm_year = int_anio;
 
-	printf(" Ingrese el dia: ");
- //	gets( dia );
-//	validardia(dia,mes,ano);
+	printf("\n Ingrese el mes: ");
+	waitfor( getswf( p_mes ));
+   // Convertimos a int
+   int_mes = atoi( p_mes );
+   printf("\nDEBUG: El valor de int_mes es: %d", int_mes);
+	p_FechaHora->tm_mon = int_mes;
+//   p_FechaHora->tm_mon = 0X0B;
 
-	printf(" Ingrese el hora: ");
- //	gets( hora );
- //	validarhora(hora);
+	printf("\n Ingrese el dia: ");
+	waitfor( getswf( p_dia ));
+   // Convertimos a int
+   int_dia = atoi( p_dia );
+   p_FechaHora->tm_mday = int_dia;
 
-	printf(" Ingrese el minuto: ");
- //	gets( minuto );
-  //	validarminuto(minuto);
-  /*
-	// ojo esta todo en char
-	p_FechaHora->tm_hour = hora;
-	p_FechaHora->tm_min = minuto;
-	p_FechaHora->tm_mday =dia;
-	p_FechaHora->tm_mon = mes;
-	p_FechaHora->tm_year = ano;
+	printf("\n Ingrese el hora: ");
+	waitfor( getswf( p_hora ));
+   // Convertimos a int
+   int_hora = atoi( p_hora );
+   p_FechaHora->tm_hour = int_hora;
 
-	/*
-
-	p_FechaHora->tm_hour = 1;
-	p_FechaHora->tm_min = 23;
-	p_FechaHora->tm_mday = 6;
-	p_FechaHora->tm_mon = 4;
-	p_FechaHora->tm_year = 19;*/
-   //RTC_fijarFechaHora( p_FechaHora ); // ESto anda si en el test pero aca no anda por eso esta comentado
-   printFechaHora( pp_FechaHora );		// Imprimo la Fecha y hora modificados
-
-  // return pp_FechaHora;
+	printf("\n Ingrese el minuto: ");
+	waitfor( getswf( p_minuto ));
+   // Convertimos a int
+   int_minuto = atoi( p_minuto );
+   p_FechaHora->tm_min = int_minuto;
 }
 
 /*** BeginHeader MENU_consultarHora */
 cofunc void MENU_consultarHora();
 /*** EndHeader */
 cofunc void MENU_consultarHora(){
-	printf("\n-------- CONFIGURACION: CONSULTAR HORA ACTUAL -------\n");
+	printf("\n\n-------- CONSULTAR HORA ACTUAL -------\n");
 }
 
 /*** BeginHeader MENU_pedirDatosEvento */
@@ -202,6 +136,9 @@ char MENU_pedirDatosEvento(){
 					auxiliarParaDatosEventos[2] = hora;
 
 					return auxiliarParaDatosEventos;
+               }
+      }
+   }
 }
 
 /*** BeginHeader MENU_eliminarEvento */
@@ -209,9 +146,9 @@ cofunc int MENU_eliminarEvento();
 /*** EndHeader */
 cofunc int MENU_eliminarEvento(){
 	char numEvento[2];
-	while(1){		
+	while(1){
 		printf("-------- CONFIGURACION: ELIMINAR EVENTO -------\n");
-		printf("Para eliminar ingrese numero de evento (0 para listar los eventos):\n");
+		printf("Para eliminar ingrese numero de evento (0 para listar los eventos): \n");
 		waitfor(getswf( numEvento ));
 		printf("EVENTO ELEGIDO: --- %s ---- \n",&numEvento[0]);
 		if (numEvento[0] == '0'){
@@ -234,3 +171,81 @@ cofunc void MENU_consultarEventos();
 cofunc void MENU_consultarEventos(){
 	printf("-------- CONFIGURACION: LISTAR EVENTOS -------\n");
 }
+
+
+
+
+
+
+
+
+/*
+int bisiesto(char p_ano){
+	return ((ano % 4 == 0 && ano % 100 != 0) || ano % 400   == 0);
+}
+
+//bool validarano( char ano);
+bool validarano( char p_ano ){
+	while(1){
+		if ( p_ano > "1900" && ano < "5000"){
+			return true;
+		}
+	}
+}
+
+
+//bool validarmes( char mes);
+bool validarmes( char mes){
+	while(1){
+		if (mes > "0" && ano < "13"){
+			return true;
+		}
+	}
+}
+
+//bool validardia( char dia, char mes, char ano);
+bool validardia( char dia, char mes, char ano){
+	while(1){
+		if (mes == '4' || mes== '6' || mes == '9' || mes == "11"){
+			if (dia > 0 && dia < 31){
+				return true;
+			}
+		}
+		if (mes == '2'){
+			if (bisiesto(ano)){
+				if (dia > 0 && dia < 30){
+					return true;
+				}
+			}else{
+				if (dia > 0 && dia < 29){
+					return true;
+				}
+			}
+
+
+		}
+		else {
+			if (dia > 0 && dia < 32){
+				return true;
+			}
+		}
+	}
+}
+
+//bool validarhora( char hora);
+bool validarhora( char hora){
+	while(1){
+		if (hora > "0" && hora < "25"){
+			return true;
+		}
+	}
+}
+
+//bool validarminuto( char minuto);
+bool validarminuto( char minuto){
+	while(1){
+		if (minuto > "0" && minuto < "60"){
+			return true;
+		}
+	}
+}  */

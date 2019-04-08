@@ -1,22 +1,35 @@
 // Compilers view of MMU. Note these values are determined by the origin statements in the BIOS.
 //Segment           Origin     Size
-Root Code           00:0000    001b19
-Root Data           8e:c616    fffffffe
-Xmem Code           f8:ea2a    000000
+Root Code           00:0000    002284
+Root Data           ae:c9e8    000408
+Xmem Code           f8:e200    00082a
 
 
 
 // Function mapping and source reference.
 // * The size of labels is indeterminate and so is denoted with an asterisk.
 //  Addr     Size   Function                        File                         Line Num
+    1b19      383   MENU_mostrarMenuPrincipal       \MENU.LIB                          21
+    1c98      463   MENU_pedirFechaHora             \MENU.LIB                          37
+    1e67      102   MENU_consultarHora              \MENU.LIB                          81
+    1ecd      830   MENU_pedirDatosEvento           \MENU.LIB                          88
 
 
 // Global/static data symbol mapping and source reference.
 //  Addr     Size   Symbol                          File                         Line Num  Type
- 8e:c617        2   auxiliarParaDatosEventos        \MENU.LIB                          16  char[]          
+ ae:c617        2   auxiliarParaDatosEventos        \MENU.LIB                          14  char[]          
+    2212        2   _orgtablesize                   \Rabbitbios.c                      41  int             
+    2214        0   _orgtable                       \Rabbitbios.c                      42  struct _orgtable[]
 
 // Parameter and local auto symbol mapping and source reference.
 //Offset Rel. to     Size   Symbol                          File                         Line Num  Type
+       4      IX        2   MENU_pedirFechaHora:p_FechaHora \MENU.LIB                          38  struct MENU_pedirFechaHora:p_FechaHora*
+     -10      IX       10   MENU_pedirFechaHora:anio        \MENU.LIB                          39  char[]          
+     -12      IX        2   MENU_pedirFechaHora:p_anio      \MENU.LIB                          39  char*           
+     -14      IX        2   MENU_pedirFechaHora:int_anio    \MENU.LIB                          40  int             
+       3      SP        1   MENU_pedirDatosEvento:evento    \MENU.LIB                          90  char            
+       2      SP        1   MENU_pedirDatosEvento:led       \MENU.LIB                          91  char            
+       0      SP        2   MENU_pedirDatosEvento:hora      \MENU.LIB                          92  struct MENU_pedirDatosEvento:hora*
 
 
 // Macro listing and source reference.
@@ -169,6 +182,11 @@ Xmem Code           f8:ea2a    000000
    DK_ENABLE_STACK_TRACING         \DEFAULT.H                        360
    DK_SEND_STACK_LENGTH            \DEFAULT.H                        368
    DK_ENABLE_DEBUGKERNEL           \DEFAULT.H                        370
+   DK_ENABLE_TRACING               \DEFAULT.H                        377
+   DK_ENABLE_STACK_TRACING         \DEFAULT.H                        380
+   DK_ENABLE_ASMSINGLESTEP         \DEFAULT.H                        383
+   DK_ENABLE_BREAKPOINTS           \DEFAULT.H                        386
+   DK_ENABLE_WATCHEXPRESSIONS      \DEFAULT.H                        389
    __DKENTRY_LIB                   \DKENTRY.LIB                        2
    __DKCOMMON_LIB                  \DKCOMMON.LIB                       2
    __DKCORE_LIB                    \DKCORE.LIB                         2
@@ -199,8 +217,6 @@ Xmem Code           f8:ea2a    000000
    TC_DEBUG_STDIOCHARREADY         \DKCORE.LIB                        39
    TC_DEBUG_NOOP                   \DKCORE.LIB                        40
    TC_DEBUG_ENABLEDOPTIONS         \DKCORE.LIB                        41
-   TC_DEBUG_WRITESTACKSIZE         \DKCORE.LIB                        47
-   TC_DEBUG_STACKTRACEDATA         \DKCORE.LIB                        48
    DKF_STEP_INTO                   \DKCORE.LIB                        52
    DKF_STEP_OVER                   \DKCORE.LIB                        53
    DKF_STEP_ASM                    \DKCORE.LIB                        54
@@ -225,7 +241,6 @@ Xmem Code           f8:ea2a    000000
    DKF_SEND_REGS                   \DKCORE.LIB                       146
    DKF_SEND_STATUS                 \DKCORE.LIB                       147
    DKF_SEND_ACK                    \DKCORE.LIB                       148
-   DKF_SEND_STACKTRACE             \DKCORE.LIB                       153
    DK_ERROR_BPNOTENABLED           \DKCORE.LIB                       159
    DK_ERROR_ASMSINGLESTEPNOTENABLED \DKCORE.LIB                       160
    DK_ERROR_WATCHNOTENABLED        \DKCORE.LIB                       161

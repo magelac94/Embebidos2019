@@ -44,7 +44,7 @@ main(){
 			switch(p_opcion[0]){
 				case ('1'):       // DA ERROR, ANTES ANDABA !
             	// FIJAR HORA EN EL RELOJ
-               wfd MENU_pedirFechaHora( p1_FechaHora );   // CHEQUEAR QUE NO FUNCIONA
+               MENU_pedirFechaHora( p1_FechaHora );   // CHEQUEAR QUE NO FUNCIONA
             	RTC_fijarFechaHora( p1_FechaHora );
   					printFechaHora( p1_FechaHora );		// Imprimo la Fecha y hora modificadoS
 
