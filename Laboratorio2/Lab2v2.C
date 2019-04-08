@@ -9,12 +9,12 @@
 #define OFF_TIME	800
 #define ONE_SECOND	1000
 
-  struct tm* p1_FechaHora;
-	struct tm* p2_FechaHora;
+  	struct tm* p1_FechaHora;       // para ingresar hora
+	struct tm* p2_FechaHora;       // para consultar hora
 
 main(){
 	char p_opcion[3];    // Array para opcion del menu principal.
-   char datosEvento[2];
+   char datosEvento[2];       // para pasar los datos de eventos
 
 	HW_init();
    EVENTOS_initEventos();
@@ -45,6 +45,8 @@ main(){
             	// FIJAR HORA EN EL RELOJ
 
                //  MENU_pedirFechaHora();   // CHEQUEAR QUE NO FUNCIONA
+
+               //datos de ejemplo para probar el ingresar hora lo saque del main de test
                p1_FechaHora->tm_hour = 1;
 					p1_FechaHora->tm_min = 23;
 					p1_FechaHora->tm_mday = 6;
@@ -97,7 +99,7 @@ main(){
 		// Parte 3 - Maquina de estado para checkear si es momento de ejecutar algun evento programado
 		costate EVENT_CHECKER always_on
 		{
-	  		wfd MENU_consultarEventos();
+	  	//	wfd MENU_consultarEventos();
     //     EVENTO_ejecutarEventos();
 		}
 
