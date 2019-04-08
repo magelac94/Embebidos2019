@@ -42,26 +42,23 @@ main(){
          printf("PRUEBA GET: --- %s ---- \n",&p_opcion[0]);
 
 			switch(p_opcion[0]){
-				case ('1'):       // DA ERROR, ANTES ANDABA !
+				case ('1'):
             	// FIJAR HORA EN EL RELOJ
-               wfd MENU_pedirFechaHora( p1_FechaHora );   // CHEQUEAR QUE NO FUNCIONA
+               wfd MENU_pedirFechaHora( p1_FechaHora );
             	RTC_fijarFechaHora( p1_FechaHora );
   					printFechaHora( p1_FechaHora );		// Imprimo la Fecha y hora modificadoS
-
                break;
 
 				case ('2'):
-                  // CONSULTAR HORA ACTUAL
-
-                  wfd MENU_consultarHora();
-                  RTC_leerFechaHora( p2_FechaHora );	// Leo el RTC
-						printFechaHora( p2_FechaHora );		// Imprimo la Fecha y hora
-                  				// NO esta devolviendo la fecha ingresada en punto 1-revisar
+               // CONSULTAR HORA ACTUAL
+               wfd MENU_consultarHora();
+               RTC_leerFechaHora( p2_FechaHora );	// Leo el RTC
+					printFechaHora( p2_FechaHora );		// Imprimo la Fecha y hora
 					break;
 
 				case ('3'):
-						//	AGREGAR EVENTO
-			//		  MENU_pedirDatosEvento();         NO FUNKA
+					//	AGREGAR EVENTO
+				   wfd MENU_pedirDatosEvento();
 				//  EVENTOS_agregarEvento
 					break;
 

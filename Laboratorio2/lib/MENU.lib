@@ -110,33 +110,42 @@ cofunc void MENU_consultarHora(){
 }
 
 /*** BeginHeader MENU_pedirDatosEvento */
-char MENU_pedirDatosEvento();
+cofunc void MENU_pedirDatosEvento();
 /*** EndHeader */
-char MENU_pedirDatosEvento(){
-	char evento;
-	char led;
-	struct tm* hora;	// verificar
+cofunc void MENU_pedirDatosEvento(){
+	char tipoevento[10], *p_tipoevento;
+   char led[10], *p_led;
+   int int_tipoevento, int_led;
+   struct tm* p_FechaHora;	// verificar
+
+   p_tipoevento = &tipoevento[0];
+   p_led = &led[0];
+
 	while(1){
 		printf("\n-------- CONFIGURACION: AGREGAR EVENTO -------\n");
 		printf("Tipo de Evento (1-Encender o 2-Apagar):\n");
-		getswf(evento);
-		if (evento < 0 || evento > 1){
+		waitfor(getswf( p_tipoevento ));
+      int_tipoevento = atoi(p_tipoevento);
+		if ( int_tipoevento < 0 || int_tipoevento > 1){
 			printf("Debe elegir 1 o 2, volver a ingresar\n");
-		}else{
-			printf("Led a Encender(0-6):\n");
-			getswf(led);
-			if (led < 0 || led > 6){
-					printf("Debe elegir un numero entre  0 y 6");
-			}else{
-					hora = MENU_pedirHoraFecha();  // tiene que dar un stuct de la horaFecha para ele evento, falta resolver que pedirHoraFecha devuelva eso.
-				}else{		// Guardo los datos del evento en un array para ser procesado por EVENTOS
-
-					auxiliarParaDatosEventos[0] = evento;
-					auxiliarParaDatosEventos[1] = led;
-					auxiliarParaDatosEventos[2] = hora;
-
-					return auxiliarParaDatosEventos;
-               }
+		}
+      else{
+			printf("Led a Encender(0-7):\n");
+			waitfor(getswf( p_led ));
+         int_led = atoi( p_led );
+			if ( int_led < 0 || int_led > 7){
+				printf("Debe elegir un numero entre  0 y 7\n");
+			}
+         else{
+				wfd MENU_pedirFechaHora( p_FechaHora );  // tiene que dar un stuct de la horaFecha para ele evento, falta resolver que pedirHoraFecha devuelva eso.
+            printf("DEBUG: Se ejecuto pedirFechaHora");
+            printFechaHora( p_FechaHora );
+            return;
+            // Guardo los datos del evento en un array para ser procesado por EVENTOS
+            //auxiliarParaDatosEventos[0] = evento;
+				//auxiliarParaDatosEventos[1] = led;
+				//auxiliarParaDatosEventos[2] = hora;
+         }
       }
    }
 }
