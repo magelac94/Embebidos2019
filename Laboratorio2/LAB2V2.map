@@ -1,232 +1,232 @@
 // Compilers view of MMU. Note these values are determined by the origin statements in the BIOS.
 //Segment           Origin     Size
-Root Code           00:0000    004a62
-Root Data           8e:c9e8    000985
-Xmem Code           f8:e200    005540
+Root Code           00:0000    004a50
+Root Data           8e:c9e8    00095b
+Xmem Code           f8:e200    0056e6
 
 
 
 // Function mapping and source reference.
 // * The size of labels is indeterminate and so is denoted with an asterisk.
 //  Addr     Size   Function                        File                         Line Num
-    1b19      975   main                            \LAB2V2.C                          14
-    1ee8      197   IO_setOutput                    \IO.LIB                           103
-    1fad      197   BitWrPortI                      \SYSIO.LIB                        207
-    2072      245   HW_init                         \IO.LIB                            44
-    2167      755   serCopen                        \RS232.LIB                       4635
-    245a       97   serCgetError                    \RS232.LIB                       4711
-    24bb        *   spcisr_start                    \RS232.LIB                       4742
-    24bf        *   spc_dummyfunc                   \RS232.LIB                       4746
-    24c0        *   spc_starttx                     \RS232.LIB                       4791
-    24f4        *   cDisable                        \RS232.LIB                       4832
-    250d        *   cEnable                         \RS232.LIB                       4846
-    251a        *   spc_checkcts                    \RS232.LIB                       4855
-    251e        *   spc_txload                      \RS232.LIB                       4863
-    257e      174   ser_setupparitytable            \RS232.LIB                       9987
-    262c      164   serSetParity                    \RS232.LIB                      10154
-    26d0      126   serCheckParity                  \RS232.LIB                      10195
-    274e        *   c_udv                           \MUTIL.LIB                        580
-    275a        *   c_div                           \MUTIL.LIB                        600
-    27b0        *   div0                            \MUTIL.LIB                        539
-    27bc        *   exception                       \ERRORS.LIB                       115
-    27df        *   c_asl                           \UTIL.LIB                        1572
-    27fb        *   spc_isr                         \RS232.LIB                       4953
-    28f2        *   L_div                           \MUTIL.LIB                         88
-    2991        *   dloop8                          \MUTIL.LIB                        275
-    29ae        *   div0long                        \MUTIL.LIB                        553
-    29ba        *   L_add                           \MUTIL.LIB                        745
-    29ba        *   G_add                           \MUTIL.LIB                        746
-    29c6        *   L_sub                           \MUTIL.LIB                        764
-    29c6        *   G_sub                           \MUTIL.LIB                        765
-    29d4        *   Bf_Bl                           \CSUPPORT.LIB                     414
-    29f8        *   Bf_Bg                           \CSUPPORT.LIB                     450
-    2a30        *   F_unpack                        \CSUPPORT.LIB                     491
-    2a3d        *   S_right                         \CSUPPORT.LIB                     506
-    2a95        *   G_neg                           \CSUPPORT.LIB                     579
-    2a95        *   L_neg                           \CSUPPORT.LIB                     580
-    2aa4        *   periodic_isr                    \STDVDRIVER.LIB                   153
-    2aab        *   periodic_isr_ep2                \STDVDRIVER.LIB                   160
-    2b3b        *   bios_intexit                    \STDVDRIVER.LIB                   320
-    2b56        *   __slice_tick                    \SLICE.LIB                         78
-    2b71        *   memset                          \STRING.LIB                       478
-    2b8d        *   _param3                         \UTIL.LIB                         732
-    2b9c        *   hitwd                           \VDRIVER.LIB                      106
-    2ba3        *   exit                            \SYS.LIB                           57
-    2bbf        *   _ProgStkSwitch                  \STACK.LIB                        729
-    2bd8        *   _BiosStkSwitch                  \STACK.LIB                        765
-    2be3       15   slicefsp_init                   \SLICE.LIB                         29
-    2bf2        *   st4_s                           \CSUPPORT.LIB                     339
-    2bf9        *   slong_s                         \CSUPPORT.LIB                     344
-    2c07        *   llong_                          \CSUPPORT.LIB                     620
-    2c10        *   st4_                            \CSUPPORT.LIB                     632
-    2c17        *   slong_                          \CSUPPORT.LIB                     638
-    2c1f       86   read_rtc                        \RTCLOCK.LIB                      176
-    2c75        *   swap4_                          \UTIL.LIB                        1231
-    2c7e        *   flt_0                           \UTIL.LIB                        1041
-    2c8b        *   cf_ge                           \UTIL.LIB                        1049
-    2ca1        *   cf_gt                           \UTIL.LIB                        1066
-    2cd4        *   cf_le                           \UTIL.LIB                        1103
-    2cea        *   cf_lt                           \UTIL.LIB                        1120
-    2d10        *   cl_lt                           \UTIL.LIB                         933
-    2d16        *   cl_gt                           \UTIL.LIB                         936
-    2d19        *   cl_glt                          \UTIL.LIB                         938
-    2d37        *   long_0                          \UTIL.LIB                        1203
-    2d3c        *   cl_le                           \UTIL.LIB                         968
-    2d42        *   cl_ge                           \UTIL.LIB                         971
-    2d48        *   sstak                           \UTIL.LIB                         974
-    2d84        *   swaps_                          \UTIL.LIB                        1248
-    2d95        *   llong_s                         \CSUPPORT.LIB                     317
-    2da4        *   L_mul                           \MUTIL.LIB                        828
-    2da4        *   G_mul                           \MUTIL.LIB                        829
-    2dd8        *   cg_lt                           \UTIL.LIB                         834
-    2de8        *   L_and                           \MUTIL.LIB                        339
-    2de8        *   G_and                           \MUTIL.LIB                        340
-    2e1a      224   getswf                          \STDIO.LIB                        121
-    2efa        8   kbhit                           \STDIO.LIB                        183
-    2f02       15   dkSetStdioTimer                 \DKCOMMON.LIB                     526
-    2f11       42   dkCheckStdioTimeOut             \DKCOMMON.LIB                     535
-    2f3b       15   dkSetGetCharTimer               \DKCOMMON.LIB                     549
-    2f4a       35   dkCheckGetCharTimeOut           \DKCOMMON.LIB                     558
-    2f6d        *   dkUnlockStdio                   \DKAPP.LIB                        697
-    2f72        *   dkRespond                       \DKCORE.LIB                      3236
-    2f76       57   getchar                         \STDIO.LIB                        229
-    2faf       45   puts                            \STDIO.LIB                        337
-    2fdc        *   putchar                         \STDIO.LIB                        372
-    2ff0        *   putbin                          \STDIO.LIB                        388
-    2ffb        *   dkDoMsg                         \STDIO.LIB                        580
-    3000        *   dkDoHook                        \DKCORE.LIB                      1441
-    3011        *   dkProlog                        \DKENTRY.LIB                       72
-    302b        *   dkEpilog                        \DKENTRY.LIB                      126
-    3065        *   G_div                           \MUTIL.LIB                        221
-    30b2        *   G_asr                           \MUTIL.LIB                        454
-    30d5        *   _ZGLExit                        \MUTIL.LIB                        525
-    30d7        *   G_rmax                          \MUTIL.LIB                        528
-    30df        *   L_go                            \MUTIL.LIB                        513
-    30e3        *   G_asl                           \MUTIL.LIB                        484
-    30e3        *   L_asl                           \MUTIL.LIB                        485
-    323f        *   funcblk_entry                   \COSTATE.LIB                      181
-    328d        *   funcblk_exit                    \COSTATE.LIB                      252
-    3296        *   funcblk_begin                   \COSTATE.LIB                      261
-    32a1        *   funcblk_init                    \COSTATE.LIB                      275
-    32bd        *   CoBegin                         \COSTATE.LIB                      313
-    32c7        *   CoReset                         \COSTATE.LIB                      320
-    32d1        *   CoPause                         \COSTATE.LIB                      327
-    32d6        *   CoResume                        \COSTATE.LIB                      332
-    32db        *   isCoRunning                     \COSTATE.LIB                      338
-    32ea        *   isCoDone                        \COSTATE.LIB                      350
-    32fb        *   bound_e                         \UTIL.LIB                        1871
-    3307        *   cofprologdbg_                   \COFUNC.LIB                       417
-    33b3        *   cofepilogdbg_                   \COFUNC.LIB                       591
-    3408        *   _fentry                         \CSUPPORT.LIB                     125
-    3426        *   _fexit                          \CSUPPORT.LIB                     186
-    344e        *   __coferr_badinstance            \COFUNC.LIB                        92
-    345a        *   __coferr_badcodata              \COFUNC.LIB                        99
-    3466        *   strtol                          \STRING.LIB                       123
-    357f        *   _mult328                        \STRING.LIB                       322
-    35a1        *   islower                         \STRING.LIB                      1722
-    35a6        *   isupper                         \STRING.LIB                      1726
-    35ab        *   isdigit                         \STRING.LIB                      1730
-    35b0        *   isxdigit                        \STRING.LIB                      1734
-    35b5        *   ispunct                         \STRING.LIB                      1738
-    35ba        *   isprint                         \STRING.LIB                      1742
-    35bf        *   isspace                         \STRING.LIB                      1746
-    3645        *   _ctype                          \STRING.LIB                      1981
-    365e        *   sspixffndbg_                    \UTIL.LIB                         236
-    3668        *   rspixffndbg_                    \UTIL.LIB                         260
-    3682       78   outchrs                         \STDIO.LIB                       2461
-    36da        *   htoa                            \STDIO.LIB                       2343
-    3726        *   hltoa                           \STDIO.LIB                       2401
-    3747        *   xgetint                         \XMEM.LIB                        1477
-    3757        *   strlen                          \STRING.LIB                      1231
-    3770        *   utoa                            \STDIO.LIB                       2214
-    37af        *   utoan                           \STDIO.LIB                       2275
-    37cd        *   itoan                           \STDIO.LIB                       2298
-    37dd        *   abs                             \MATH.LIB                        1742
-    37e7        *   itoa                            \STDIO.LIB                       2154
-    3831        *   cg_le                           \UTIL.LIB                         873
-    384b        *   G_com                           \MUTIL.LIB                        785
-    384b        *   L_com                           \MUTIL.LIB                        786
-    3858        *   __divmod10                      \STDIO.LIB                       1115
-    3885        *   eq_4                            \UTIL.LIB                        1161
-    3885        *   cf_eq                           \UTIL.LIB                        1162
-    38a5        *   cf_ne                           \UTIL.LIB                        1190
-    38a5        *   neq_4                           \UTIL.LIB                        1191
-    38aa        *   tolower                         \STRING.LIB                      1599
-    38f7        *   F_neg                           \MUTILFP.LIB                     1332
-    38fc        *   G_mod                           \MUTIL.LIB                         56
-    3913        *   mod0                            \MUTIL.LIB                        314
-    3925        *   Bf_Hc                           \UTIL.LIB                        1609
-    3925        *   Bf_Hu                           \UTIL.LIB                        1610
-    3925        *   Bf_Hi                           \UTIL.LIB                        1611
-    392a        *   cg_gt                           \UTIL.LIB                         852
-    393d        *   __wfdheader                     \COFUNC.LIB                        32
-    3a85        *   abound_e                        \UTIL.LIB                        1891
-    3bd4        *   _switch                         \UTIL.LIB                          38
-    3bfb        *   cg_ge                           \UTIL.LIB                         899
-    3d4e      161   premain                         \PROGRAM.LIB                      110
-    3def        *   L_not                           \UTIL.LIB                        1217
-    3def        *   G_not                           \UTIL.LIB                        1218
-    3e1a        *   L_asr                           \MUTIL.LIB                        418
-    3e49        *   L_or                            \MUTIL.LIB                        366
-    3e49        *   G_or                            \MUTIL.LIB                        367
-    3e5b        *   xmem_cpyblkfwd                  \XMEM.LIB                         302
-    3ed3        *   xmem_cpyblkbwd                  \XMEM.LIB                         405
-    3f57        *   _init_bad_interrupts            \PROGRAM.LIB                      280
-    4164        *   _unexp_interrupt                \UTIL.LIB                        2052
-    4181        *   _disable_peripheral_interrupts  \UTIL.LIB                        1927
-    41e8      195   dkDoWatchExpression             \DKCORE.LIB                      2881
-    42ab        *   dkAddWatch                      \DKCORE.LIB                      2488
-    42d5        *   __dk_executewatch               \DKCORE.LIB                      2657
-    4330        *   dkSavepcrst2028                 \DKCORE.LIB                       487
-    433f        *   dkCopyNextInstruction           \DKCORE.LIB                      1534
-    4357        *   __dk_ldp_LogToPhyCode           \DKCORE.LIB                      1567
-    4366        *   __dk_copylcallreturn            \DKCORE.LIB                      1910
-    43f4        *   __dk_do_djnz                    \DKCORE.LIB                      2053
-    43fa        *   __dk_handle_djnz                \DKCORE.LIB                      2059
-    442e        *   __dk_handle_retf                \DKCORE.LIB                      2099
-    4442        *   __dk_handle_jpf                 \DKCORE.LIB                      2118
-    4469        *   __dk_handle_jrcc                \DKCORE.LIB                      2144
-    446c        *   __dk_handle_ldir                \DKCORE.LIB                      2147
-    4470        *   __dk_handle_lddsr               \DKCORE.LIB                      2153
-    4473        *   __dk_handle_ldisr               \DKCORE.LIB                      2157
-    4476        *   __dk_handle_lsdr                \DKCORE.LIB                      2161
-    4479        *   __dk_handle_lsir                \DKCORE.LIB                      2165
-    447c        *   __dk_handle_lsddr               \DKCORE.LIB                      2169
-    447f        *   __dk_handle_lsidr               \DKCORE.LIB                      2173
-    4502        *   dkRestoreContext                \DKCORE.LIB                      1383
-    453f        *   dkStartup                       \DKCOMMON.LIB                     204
-    4546        *   dkInitDebugKernel               \DKCOMMON.LIB                      76
-    45c6        *   dkSetReturnAddress              \DKCOMMON.LIB                     234
-    462b        *   dkHandleRST20                   \DKCOMMON.LIB                     299
-    470b        *   dkConvertAddress                \DKCORE.LIB                       989
-    471f        *   dkSaveContext                   \DKCORE.LIB                       387
-    4750        *   LongToXaddr                     \SYSIO.LIB                        552
-    4770        *   _dkxexit                        \DKCOMMON.LIB                      12
-    47ac        *   __xexit__                       \DKCOMMON.LIB                      56
-    47fe        *   dkCallback                      \DKAPP.LIB                        758
-    4828        *   dkSetSingleStepCommand          \DKAPP.LIB                         94
-    484e        *   dkSetRunProgramCommand          \DKAPP.LIB                        159
-    4853        *   dkSetStopProgramCommand         \DKAPP.LIB                        185
-    4858        *   dkHandleStartProgram            \DKAPP.LIB                        202
-    485d        *   dkHandleToggleBreakpoint        \DKAPP.LIB                        208
-    487a        *   dkClearAllBreakpoints           \DKAPP.LIB                        241
-    487f        *   dkHandleRegRead                 \DKAPP.LIB                        431
-    4884        *   dkHandleRegWrite                \DKAPP.LIB                        435
-    48a0        *   dkHandleNoop                    \DKAPP.LIB                        453
-    48a9        *   dkHandleReset                   \DKAPP.LIB                        459
-    48b2        *   dkSendStkTrace                  \DKAPP.LIB                        473
-    48b7        *   dkSetSendFlags                  \DKAPP.LIB                        511
-    48d7        *   dkHandleAddWatch                \DKAPP.LIB                        530
-    48f1        *   dkHandleDeleteWatch             \DKAPP.LIB                        547
-    4906        *   dkHandleDeleteAllWatches        \DKAPP.LIB                        573
-    490b        *   dkHandleExecuteWatch            \DKAPP.LIB                        579
-    492d        *   dkHandleExecAllWatches          \DKAPP.LIB                        616
-    4932        *   dkHandleWatchData               \DKAPP.LIB                        624
-    4942        *   dkHandleSendChar                \DKAPP.LIB                        637
-    4953        *   dkHandleStdioCharReady          \DKAPP.LIB                        646
-    4967        *   dkHandleGetEnabledOptions       \DKAPP.LIB                        677
-    496c        *   dkHandleRST28                   \DKENTRY.LIB                      346
-    498f        *   dkHandleRST18                   \DKENTRY.LIB                      211
+    1b19     1006   main                            \LAB2V2.C                          15
+    1f07      197   IO_setOutput                    \IO.LIB                           103
+    1fcc      197   BitWrPortI                      \SYSIO.LIB                        207
+    2091      245   HW_init                         \IO.LIB                            44
+    2186      755   serCopen                        \RS232.LIB                       4635
+    2479       97   serCgetError                    \RS232.LIB                       4711
+    24da        *   spcisr_start                    \RS232.LIB                       4742
+    24de        *   spc_dummyfunc                   \RS232.LIB                       4746
+    24df        *   spc_starttx                     \RS232.LIB                       4791
+    2513        *   cDisable                        \RS232.LIB                       4832
+    252c        *   cEnable                         \RS232.LIB                       4846
+    2539        *   spc_checkcts                    \RS232.LIB                       4855
+    253d        *   spc_txload                      \RS232.LIB                       4863
+    259d      174   ser_setupparitytable            \RS232.LIB                       9987
+    264b      164   serSetParity                    \RS232.LIB                      10154
+    26ef      126   serCheckParity                  \RS232.LIB                      10195
+    276d        *   c_udv                           \MUTIL.LIB                        580
+    2779        *   c_div                           \MUTIL.LIB                        600
+    27cf        *   div0                            \MUTIL.LIB                        539
+    27db        *   exception                       \ERRORS.LIB                       115
+    27fe        *   c_asl                           \UTIL.LIB                        1572
+    281a        *   spc_isr                         \RS232.LIB                       4953
+    2911        *   L_div                           \MUTIL.LIB                         88
+    29b0        *   dloop8                          \MUTIL.LIB                        275
+    29cd        *   div0long                        \MUTIL.LIB                        553
+    29d9        *   L_add                           \MUTIL.LIB                        745
+    29d9        *   G_add                           \MUTIL.LIB                        746
+    29e5        *   L_sub                           \MUTIL.LIB                        764
+    29e5        *   G_sub                           \MUTIL.LIB                        765
+    29f3        *   Bf_Bl                           \CSUPPORT.LIB                     414
+    2a17        *   Bf_Bg                           \CSUPPORT.LIB                     450
+    2a4f        *   F_unpack                        \CSUPPORT.LIB                     491
+    2a5c        *   S_right                         \CSUPPORT.LIB                     506
+    2ab4        *   G_neg                           \CSUPPORT.LIB                     579
+    2ab4        *   L_neg                           \CSUPPORT.LIB                     580
+    2ac3        *   periodic_isr                    \STDVDRIVER.LIB                   153
+    2aca        *   periodic_isr_ep2                \STDVDRIVER.LIB                   160
+    2b5a        *   bios_intexit                    \STDVDRIVER.LIB                   320
+    2b75        *   __slice_tick                    \SLICE.LIB                         78
+    2b90        *   memset                          \STRING.LIB                       478
+    2bac        *   _param3                         \UTIL.LIB                         732
+    2bbb        *   hitwd                           \VDRIVER.LIB                      106
+    2bc2        *   exit                            \SYS.LIB                           57
+    2bde        *   _ProgStkSwitch                  \STACK.LIB                        729
+    2bf7        *   _BiosStkSwitch                  \STACK.LIB                        765
+    2c02       15   slicefsp_init                   \SLICE.LIB                         29
+    2c11        *   st4_s                           \CSUPPORT.LIB                     339
+    2c18        *   slong_s                         \CSUPPORT.LIB                     344
+    2c26        *   llong_                          \CSUPPORT.LIB                     620
+    2c2f        *   st4_                            \CSUPPORT.LIB                     632
+    2c36        *   slong_                          \CSUPPORT.LIB                     638
+    2c3e       86   read_rtc                        \RTCLOCK.LIB                      176
+    2c94        *   swap4_                          \UTIL.LIB                        1231
+    2c9d        *   flt_0                           \UTIL.LIB                        1041
+    2caa        *   cf_ge                           \UTIL.LIB                        1049
+    2cc0        *   cf_gt                           \UTIL.LIB                        1066
+    2cf3        *   cf_le                           \UTIL.LIB                        1103
+    2d09        *   cf_lt                           \UTIL.LIB                        1120
+    2d2f        *   cl_lt                           \UTIL.LIB                         933
+    2d35        *   cl_gt                           \UTIL.LIB                         936
+    2d38        *   cl_glt                          \UTIL.LIB                         938
+    2d56        *   long_0                          \UTIL.LIB                        1203
+    2d5b        *   cl_le                           \UTIL.LIB                         968
+    2d61        *   cl_ge                           \UTIL.LIB                         971
+    2d67        *   sstak                           \UTIL.LIB                         974
+    2da3        *   swaps_                          \UTIL.LIB                        1248
+    2db4        *   llong_s                         \CSUPPORT.LIB                     317
+    2dc3        *   L_mul                           \MUTIL.LIB                        828
+    2dc3        *   G_mul                           \MUTIL.LIB                        829
+    2df7        *   cg_lt                           \UTIL.LIB                         834
+    2e07        *   L_and                           \MUTIL.LIB                        339
+    2e07        *   G_and                           \MUTIL.LIB                        340
+    2e39      224   getswf                          \STDIO.LIB                        121
+    2f19        8   kbhit                           \STDIO.LIB                        183
+    2f21       15   dkSetStdioTimer                 \DKCOMMON.LIB                     526
+    2f30       42   dkCheckStdioTimeOut             \DKCOMMON.LIB                     535
+    2f5a       15   dkSetGetCharTimer               \DKCOMMON.LIB                     549
+    2f69       35   dkCheckGetCharTimeOut           \DKCOMMON.LIB                     558
+    2f8c        *   dkUnlockStdio                   \DKAPP.LIB                        697
+    2f91        *   dkRespond                       \DKCORE.LIB                      3236
+    2f95       57   getchar                         \STDIO.LIB                        229
+    2fce       45   puts                            \STDIO.LIB                        337
+    2ffb        *   putchar                         \STDIO.LIB                        372
+    300f        *   putbin                          \STDIO.LIB                        388
+    301a        *   dkDoMsg                         \STDIO.LIB                        580
+    301f        *   dkDoHook                        \DKCORE.LIB                      1441
+    3030        *   dkProlog                        \DKENTRY.LIB                       72
+    304a        *   dkEpilog                        \DKENTRY.LIB                      126
+    3084        *   G_div                           \MUTIL.LIB                        221
+    30d1        *   G_asr                           \MUTIL.LIB                        454
+    30f4        *   _ZGLExit                        \MUTIL.LIB                        525
+    30f6        *   G_rmax                          \MUTIL.LIB                        528
+    30fe        *   L_go                            \MUTIL.LIB                        513
+    3102        *   G_asl                           \MUTIL.LIB                        484
+    3102        *   L_asl                           \MUTIL.LIB                        485
+    325e        *   funcblk_entry                   \COSTATE.LIB                      181
+    32ac        *   funcblk_exit                    \COSTATE.LIB                      252
+    32b5        *   funcblk_begin                   \COSTATE.LIB                      261
+    32c0        *   funcblk_init                    \COSTATE.LIB                      275
+    32dc        *   CoBegin                         \COSTATE.LIB                      313
+    32e6        *   CoReset                         \COSTATE.LIB                      320
+    32f0        *   CoPause                         \COSTATE.LIB                      327
+    32f5        *   CoResume                        \COSTATE.LIB                      332
+    32fa        *   isCoRunning                     \COSTATE.LIB                      338
+    3309        *   isCoDone                        \COSTATE.LIB                      350
+    331a        *   bound_e                         \UTIL.LIB                        1871
+    3326        *   cofprologdbg_                   \COFUNC.LIB                       417
+    33d2        *   cofepilogdbg_                   \COFUNC.LIB                       591
+    3427        *   _fentry                         \CSUPPORT.LIB                     125
+    3445        *   _fexit                          \CSUPPORT.LIB                     186
+    346d        *   __coferr_badinstance            \COFUNC.LIB                        92
+    3479        *   __coferr_badcodata              \COFUNC.LIB                        99
+    3485        *   strtol                          \STRING.LIB                       123
+    359e        *   _mult328                        \STRING.LIB                       322
+    35c0        *   islower                         \STRING.LIB                      1722
+    35c5        *   isupper                         \STRING.LIB                      1726
+    35ca        *   isdigit                         \STRING.LIB                      1730
+    35cf        *   isxdigit                        \STRING.LIB                      1734
+    35d4        *   ispunct                         \STRING.LIB                      1738
+    35d9        *   isprint                         \STRING.LIB                      1742
+    35de        *   isspace                         \STRING.LIB                      1746
+    3664        *   _ctype                          \STRING.LIB                      1981
+    367d        *   sspixffndbg_                    \UTIL.LIB                         236
+    3687        *   rspixffndbg_                    \UTIL.LIB                         260
+    36ad       78   outchrs                         \STDIO.LIB                       2461
+    3705        *   htoa                            \STDIO.LIB                       2343
+    3751        *   hltoa                           \STDIO.LIB                       2401
+    3772        *   xgetint                         \XMEM.LIB                        1477
+    3782        *   strlen                          \STRING.LIB                      1231
+    379b        *   utoa                            \STDIO.LIB                       2214
+    37da        *   utoan                           \STDIO.LIB                       2275
+    37f8        *   itoan                           \STDIO.LIB                       2298
+    3808        *   abs                             \MATH.LIB                        1742
+    3812        *   itoa                            \STDIO.LIB                       2154
+    385c        *   cg_le                           \UTIL.LIB                         873
+    3876        *   G_com                           \MUTIL.LIB                        785
+    3876        *   L_com                           \MUTIL.LIB                        786
+    3883        *   __divmod10                      \STDIO.LIB                       1115
+    38b0        *   eq_4                            \UTIL.LIB                        1161
+    38b0        *   cf_eq                           \UTIL.LIB                        1162
+    38d0        *   cf_ne                           \UTIL.LIB                        1190
+    38d0        *   neq_4                           \UTIL.LIB                        1191
+    38d5        *   tolower                         \STRING.LIB                      1599
+    391a        *   F_neg                           \MUTILFP.LIB                     1332
+    391f        *   G_mod                           \MUTIL.LIB                         56
+    3936        *   mod0                            \MUTIL.LIB                        314
+    3948        *   Bf_Hc                           \UTIL.LIB                        1609
+    3948        *   Bf_Hu                           \UTIL.LIB                        1610
+    3948        *   Bf_Hi                           \UTIL.LIB                        1611
+    394d        *   cg_gt                           \UTIL.LIB                         852
+    3960        *   __wfdheader                     \COFUNC.LIB                        32
+    3a95        *   abound_e                        \UTIL.LIB                        1891
+    3c46        *   _switch                         \UTIL.LIB                          38
+    3c6d        *   cg_ge                           \UTIL.LIB                         899
+    3dc0      161   premain                         \PROGRAM.LIB                      110
+    3e61        *   L_not                           \UTIL.LIB                        1217
+    3e61        *   G_not                           \UTIL.LIB                        1218
+    3e74        *   L_asr                           \MUTIL.LIB                        418
+    3ea3        *   L_or                            \MUTIL.LIB                        366
+    3ea3        *   G_or                            \MUTIL.LIB                        367
+    3eb5        *   xmem_cpyblkfwd                  \XMEM.LIB                         302
+    3f2d        *   xmem_cpyblkbwd                  \XMEM.LIB                         405
+    3fb1        *   _init_bad_interrupts            \PROGRAM.LIB                      280
+    41be        *   _unexp_interrupt                \UTIL.LIB                        2052
+    41db        *   _disable_peripheral_interrupts  \UTIL.LIB                        1927
+    4242      195   dkDoWatchExpression             \DKCORE.LIB                      2881
+    4305        *   dkAddWatch                      \DKCORE.LIB                      2488
+    432f        *   __dk_executewatch               \DKCORE.LIB                      2657
+    438a        *   dkSavepcrst2028                 \DKCORE.LIB                       487
+    43a5        *   dkCopyNextInstruction           \DKCORE.LIB                      1534
+    43bd        *   __dk_ldp_LogToPhyCode           \DKCORE.LIB                      1567
+    43cc        *   __dk_copylcallreturn            \DKCORE.LIB                      1910
+    43e2        *   __dk_do_djnz                    \DKCORE.LIB                      2053
+    43e8        *   __dk_handle_djnz                \DKCORE.LIB                      2059
+    441c        *   __dk_handle_retf                \DKCORE.LIB                      2099
+    4430        *   __dk_handle_jpf                 \DKCORE.LIB                      2118
+    4457        *   __dk_handle_jrcc                \DKCORE.LIB                      2144
+    445a        *   __dk_handle_ldir                \DKCORE.LIB                      2147
+    445e        *   __dk_handle_lddsr               \DKCORE.LIB                      2153
+    4461        *   __dk_handle_ldisr               \DKCORE.LIB                      2157
+    4464        *   __dk_handle_lsdr                \DKCORE.LIB                      2161
+    4467        *   __dk_handle_lsir                \DKCORE.LIB                      2165
+    446a        *   __dk_handle_lsddr               \DKCORE.LIB                      2169
+    446d        *   __dk_handle_lsidr               \DKCORE.LIB                      2173
+    44f0        *   dkRestoreContext                \DKCORE.LIB                      1383
+    452d        *   dkStartup                       \DKCOMMON.LIB                     204
+    4534        *   dkInitDebugKernel               \DKCOMMON.LIB                      76
+    45b4        *   dkSetReturnAddress              \DKCOMMON.LIB                     234
+    4619        *   dkHandleRST20                   \DKCOMMON.LIB                     299
+    46f9        *   dkConvertAddress                \DKCORE.LIB                       989
+    470d        *   dkSaveContext                   \DKCORE.LIB                       387
+    473e        *   LongToXaddr                     \SYSIO.LIB                        552
+    475e        *   _dkxexit                        \DKCOMMON.LIB                      12
+    479a        *   __xexit__                       \DKCOMMON.LIB                      56
+    47ec        *   dkCallback                      \DKAPP.LIB                        758
+    4816        *   dkSetSingleStepCommand          \DKAPP.LIB                         94
+    483c        *   dkSetRunProgramCommand          \DKAPP.LIB                        159
+    4841        *   dkSetStopProgramCommand         \DKAPP.LIB                        185
+    4846        *   dkHandleStartProgram            \DKAPP.LIB                        202
+    484b        *   dkHandleToggleBreakpoint        \DKAPP.LIB                        208
+    4868        *   dkClearAllBreakpoints           \DKAPP.LIB                        241
+    486d        *   dkHandleRegRead                 \DKAPP.LIB                        431
+    4872        *   dkHandleRegWrite                \DKAPP.LIB                        435
+    488e        *   dkHandleNoop                    \DKAPP.LIB                        453
+    4897        *   dkHandleReset                   \DKAPP.LIB                        459
+    48a0        *   dkSendStkTrace                  \DKAPP.LIB                        473
+    48a5        *   dkSetSendFlags                  \DKAPP.LIB                        511
+    48c5        *   dkHandleAddWatch                \DKAPP.LIB                        530
+    48df        *   dkHandleDeleteWatch             \DKAPP.LIB                        547
+    48f4        *   dkHandleDeleteAllWatches        \DKAPP.LIB                        573
+    48f9        *   dkHandleExecuteWatch            \DKAPP.LIB                        579
+    491b        *   dkHandleExecAllWatches          \DKAPP.LIB                        616
+    4920        *   dkHandleWatchData               \DKAPP.LIB                        624
+    4930        *   dkHandleSendChar                \DKAPP.LIB                        637
+    4941        *   dkHandleStdioCharReady          \DKAPP.LIB                        646
+    4955        *   dkHandleGetEnabledOptions       \DKAPP.LIB                        677
+    495a        *   dkHandleRST28                   \DKENTRY.LIB                      346
+    497d        *   dkHandleRST18                   \DKENTRY.LIB                      211
  f8:ea2a        *   spc_init                        \RS232.LIB                       4755
  f8:ea5d        *   ser8_getparity                  \RS232.LIB                      10022
  f8:ea80        *   ser7_setparity                  \RS232.LIB                      10054
@@ -264,137 +264,139 @@ Xmem Code           f8:e200    005540
  f9:e23e      478   write_rtc                       \RTCLOCK.LIB                      100
  f9:e41c       80   mktime                          \RTCLOCK.LIB                      363
  f9:e46c       85   _mktime_date                    \RTCLOCK.LIB                      269
- f9:e4c1      609   MENU_pedirFechaHora             \MENU.LIB                          47
- f9:e722        *   dkEnableRST28                   \DKCORE.LIB                      3298
- f9:e729        *   dkDisableRST28                  \DKCORE.LIB                      3307
- f9:e731        *   dkEnableRST20                   \DKCORE.LIB                      3333
- f9:e738        *   dkDisableRST20                  \DKCORE.LIB                      3337
- f9:e73f        *   dkEnableRST18                   \DKCORE.LIB                      3359
- f9:e746        *   dkDisableRST18                  \DKCORE.LIB                      3363
- f9:e74d       96   atoi                            \STRING.LIB                       407
- f9:e7ad       38   printf                          \STDIO.LIB                        740
- f9:e7d3       57   __qe2                           \STDIO.LIB                        633
- f9:e80c      107   _printf                         \STDIO.LIB                        676
- f9:e877     1689   doprnt                          \STDIO.LIB                        819
- f9:ef10      453   phex                            \STDIO.LIB                       1785
- fa:e0d5       76   outstr                          \STDIO.LIB                       2528
- fa:e121       76   outpad                          \STDIO.LIB                       1746
- fa:e16d      516   plhex                           \STDIO.LIB                       1056
- fa:e371        *   xstrlen                         \XMEM.LIB                        1195
- fa:e3a2      543   pint                            \STDIO.LIB                       1851
- fa:e5c1      680   plint                           \STDIO.LIB                       1520
- fa:e869       59   labs                            \MATH.LIB                        2424
- fa:e8a4      201   _gltoa                          \STDIO.LIB                       1200
- fa:e96d      191   _gltoan                         \STDIO.LIB                       1402
- fa:ea2c       30   gtoa                            \STDIO.LIB                       1434
- fa:ea4a       30   ltoa                            \STDIO.LIB                       1451
- fa:ea68       27   gtoan                           \STDIO.LIB                       1471
- fa:ea83       27   ltoan                           \STDIO.LIB                       1488
- fa:ea9e     2296   pflt                            \STDIO.LIB                       1934
- fb:e396     1391   __ftoa                          \STDIO.LIB                       1579
- fb:e905      287   MENU_eliminarEvento             \MENU.LIB                         155
- fb:ea24      222   EVENTOS_listarEventos           \EVENTOS.LIB                       70
- fb:eb02       54   MENU_consultarEventos           \MENU.LIB                         179
- fb:eb38      116   MENU_mostrarMenuPrincipal       \MENU.LIB                          21
- fb:ebac      102   DelayMs                         \COSTATE.LIB                      525
- fb:ec12       93   EVENTOS_initEventos             \EVENTOS.LIB                       33
- fb:ec6f      444   MENU_pedirDatosEvento           \MENU.LIB                         114
- fb:ee2b       54   MENU_consultarHora              \MENU.LIB                         107
- fb:ee61      706   _Init_Stacks                    \STACK.LIB                        421
- fc:e123      317   _Get_Stack_Size                 \STACK.LIB                        504
- fc:e260      332   _Alloc_Stack                    \STACK.LIB                        582
- fc:e3ac      180   _Dealloc_Stack                  \STACK.LIB                        660
- fc:e460       55   _gen_lin2seg                    \XMEM.LIB                          93
- fc:e497       21   xalloc                          \STACK.LIB                        331
- fc:e4ac      547   _rs_xalloc                      \MEM.LIB                          357
- fc:e6cf       47   xmem2root                       \XMEM.LIB                         233
- fc:e6fe      531   xmem2xmem                       \XMEM.LIB                         513
- fc:e911       10   paddr                           \XMEM.LIB                        1102
- fc:e91b       47   root2xmem                       \XMEM.LIB                         174
- fc:e94a       16   _rk_alloc_calc_chksum           \MEM.LIB                           58
- fc:e95a       10   _disable_serial_interrupt       \UTIL.LIB                        2003
- fc:e964       65   _init_xalloc                    \MEM.LIB                          645
- fc:e9a5      508   _rs_xalloc_init                 \MEM.LIB                           90
- fc:eba1      339   _rs_alloc_init                  \MEM.LIB                          239
- fc:ecf4       16   VdInit                          \VDRIVER.LIB                       64
- fc:ed04        *   dkDeleteWatch                   \DKCORE.LIB                      2528
- fc:edbb        *   dkDeleteAllWatches              \DKCORE.LIB                      2646
- fc:edcb        *   dkExecuteWatch                  \DKCORE.LIB                      2716
- fc:ee0d        *   dkExecuteAllWatches             \DKCORE.LIB                      2746
- fc:ee8a        *   dkSendWatches                   \DKCORE.LIB                      2822
- fc:ee99        *   dkCore                          \DKCORE.LIB                       510
- fc:eeab        *   __dk_sendstatusret              \DKCORE.LIB                       522
- fc:ef1a        *   dkSendStatus                    \DKCORE.LIB                       636
- fc:ef54        *   __dk_eawret                     \DKCORE.LIB                       669
- fc:ef81        *   dkSingleStep                    \DKCORE.LIB                      1464
- fc:efac        *   dkCSingleStep                   \DKCORE.LIB                      1494
- fc:efca        *   dkSingleStepExit                \DKENTRY.LIB                       50
- fc:efcc        *   dkAsmSingleStep                 \DKCORE.LIB                      1582
- fc:f055        *   __dk_checkddprefix              \DKCORE.LIB                      1669
- fc:f05e        *   __dk_checkedprefix              \DKCORE.LIB                      1676
- fc:f0a0        *   __dk_checkfdprefix              \DKCORE.LIB                      1726
- fc:f0a9        *   __dk_call                       \DKCORE.LIB                      1733
- fc:f0da        *   __dk_stepintocall               \DKCORE.LIB                      1759
- fc:f0ed        *   __dk_ret                        \DKCORE.LIB                      1769
- fc:f0f4        *   __dk_retf                       \DKCORE.LIB                      1774
- fc:f113        *   __dk_reti                       \DKCORE.LIB                      1790
- fc:f122        *   __dk_djnz                       \DKCORE.LIB                      1802
- fc:f139        *   __dk_jphl                       \DKCORE.LIB                      1816
- fc:f142        *   __dk_jpix                       \DKCORE.LIB                      1821
- fc:f14b        *   __dk_jpiy                       \DKCORE.LIB                      1827
- fc:f154        *   __dk_jp                         \DKCORE.LIB                      1832
- fc:f15d        *   __dk_jpf                        \DKCORE.LIB                      1837
- fc:f17b        *   __dk_jrcc                       \DKCORE.LIB                      1851
- fc:f19b        *   __dk_jr                         \DKCORE.LIB                      1866
- fc:f1b2        *   __dk_lcall                      \DKCORE.LIB                      1881
- fd:e1f4        *   __dk_lret                       \DKCORE.LIB                      1934
- fd:e204        *   __dk_ldxpca                     \DKCORE.LIB                      1944
- fd:e20e        *   __dk_ldaxpc                     \DKCORE.LIB                      1950
- fd:e222        *   __dk_do_ldir                    \DKCORE.LIB                      1962
- fd:e234        *   __dk_ldir                       \DKCORE.LIB                      1971
- fd:e23a        *   __dk_lddsr                      \DKCORE.LIB                      1977
- fd:e240        *   __dk_ldisr                      \DKCORE.LIB                      1981
- fd:e246        *   __dk_lsdr                       \DKCORE.LIB                      1985
- fd:e24c        *   __dk_lsir                       \DKCORE.LIB                      1989
- fd:e252        *   __dk_lsddr                      \DKCORE.LIB                      1993
- fd:e258        *   __dk_lsidr                      \DKCORE.LIB                      1997
- fd:e25e        *   __dk_ljp                        \DKCORE.LIB                      2003
- fd:e26d        *   __dk_rst2028                    \DKCORE.LIB                      2011
- fd:e277        *   __dkReenterRST18                \DKCORE.LIB                      2017
- fd:e27f        *   __dkCopyToRam                   \DKCORE.LIB                      2022
- fd:e294        *   __dkExecInRAM                   \DKCORE.LIB                      2035
- fd:e2ac        *   dkExit                          \DKENTRY.LIB                       29
- fd:e2ae        *   dkGetOplength                   \DKCORE.LIB                      2271
- fd:e2ea        *   dkOplen                         \DKCORE.LIB                      2319
- fd:e385        *   dkRunProgram                    \DKCORE.LIB                       764
- fd:e39d        *   dkStopProgram                   \DKCORE.LIB                       785
- fd:e3b7        *   dkStartProgram                  \DKCORE.LIB                       736
- fd:e3cc        *   dkSavepc                        \DKCORE.LIB                       445
- fd:e3dc        *   dkGetStructMemberAddr           \DKCORE.LIB                      2439
- fd:e3e6        *   dkCheckEntry                    \DKCORE.LIB                       372
- fd:e3f1        *   dkBPTableFindEmpty              \DKCORE.LIB                       865
- fd:e3f8        *   dkBPTableFindBP                 \DKCORE.LIB                       874
- fd:e483        *   dkToggleBreakpoint              \DKCORE.LIB                      1011
- fd:e57d        *   dkClearBPTable                  \DKCORE.LIB                      1269
- fd:e591        *   dkToggleAllBreakpoints          \DKCORE.LIB                      1285
- fd:e5af        *   dkResetBreakpoints              \DKCORE.LIB                      1304
- fd:e5b1        *   __dk_setrun                     \DKAPP.LIB                        124
- fd:e5d9        *   __dk_setstop                    \DKAPP.LIB                        165
- fd:e605        *   __dk_startprogram               \DKAPP.LIB                        191
- fd:e617        *   __dk_clearallbps                \DKAPP.LIB                        228
- fd:e62e        *   __dk_regread                    \DKAPP.LIB                        249
- fd:e63f        *   dkSendStackTraceInfo            \DKAPP.LIB                        261
- fd:e6ef        *   __dk_deleteallwatches           \DKAPP.LIB                        563
- fd:e6fd        *   __dk_execallwatches             \DKAPP.LIB                        599
- fd:e71b        *   __dk_getenabledoptions          \DKAPP.LIB                        658
+ f9:e4c1      659   MENU_pedirFechaHora             \MENU.LIB                          44
+ f9:e754        *   dkEnableRST28                   \DKCORE.LIB                      3298
+ f9:e75b        *   dkDisableRST28                  \DKCORE.LIB                      3307
+ f9:e763        *   dkEnableRST20                   \DKCORE.LIB                      3333
+ f9:e76a        *   dkDisableRST20                  \DKCORE.LIB                      3337
+ f9:e771        *   dkEnableRST18                   \DKCORE.LIB                      3359
+ f9:e778        *   dkDisableRST18                  \DKCORE.LIB                      3363
+ f9:e77f       96   atoi                            \STRING.LIB                       407
+ f9:e7df       38   printf                          \STDIO.LIB                        740
+ f9:e805       57   __qe2                           \STDIO.LIB                        633
+ f9:e83e      107   _printf                         \STDIO.LIB                        676
+ f9:e8a9     1689   doprnt                          \STDIO.LIB                        819
+ f9:ef42      454   phex                            \STDIO.LIB                       1785
+ fa:e108       76   outstr                          \STDIO.LIB                       2528
+ fa:e154       76   outpad                          \STDIO.LIB                       1746
+ fa:e1a0      516   plhex                           \STDIO.LIB                       1056
+ fa:e3a4        *   xstrlen                         \XMEM.LIB                        1195
+ fa:e3d5      543   pint                            \STDIO.LIB                       1851
+ fa:e5f4      680   plint                           \STDIO.LIB                       1520
+ fa:e89c       59   labs                            \MATH.LIB                        2424
+ fa:e8d7      201   _gltoa                          \STDIO.LIB                       1200
+ fa:e9a0      191   _gltoan                         \STDIO.LIB                       1402
+ fa:ea5f       30   gtoa                            \STDIO.LIB                       1434
+ fa:ea7d       30   ltoa                            \STDIO.LIB                       1451
+ fa:ea9b       27   gtoan                           \STDIO.LIB                       1471
+ fa:eab6       27   ltoan                           \STDIO.LIB                       1488
+ fa:ead1     2296   pflt                            \STDIO.LIB                       1934
+ fb:e3c9     1391   __ftoa                          \STDIO.LIB                       1579
+ fb:e938      287   MENU_eliminarEvento             \MENU.LIB                         137
+ fb:ea57      107   EVENTOS_agregarEvento           \EVENTOS.LIB                       50
+ fb:eac2      127   posicionLibre                   \EVENTOS.LIB                       21
+ fb:eb41       54   MENU_consultarEventos           \MENU.LIB                         161
+ fb:eb77      236   EVENTOS_listarEventos           \EVENTOS.LIB                       72
+ fb:ec63      116   MENU_mostrarMenuPrincipal       \MENU.LIB                          18
+ fb:ecd7      102   DelayMs                         \COSTATE.LIB                      525
+ fb:ed3d       93   EVENTOS_initEventos             \EVENTOS.LIB                       37
+ fb:ed9a      571   MENU_pedirDatosEvento           \MENU.LIB                          95
+ fb:efd5       54   MENU_consultarHora              \MENU.LIB                          88
+ fc:e00b      702   _Init_Stacks                    \STACK.LIB                        421
+ fc:e2c9      317   _Get_Stack_Size                 \STACK.LIB                        504
+ fc:e406      332   _Alloc_Stack                    \STACK.LIB                        582
+ fc:e552      180   _Dealloc_Stack                  \STACK.LIB                        660
+ fc:e606       55   _gen_lin2seg                    \XMEM.LIB                          93
+ fc:e63d       21   xalloc                          \STACK.LIB                        331
+ fc:e652      547   _rs_xalloc                      \MEM.LIB                          357
+ fc:e875       47   xmem2root                       \XMEM.LIB                         233
+ fc:e8a4      531   xmem2xmem                       \XMEM.LIB                         513
+ fc:eab7       10   paddr                           \XMEM.LIB                        1102
+ fc:eac1       47   root2xmem                       \XMEM.LIB                         174
+ fc:eaf0       16   _rk_alloc_calc_chksum           \MEM.LIB                           58
+ fc:eb00       10   _disable_serial_interrupt       \UTIL.LIB                        2003
+ fc:eb0a       65   _init_xalloc                    \MEM.LIB                          645
+ fc:eb4b      508   _rs_xalloc_init                 \MEM.LIB                           90
+ fc:ed47      339   _rs_alloc_init                  \MEM.LIB                          239
+ fc:ee9a       16   VdInit                          \VDRIVER.LIB                       64
+ fc:eeaa        *   dkDeleteWatch                   \DKCORE.LIB                      2528
+ fc:ef61        *   dkDeleteAllWatches              \DKCORE.LIB                      2646
+ fc:ef71        *   dkExecuteWatch                  \DKCORE.LIB                      2716
+ fc:efb3        *   dkExecuteAllWatches             \DKCORE.LIB                      2746
+ fc:f030        *   dkSendWatches                   \DKCORE.LIB                      2822
+ fd:e043        *   dkCore                          \DKCORE.LIB                       510
+ fd:e055        *   __dk_sendstatusret              \DKCORE.LIB                       522
+ fd:e0c4        *   dkSendStatus                    \DKCORE.LIB                       636
+ fd:e0fe        *   __dk_eawret                     \DKCORE.LIB                       669
+ fd:e12b        *   dkSingleStep                    \DKCORE.LIB                      1464
+ fd:e156        *   dkCSingleStep                   \DKCORE.LIB                      1494
+ fd:e174        *   dkSingleStepExit                \DKENTRY.LIB                       50
+ fd:e176        *   dkAsmSingleStep                 \DKCORE.LIB                      1582
+ fd:e1ff        *   __dk_checkddprefix              \DKCORE.LIB                      1669
+ fd:e208        *   __dk_checkedprefix              \DKCORE.LIB                      1676
+ fd:e24a        *   __dk_checkfdprefix              \DKCORE.LIB                      1726
+ fd:e253        *   __dk_call                       \DKCORE.LIB                      1733
+ fd:e284        *   __dk_stepintocall               \DKCORE.LIB                      1759
+ fd:e297        *   __dk_ret                        \DKCORE.LIB                      1769
+ fd:e29e        *   __dk_retf                       \DKCORE.LIB                      1774
+ fd:e2bd        *   __dk_reti                       \DKCORE.LIB                      1790
+ fd:e2cc        *   __dk_djnz                       \DKCORE.LIB                      1802
+ fd:e2e3        *   __dk_jphl                       \DKCORE.LIB                      1816
+ fd:e2ec        *   __dk_jpix                       \DKCORE.LIB                      1821
+ fd:e2f5        *   __dk_jpiy                       \DKCORE.LIB                      1827
+ fd:e2fe        *   __dk_jp                         \DKCORE.LIB                      1832
+ fd:e307        *   __dk_jpf                        \DKCORE.LIB                      1837
+ fd:e325        *   __dk_jrcc                       \DKCORE.LIB                      1851
+ fd:e345        *   __dk_jr                         \DKCORE.LIB                      1866
+ fd:e35c        *   __dk_lcall                      \DKCORE.LIB                      1881
+ fd:e39a        *   __dk_lret                       \DKCORE.LIB                      1934
+ fd:e3aa        *   __dk_ldxpca                     \DKCORE.LIB                      1944
+ fd:e3b4        *   __dk_ldaxpc                     \DKCORE.LIB                      1950
+ fd:e3c8        *   __dk_do_ldir                    \DKCORE.LIB                      1962
+ fd:e3da        *   __dk_ldir                       \DKCORE.LIB                      1971
+ fd:e3e0        *   __dk_lddsr                      \DKCORE.LIB                      1977
+ fd:e3e6        *   __dk_ldisr                      \DKCORE.LIB                      1981
+ fd:e3ec        *   __dk_lsdr                       \DKCORE.LIB                      1985
+ fd:e3f2        *   __dk_lsir                       \DKCORE.LIB                      1989
+ fd:e3f8        *   __dk_lsddr                      \DKCORE.LIB                      1993
+ fd:e3fe        *   __dk_lsidr                      \DKCORE.LIB                      1997
+ fd:e404        *   __dk_ljp                        \DKCORE.LIB                      2003
+ fd:e413        *   __dk_rst2028                    \DKCORE.LIB                      2011
+ fd:e41d        *   __dkReenterRST18                \DKCORE.LIB                      2017
+ fd:e425        *   __dkCopyToRam                   \DKCORE.LIB                      2022
+ fd:e43a        *   __dkExecInRAM                   \DKCORE.LIB                      2035
+ fd:e452        *   dkExit                          \DKENTRY.LIB                       29
+ fd:e454        *   dkGetOplength                   \DKCORE.LIB                      2271
+ fd:e490        *   dkOplen                         \DKCORE.LIB                      2319
+ fd:e52b        *   dkRunProgram                    \DKCORE.LIB                       764
+ fd:e543        *   dkStopProgram                   \DKCORE.LIB                       785
+ fd:e55d        *   dkStartProgram                  \DKCORE.LIB                       736
+ fd:e572        *   dkSavepc                        \DKCORE.LIB                       445
+ fd:e582        *   dkGetStructMemberAddr           \DKCORE.LIB                      2439
+ fd:e58c        *   dkCheckEntry                    \DKCORE.LIB                       372
+ fd:e597        *   dkBPTableFindEmpty              \DKCORE.LIB                       865
+ fd:e59e        *   dkBPTableFindBP                 \DKCORE.LIB                       874
+ fd:e629        *   dkToggleBreakpoint              \DKCORE.LIB                      1011
+ fd:e723        *   dkClearBPTable                  \DKCORE.LIB                      1269
+ fd:e737        *   dkToggleAllBreakpoints          \DKCORE.LIB                      1285
+ fd:e755        *   dkResetBreakpoints              \DKCORE.LIB                      1304
+ fd:e757        *   __dk_setrun                     \DKAPP.LIB                        124
+ fd:e77f        *   __dk_setstop                    \DKAPP.LIB                        165
+ fd:e7ab        *   __dk_startprogram               \DKAPP.LIB                        191
+ fd:e7bd        *   __dk_clearallbps                \DKAPP.LIB                        228
+ fd:e7d4        *   __dk_regread                    \DKAPP.LIB                        249
+ fd:e7e5        *   dkSendStackTraceInfo            \DKAPP.LIB                        261
+ fd:e895        *   __dk_deleteallwatches           \DKAPP.LIB                        563
+ fd:e8a3        *   __dk_execallwatches             \DKAPP.LIB                        599
+ fd:e8c1        *   __dk_getenabledoptions          \DKAPP.LIB                        658
 
 
 // Global/static data symbol mapping and source reference.
 //  Addr     Size   Symbol                          File                         Line Num  Type
- 8e:c617        2   auxiliarParaDatosEventos        \MENU.LIB                          14  char[]          
- 8e:c5f9       30   eventos                         \EVENTOS.LIB                       14  struct eventos[]
- 8e:c5f7        2   p1_FechaHora                    \LAB2V2.C                          12  struct p1_FechaHora*
- 8e:c5f5        2   p2_FechaHora                    \LAB2V2.C                          13  struct p2_FechaHora*
+ 8e:c5fb       30   eventos                         \EVENTOS.LIB                       14  struct eventos[]
+ 8e:c5f9        2   auxiliarParaDatosEventos        \MENU.LIB                          11  char[]          
+ 8e:c5f7        2   p1_FechaHora                    \LAB2V2.C                          13  struct p1_FechaHora*
+ 8e:c5f5        2   p2_FechaHora                    \LAB2V2.C                          14  struct p2_FechaHora*
  8e:c54c      136   spc_icbuf                       \RS232.LIB                       4595  char[]          
  8e:c4c4      136   spc_ocbuf                       \RS232.LIB                       4596  char[]          
  8e:c4c2        2   serCrtsLo                       \RS232.LIB                       4534  int             
@@ -457,18 +459,18 @@ Xmem Code           f8:e200    005540
  8e:c312        1   dkSUval                         \DKCORE.LIB                       320  char            
  8e:c310        2   _sys_exit_ret                   \SYS.LIB                           46  int             
  8e:c30e        2   _sys_exit_err                   \SYS.LIB                           47  int             
- 8e:c30c        2   GLOBAL:biossp                   \STACK.LIB                        726  int             
- 8e:c30a        2   GLOBAL:biossr                   \STACK.LIB                        726  int             
+ 8e:c30c        2   main:biossp                     \STACK.LIB                        726  int             
+ 8e:c30a        2   main:biossr                     \STACK.LIB                        726  int             
  8e:c308        2   FSP                             \SLICE.LIB                         20  void*           
  8e:c306        2   DBGFSP                          \SLICE.LIB                         20  void*           
-    2dfa       32   __f_divxmemwrapper:_divtable    \MUTILFP.LIB                     1106  const char[]    
+    2e19       32   __f_divxmemwrapper:_divtable    \MUTILFP.LIB                     1106  const char[]    
  8e:c304        2   getswf:p                        \STDIO.LIB                        124  char*           
  8e:c303        1   getswf:c                        \STDIO.LIB                        124  char            
  8e:c2f7        1   dkCharData                      \DKCORE.LIB                      3014  char            
  8e:c2f6        1   dkCharReady                     \DKCORE.LIB                      3015  char            
  8e:c2f4        2   dkStdioTimeout                  \DKCOMMON.LIB                     523  unsigned int    
  8e:c2f2        2   dkGetCharTimeout                \DKCOMMON.LIB                     524  unsigned int    
-    309a       24   _mktm_date:__dom                \RTCLOCK.LIB                      456  const char[][]  
+    30b9       24   _mktm_date:__dom                \RTCLOCK.LIB                      456  const char[][]  
  8e:c2f1        1   write_rtc:k                     \RTCLOCK.LIB                      105  char            
  8e:c2f0        1   write_rtc:b1                    \RTCLOCK.LIB                      105  char            
  8e:c2ef        1   write_rtc:b2                    \RTCLOCK.LIB                      105  char            
@@ -476,54 +478,55 @@ Xmem Code           f8:e200    005540
  8e:c2ed        1   write_rtc:b4                    \RTCLOCK.LIB                      105  char            
  8e:c2ec        1   write_rtc:b5                    \RTCLOCK.LIB                      105  char            
  8e:c2ea        2   write_rtc:j                     \RTCLOCK.LIB                      106  int             
-    3106       48   _mktime_date:__jom              \RTCLOCK.LIB                      275  const unsigned int[][]
-    35c4      129   _ctype_table                    \STRING.LIB                      1967  const char[]    
- 8e:c297        2   _xtoxErr                        \STRING.LIB                        18  int             
-    3766       10   _tens                           \STDIO.LIB                       2204  const unsigned int[]
-    3805       44   __ltens                         \STDIO.LIB                       1181  const unsigned long[]
-    38b5       32   pflt:round                      \STDIO.LIB                       1941  const long[]    
-    38f3        4   __ftoa:lg_2_10                  \STDIO.LIB                       1588  const float     
+    3125       48   _mktime_date:__jom              \RTCLOCK.LIB                      275  const unsigned int[][]
+    35e3      129   _ctype_table                    \STRING.LIB                      1967  const char[]    
+ 8e:c2c7        2   _xtoxErr                        \STRING.LIB                        18  int             
+    3791       10   _tens                           \STDIO.LIB                       2204  const unsigned int[]
+    3830       44   __ltens                         \STDIO.LIB                       1181  const unsigned long[]
+    38e0       32   pflt:round                      \STDIO.LIB                       1941  const long[]    
+    3916        4   __ftoa:lg_2_10                  \STDIO.LIB                       1588  const float     
  8e:c38c        4   MS_TIMER                        \COSTATE.LIB                       55  unsigned long   
- 8e:c227        4   __initial_stack                 \PROGRAM.LIB                       77  long            
- 8e:c223        4   freeStacks                      \STACK.LIB                        390  long[]          
-    3df8       10   stackSizes                      \STACK.LIB                        391  const unsigned int[]
- 8e:c21f        4   BaseOfStacks1                   \STACK.LIB                        344  unsigned long   
- 8e:c21b        4   BaseOfStacks2                   \STACK.LIB                        344  unsigned long   
- 8e:c217        4   SizeOfStacks1                   \STACK.LIB                        345  unsigned long   
- 8e:c213        4   SizeOfStacks2                   \STACK.LIB                        345  unsigned long   
- 8e:c20f        4   _Alloc_Stack:retval             \STACK.LIB                        584  long            
- 8e:c20d        2   _Alloc_Stack:fsPtr              \STACK.LIB                        586  char*           
- 8e:c20b        2   _Dealloc_Stack:fsPtr            \STACK.LIB                        663  char*           
- 8e:c207        4   _rk_xubreak                     \MEM.LIB                          347  long            
- 8e:c205        2   _rk_ubreak                      \MEM.LIB                           44  struct _rk_ubreak*
- 8e:c201        4   dkStructWatchMem                \DKCORE.LIB                      2862  unsigned long   
- 8e:c200        1   dkWatchCount                    \DKCORE.LIB                      2467  char            
- 8e:c1f4       12   dkWatchExpression               \DKCORE.LIB                      2463  struct dkWatchExpression
- 8e:c164      144   dkWatchTable                    \DKCORE.LIB                      2475  struct dkWatchTable[]
- 8e:c162        2   dkWatchIndex                    \DKCORE.LIB                      2462  unsigned int    
- 8e:c161        1   __dk_watchcurindex              \DKCORE.LIB                      2477  char            
- 8e:c160        1   __dk_watchnumleft               \DKCORE.LIB                      2478  char            
- 8e:c15f        1   __dk_watchcurxpc                \DKCORE.LIB                      2479  char            
- 8e:c15d        2   __dk_watchcuroffset             \DKCORE.LIB                      2480  unsigned int    
- 8e:c15b        2   __dk_ptrexecwatchret            \DKCORE.LIB                      2481  unsigned int    
- 8e:c159        2   dkStructWatchBufferOffset       \DKCORE.LIB                      2464  int             
- 8e:c156        3   dkStackAddress                  \DKCORE.LIB                      1517  struct dkStackAddress
- 8e:c153        3   dkReturnAddress                 \DKCORE.LIB                      1518  struct dkReturnAddress
- 8e:c14b        8   dknextasm                       \DKCORE.LIB                      1531  char[]          
-    4482       64   dkOpsize                        \DKCORE.LIB                      2215  const char[]    
-    44c2       64   dkPrefixed                      \DKCORE.LIB                      2257  const char[]    
- 8e:c148        3   dkCurBPAddress                  \DKCOMMON.LIB                     230  struct dkCurBPAddress
- 8e:c068      224   dkBPTable                       \DKCORE.LIB                       856  struct dkBPTable[]
- 8e:c067        1   dkBPCount                       \DKCORE.LIB                       852  char            
-    47b6       60   dkJumpTable                     \DKAPP.LIB                        749  void(* const [])()
- 8e:c064        3   dkEnabledOptions                \DKAPP.LIB                         91  struct dkEnabledOptions
-    49f0        2   _orgtablesize                   \Rabbitbios.c                      41  int             
-    49f2        0   _orgtable                       \Rabbitbios.c                      42  struct _orgtable[]
+ 8e:c251        4   __initial_stack                 \PROGRAM.LIB                       77  long            
+ 8e:c24d        4   freeStacks                      \STACK.LIB                        390  long[]          
+    3e6a       10   stackSizes                      \STACK.LIB                        391  const unsigned int[]
+ 8e:c249        4   BaseOfStacks1                   \STACK.LIB                        344  unsigned long   
+ 8e:c245        4   BaseOfStacks2                   \STACK.LIB                        344  unsigned long   
+ 8e:c241        4   SizeOfStacks1                   \STACK.LIB                        345  unsigned long   
+ 8e:c23d        4   SizeOfStacks2                   \STACK.LIB                        345  unsigned long   
+ 8e:c239        4   _Alloc_Stack:retval             \STACK.LIB                        584  long            
+ 8e:c237        2   _Alloc_Stack:fsPtr              \STACK.LIB                        586  char*           
+ 8e:c235        2   _Dealloc_Stack:fsPtr            \STACK.LIB                        663  char*           
+ 8e:c231        4   _rk_xubreak                     \MEM.LIB                          347  long            
+ 8e:c22f        2   _rk_ubreak                      \MEM.LIB                           44  struct _rk_ubreak*
+ 8e:c22b        4   dkStructWatchMem                \DKCORE.LIB                      2862  unsigned long   
+ 8e:c22a        1   dkWatchCount                    \DKCORE.LIB                      2467  char            
+ 8e:c21e       12   dkWatchExpression               \DKCORE.LIB                      2463  struct dkWatchExpression
+ 8e:c18e      144   dkWatchTable                    \DKCORE.LIB                      2475  struct dkWatchTable[]
+ 8e:c18c        2   dkWatchIndex                    \DKCORE.LIB                      2462  unsigned int    
+ 8e:c18b        1   __dk_watchcurindex              \DKCORE.LIB                      2477  char            
+ 8e:c18a        1   __dk_watchnumleft               \DKCORE.LIB                      2478  char            
+ 8e:c189        1   __dk_watchcurxpc                \DKCORE.LIB                      2479  char            
+ 8e:c187        2   __dk_watchcuroffset             \DKCORE.LIB                      2480  unsigned int    
+ 8e:c185        2   __dk_ptrexecwatchret            \DKCORE.LIB                      2481  unsigned int    
+ 8e:c183        2   dkStructWatchBufferOffset       \DKCORE.LIB                      2464  int             
+ 8e:c180        3   dkStackAddress                  \DKCORE.LIB                      1517  struct dkStackAddress
+ 8e:c17d        3   dkReturnAddress                 \DKCORE.LIB                      1518  struct dkReturnAddress
+ 8e:c175        8   dknextasm                       \DKCORE.LIB                      1531  char[]          
+    4470       64   dkOpsize                        \DKCORE.LIB                      2215  const char[]    
+    44b0       64   dkPrefixed                      \DKCORE.LIB                      2257  const char[]    
+ 8e:c172        3   dkCurBPAddress                  \DKCOMMON.LIB                     230  struct dkCurBPAddress
+ 8e:c092      224   dkBPTable                       \DKCORE.LIB                       856  struct dkBPTable[]
+ 8e:c091        1   dkBPCount                       \DKCORE.LIB                       852  char            
+    47a4       60   dkJumpTable                     \DKAPP.LIB                        749  void(* const [])()
+ 8e:c08e        3   dkEnabledOptions                \DKAPP.LIB                         91  struct dkEnabledOptions
+    49de        2   _orgtablesize                   \Rabbitbios.c                      41  int             
+    49e0        0   _orgtable                       \Rabbitbios.c                      42  struct _orgtable[]
 
 // Parameter and local auto symbol mapping and source reference.
 //Offset Rel. to     Size   Symbol                          File                         Line Num  Type
-       2      SP        3   main:p_opcion                   \LAB2V2.C                          16  char[]          
-       0      SP        2   main:datosEvento                \LAB2V2.C                          17  char[]          
+       4      SP        3   main:p_opcion                   \LAB2V2.C                          17  char[]          
+       2      SP        2   main:datosEvento                \LAB2V2.C                          18  char[]          
+       0      SP        2   main:p_evento                   \LAB2V2.C                          19  struct main:p_evento*
        6      SP        2   IO_setOutput:p_port             \IO.LIB                           103  int             
        8      SP        2   IO_setOutput:p_pin              \IO.LIB                           103  int             
       10      SP        1   IO_setOutput:p_state            \IO.LIB                           103  char            
@@ -534,20 +537,20 @@ Xmem Code           f8:e200    005540
        8      SP        2   BitWrPortI:value                \SYSIO.LIB                        206  int             
       10      SP        2   BitWrPortI:bitcode              \SYSIO.LIB                        206  int             
        0      SP        2   BitWrPortI:reg_perm             \SYSIO.LIB                        209  int             
-       0      SP        0   HW_init:_____ZW0000009C         \IO.LIB                            44  void            
+       0      SP        0   HW_init:_____ZW0000009F         \IO.LIB                            44  void            
        2      SP        4   serCopen:baud                   \RS232.LIB                       4635  long            
        2      SP        1   serSetParity:tx_byte            \RS232.LIB                      10154  char            
        4      SP        1   serSetParity:parity             \RS232.LIB                      10154  char            
        2      SP        1   serCheckParity:rx_byte          \RS232.LIB                      10195  char            
        4      SP        1   serCheckParity:parity           \RS232.LIB                      10195  char            
-       0      SP        0   read_rtc:_____ZW000000DA        \RTCLOCK.LIB                      176  void            
+       0      SP        0   read_rtc:_____ZW000000DD        \RTCLOCK.LIB                      176  void            
        4      IX        2   getswf:s                        \STDIO.LIB                        121  char*           
       -2      IX        2   getswf:res                      \STDIO.LIB                        123  int             
-       0      SP        0   dkSetStdioTimer:_____ZW000000F0 \DKCOMMON.LIB                     526  void            
-       0      SP        0   dkCheckStdioTimeOut:_____ZW000000F2 \DKCOMMON.LIB                     535  void            
-       0      SP        0   dkSetGetCharTimer:_____ZW000000F6 \DKCOMMON.LIB                     549  void            
-       0      SP        0   dkCheckGetCharTimeOut:_____ZW000000F8 \DKCOMMON.LIB                     558  void            
-       0      IX        0   getchar:_____ZW000000FB         \STDIO.LIB                        229  void            
+       0      SP        0   dkSetStdioTimer:_____ZW000000F3 \DKCOMMON.LIB                     526  void            
+       0      SP        0   dkCheckStdioTimeOut:_____ZW000000F5 \DKCOMMON.LIB                     535  void            
+       0      SP        0   dkSetGetCharTimer:_____ZW000000F9 \DKCOMMON.LIB                     549  void            
+       0      SP        0   dkCheckGetCharTimeOut:_____ZW000000FB \DKCOMMON.LIB                     558  void            
+       0      IX        0   getchar:_____ZW000000FE         \STDIO.LIB                        229  void            
       -1      IX        1   getchar:c                       \STDIO.LIB                        231  char            
        4      IX        2   puts:s                          \STDIO.LIB                        337  char*           
        3      SP        2   printFechaHora:p_FechaHora      \UTILITIES.LIB                     40  struct printFechaHora:p_FechaHora*
@@ -562,21 +565,9 @@ Xmem Code           f8:e200    005540
        3      SP        4   write_rtc:time                  \RTCLOCK.LIB                      100  unsigned long   
        3      SP        2   mktime:timeptr                  \RTCLOCK.LIB                      363  struct mktime:timeptr*
        3      SP        2   _mktime_date:timeptr            \RTCLOCK.LIB                      269  struct _mktime_date:timeptr*
-       4      IX        2   MENU_pedirFechaHora:p_FechaHora \MENU.LIB                          48  struct MENU_pedirFechaHora:p_FechaHora*
-      -2      IX        2   MENU_pedirFechaHora:p_anio      \MENU.LIB                          49  char*           
-     -12      IX       10   MENU_pedirFechaHora:mes         \MENU.LIB                          50  char[]          
-     -14      IX        2   MENU_pedirFechaHora:p_mes       \MENU.LIB                          50  char*           
-     -24      IX       10   MENU_pedirFechaHora:dia         \MENU.LIB                          51  char[]          
-     -26      IX        2   MENU_pedirFechaHora:p_dia       \MENU.LIB                          51  char*           
-     -36      IX       10   MENU_pedirFechaHora:hora        \MENU.LIB                          52  char[]          
-     -38      IX        2   MENU_pedirFechaHora:p_hora      \MENU.LIB                          52  char*           
-     -48      IX       10   MENU_pedirFechaHora:minuto      \MENU.LIB                          53  char[]          
-     -50      IX        2   MENU_pedirFechaHora:p_minuto    \MENU.LIB                          53  char*           
-     -52      IX        2   MENU_pedirFechaHora:int_anio    \MENU.LIB                          55  int             
-     -54      IX        2   MENU_pedirFechaHora:int_mes     \MENU.LIB                          56  int             
-     -56      IX        2   MENU_pedirFechaHora:int_dia     \MENU.LIB                          57  int             
-     -58      IX        2   MENU_pedirFechaHora:int_hora    \MENU.LIB                          58  int             
-     -60      IX        2   MENU_pedirFechaHora:int_minuto  \MENU.LIB                          59  int             
+       4      IX        2   MENU_pedirFechaHora:p_FechaHora \MENU.LIB                          45  struct MENU_pedirFechaHora:p_FechaHora*
+     -10      IX       10   MENU_pedirFechaHora:temp        \MENU.LIB                          46  char[]          
+     -12      IX        2   MENU_pedirFechaHora:int_temp    \MENU.LIB                          48  int             
        7      SP        2   atoi:sptr                       \STRING.LIB                       407  char*           
        2      SP        2   atoi:res                        \STRING.LIB                       409  int             
        0      SP        2   atoi:p                          \STRING.LIB                       410  char*           
@@ -730,19 +721,25 @@ Xmem Code           f8:e200    005540
        8      SP        4   __ftoa:lng                      \STDIO.LIB                       1592  unsigned long   
        4      SP        4   __ftoa:chg                      \STDIO.LIB                       1592  unsigned long   
        0      SP        4   __ftoa:slng                     \STDIO.LIB                       1593  long            
-      -2      IX        2   MENU_eliminarEvento:numEvento   \MENU.LIB                         157  char[]          
-       2      SP        2   EVENTOS_listarEventos:j         \EVENTOS.LIB                       72  int             
-       0      SP        2   EVENTOS_listarEventos:i         \EVENTOS.LIB                       73  int             
+      -2      IX        2   MENU_eliminarEvento:numEvento   \MENU.LIB                         139  char[]          
+       5      SP        2   EVENTOS_agregarEvento:p_evento  \EVENTOS.LIB                       50  struct EVENTOS_agregarEvento:p_evento*
+       0      SP        2   EVENTOS_agregarEvento:posicion  \EVENTOS.LIB                       52  int             
+       0      SP        2   posicionLibre:i                 \EVENTOS.LIB                       23  int             
+       4      SP        2   EVENTOS_listarEventos:j         \EVENTOS.LIB                       74  int             
+       2      SP        2   EVENTOS_listarEventos:i         \EVENTOS.LIB                       75  int             
+       0      SP        2   EVENTOS_listarEventos:int_tem   \EVENTOS.LIB                       76  int             
        3      SP        2   DelayMs:pfb                     \COSTATE.LIB                      525  struct DelayMs:pfb*
        5      SP        4   DelayMs:delayms                 \COSTATE.LIB                      525  long            
-       0      SP        2   EVENTOS_initEventos:i           \EVENTOS.LIB                       35  int             
-     -10      IX       10   MENU_pedirDatosEvento:tipoevento \MENU.LIB                         116  char[]          
-     -12      IX        2   MENU_pedirDatosEvento:p_tipoevento \MENU.LIB                         116  char*           
-     -22      IX       10   MENU_pedirDatosEvento:led       \MENU.LIB                         117  char[]          
-     -24      IX        2   MENU_pedirDatosEvento:p_led     \MENU.LIB                         117  char*           
-     -26      IX        2   MENU_pedirDatosEvento:int_tipoevento \MENU.LIB                         118  int             
-     -28      IX        2   MENU_pedirDatosEvento:int_led   \MENU.LIB                         118  int             
-     -30      IX        2   MENU_pedirDatosEvento:p_FechaHora \MENU.LIB                         119  struct MENU_pedirDatosEvento:p_FechaHora*
+       0      SP        2   EVENTOS_initEventos:i           \EVENTOS.LIB                       39  int             
+       4      IX        2   MENU_pedirDatosEvento:e         \MENU.LIB                          96  struct MENU_pedirDatosEvento:e*
+     -10      IX       10   MENU_pedirDatosEvento:tipoevento \MENU.LIB                          97  char[]          
+     -12      IX        2   MENU_pedirDatosEvento:p_tipoevento \MENU.LIB                          97  char*           
+     -22      IX       10   MENU_pedirDatosEvento:led       \MENU.LIB                          98  char[]          
+     -24      IX        2   MENU_pedirDatosEvento:p_led     \MENU.LIB                          98  char*           
+     -26      IX        2   MENU_pedirDatosEvento:int_tipoevento \MENU.LIB                          99  int             
+     -28      IX        2   MENU_pedirDatosEvento:int_led   \MENU.LIB                          99  int             
+     -30      IX        2   MENU_pedirDatosEvento:p2_FechaHora \MENU.LIB                         100  struct MENU_pedirDatosEvento:p2_FechaHora*
+     -34      IX        4   MENU_pedirDatosEvento:timestamp \MENU.LIB                         101  unsigned long   
       16      SP        4   _Init_Stacks:spaceLeft          \STACK.LIB                        423  long            
       14      SP        2   _Init_Stacks:i                  \STACK.LIB                        424  int             
        4      SP       10   _Init_Stacks:locCounts          \STACK.LIB                        425  unsigned int[]  
@@ -802,7 +799,7 @@ Xmem Code           f8:e200    005540
        4      SP        2   _rs_alloc_init:bsize            \MEM.LIB                          242  unsigned int    
        2      SP        2   _rs_alloc_init:mbreak           \MEM.LIB                          243  struct _rs_alloc_init:mbreak*
        0      SP        2   _rs_alloc_init:pe               \MEM.LIB                          244  struct _rs_alloc_init:pe*
-       0      SP        0   VdInit:_____ZW000003A9          \VDRIVER.LIB                       64  void            
+       0      SP        0   VdInit:_____ZW000003C4          \VDRIVER.LIB                       64  void            
        2      SP        2   dkDoWatchExpression:WatchExpression \DKCORE.LIB                      2880  struct dkDoWatchExpression:WatchExpression
 
 
@@ -1094,9 +1091,9 @@ Xmem Code           f8:e200    005540
    LED_RED_SET                     \LED.LIB                            9
    LED_RED_RESET                   \LED.LIB                           10
    MAX_EVENTS                      \EVENTOS.LIB                        3
-   ON_TIME                         \LAB2V2.C                           8
-   OFF_TIME                        \LAB2V2.C                           9
-   ONE_SECOND                      \LAB2V2.C                          10
+   ON_TIME                         \LAB2V2.C                           9
+   OFF_TIME                        \LAB2V2.C                          10
+   ONE_SECOND                      \LAB2V2.C                          11
    CINBUFOK                        \RS232.LIB                       4569
    COUTBUFOK                       \RS232.LIB                       4586
    STDIO_MAX_PRINTF_BUF_SIZE       \STDIO.LIB                        629
@@ -1150,7 +1147,8 @@ premain
    exit
    main
       DelayMs
-      EVENTOS_initEventos
+      EVENTOS_agregarEvento
+         posicionLibre
          printf
             _printf
                __qe2
@@ -1205,6 +1203,12 @@ premain
                   tolower
                   xgetint
                   xstrlen
+      EVENTOS_initEventos
+         printf->**see above**
+      EVENTOS_listarEventos
+         atoi
+            strtol
+         printf->**see above**
       HW_init
          BitWrPortI
          serCopen
@@ -1217,8 +1221,7 @@ premain
       MENU_consultarHora
          printf->**see above**
       MENU_eliminarEvento
-         EVENTOS_listarEventos
-            printf->**see above**
+         EVENTOS_listarEventos->**see above**
          getswf
             getchar
                dkGetCharFromStdio
@@ -1232,12 +1235,12 @@ premain
          printf->**see above**
       MENU_pedirDatosEvento
          MENU_pedirFechaHora
-            atoi
-               strtol
+            atoi->**see above**
             getswf->**see above**
             printf->**see above**
          atoi->**see above**
          getswf->**see above**
+         mktime
          printFechaHora
             printf->**see above**
          printf->**see above**

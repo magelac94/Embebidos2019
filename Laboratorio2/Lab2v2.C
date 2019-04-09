@@ -1,9 +1,10 @@
 #use IO.LIB
 #use LED.LIB
 #use UTILITIES.LIB
-#use MENU.LIB
+
 #use EVENTOS.LIB
 #use RTC.lib
+#use MENU.LIB
 
 #define ON_TIME	400
 #define OFF_TIME	800
@@ -15,6 +16,7 @@
 main(){
 	char p_opcion[3];    // Array para opcion del menu principal.
    char datosEvento[2];       // para pasar los datos de eventos
+   Event *p_evento;
 //   struct tm* p_FechaHora;
 
 // INIT
@@ -58,8 +60,8 @@ main(){
 
 				case ('3'):
 					//	AGREGAR EVENTO
-				   wfd MENU_pedirDatosEvento();
-				//  EVENTOS_agregarEvento
+				   wfd MENU_pedirDatosEvento( p_evento );
+				   EVENTOS_agregarEvento( p_evento );
 					break;
 
 				case ('4'):
@@ -71,7 +73,8 @@ main(){
 
             	// CONSULTAR EVENTO
 					wfd MENU_consultarEventos();
-					break;
+               EVENTOS_listarEventos();
+               break;
 
             case ('6'):
 

@@ -14,6 +14,10 @@ typedef struct {		// Struct de eventos
 Event eventos[MAX_EVENTS];		// Lista de Eventos
 /*** EndHeader */
 
+/*** BeginHeader  posicionLibre */
+int posicionLibre();
+/*** EndHeader */
+
 //// Metodos
 int posicionLibre(){  	// Devuelve primer posicion libre del array de eventos
 	int i;
@@ -41,18 +45,16 @@ void EVENTOS_initEventos(){
 
 
 /*** BeginHeader EVENTOS_agregarEvento */
-void EVENTOS_agregarEvento(char evento);
+void EVENTOS_agregarEvento( Event *p_evento);
 /*** EndHeader */
-void EVENTOS_agregarEvento(char datosEvento)
+void EVENTOS_agregarEvento( Event *p_evento)
 {
 	int posicion;
 	posicion = posicionLibre() ;
 	if (posicion == -1){
 		printf("No se puede ingresar evento, calendario lleno \n");
 	}else{
-		eventos[posicion].command = datosEvento[0];
-		eventos[posicion].param = datosEvento[1];
-		eventos[posicion].time = datosEvento[2];
+		eventos[posicion] = *p_evento;
 
 		printf("Evento Agregado Correctamente\n");
 	}
@@ -71,13 +73,17 @@ void EVENTOS_listarEventos();
 void EVENTOS_listarEventos(){
 	int j;
 	int i;
+   int int_tem;
 	j = 1;
+
 	for (i=0;i<MAX_EVENTS;i++){
 		printf("----------------------------------------:\n" );
-		printf("NUMERO DE EVENTO %s:\n", j);
-		printf("Comando: %s\n", eventos[i].command);
-		printf("LED : %s\n", eventos[i].param);
-		printf("Hora: %s\n", eventos[i].time); // ver formato
+		printf("NUMERO DE EVENTO %d:\n", j);
+      int_tem = atoi(&eventos[i].command);
+		printf("COMANDO: %d\n", int_tem);
+      int_tem = atoi(&eventos[i].param);
+		printf("LED : %d\n", int_tem);
+		printf("HORA: %d\n", eventos[i].time); // ver formato
 
 		j++;
 	}
