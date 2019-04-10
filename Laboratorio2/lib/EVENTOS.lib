@@ -1,5 +1,4 @@
 /*** BeginHeader */
-
 // Definicion de macros
 #define MAX_EVENTS 5
 
@@ -39,8 +38,9 @@ void EVENTOS_initEventos(){
 	int i;
 	for (i=0;i<MAX_EVENTS;i++){
 		eventos[i].command = 0xFF;
+      eventos[i].param = 0xFF;
 	}
-	printf("Eventos iniciados correctamente");
+	printf("\nEventos iniciados correctamente");
 }
 
 
@@ -50,13 +50,16 @@ void EVENTOS_agregarEvento( Event *p_evento);
 void EVENTOS_agregarEvento( Event *p_evento)
 {
 	int posicion;
+   Event e;
 	posicion = posicionLibre() ;
 	if (posicion == -1){
-		printf("No se puede ingresar evento, calendario lleno \n");
+		printf("\nERROR: No se puede ingresar evento, calendario lleno.");
 	}else{
-		eventos[posicion] = *p_evento;
-
-		printf("\nEvento Agregado Correctamente\n");
+      e = eventos[posicion];
+		e.command = (*p_evento).command;
+      e.param = (*p_evento).param;
+      e.time = (*p_evento).time;
+		printf("\nEvento AGREGADO correctamente");
 	}
 }
 
@@ -73,6 +76,7 @@ void EVENTOS_listarEventos();
 void EVENTOS_listarEventos(){
 	int i, j, int_item;
 	struct tm *p_FechaHora;
+   char unChar;
 
 	j = 1;
 
@@ -81,7 +85,8 @@ void EVENTOS_listarEventos(){
 		printf("NUMERO DE EVENTO %d:\n", j);
 
       int_item = atoi(&eventos[i].command);
-		printf("COMANDO: %d\n", int_item);
+      //unChar = UT_ASCIItoCharNum( eventos[i].command );  esto parece que no anda
+      printf("COMANDO: %d\n", int_item);
 
       int_item = atoi(&eventos[i].param);
 		printf("LED : %d\n", int_item);

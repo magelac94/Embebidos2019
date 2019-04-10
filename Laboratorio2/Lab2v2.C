@@ -10,10 +10,10 @@
 #define OFF_TIME	800
 #define ONE_SECOND	1000
 
-struct tm* p_FechaHora;
+struct tm FechaHora;
 char opcion_menu[5];
 int int_opcion_menu, int_lugar_libre;
-Event *p_unEvento;
+Event unEvento;
 
 main(){
 
@@ -44,16 +44,16 @@ main(){
 			switch( int_opcion_menu ){
 				case( OPCION_1 ):
 					// FIJAR HORA EN EL RELOJ
-					wfd MENU_pedirFechaHora( p_FechaHora );
-					RTC_fijarFechaHora( p_FechaHora );
-					printFechaHora( p_FechaHora );		// Imprimo la Fecha y hora modificadoS
+					wfd MENU_pedirFechaHora( &FechaHora );
+					RTC_fijarFechaHora( &FechaHora );
+					printFechaHora( &FechaHora );		// Imprimo la Fecha y hora modificadoS
 					break;
 
 				case( OPCION_2 ):
 					// CONSULTAR HORA ACTUAL
 					wfd MENU_consultarHora();
-					RTC_leerFechaHora( p_FechaHora );	// Leo el RTC
-					printFechaHora( p_FechaHora );		// Imprimo la Fecha y hora
+					RTC_leerFechaHora( &FechaHora );	// Leo el RTC
+					printFechaHora( &FechaHora );		// Imprimo la Fecha y hora
 					break;
 
 				case( OPCION_3 ):
@@ -62,8 +62,8 @@ main(){
 					// Evalua si hay sigue sino dice que no hay mas espacio.
 					// int_lugar_libre = quedaLugar( &un_Evento );
 					//p_unEvento = &eventos[0];
-					wfd MENU_pedirDatosEvento( p_unEvento );
-					EVENTOS_agregarEvento( p_unEvento );
+					wfd MENU_pedirDatosEvento( &unEvento );
+					EVENTOS_agregarEvento( &unEvento );
 					break;
 
 					case ( OPCION_4 ):
