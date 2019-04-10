@@ -56,7 +56,7 @@ void EVENTOS_agregarEvento( Event *p_evento)
 	}else{
 		eventos[posicion] = *p_evento;
 
-		printf("Evento Agregado Correctamente\n");
+		printf("\nEvento Agregado Correctamente\n");
 	}
 }
 
@@ -71,19 +71,24 @@ void EVENTOS_eliminarEvento(int posicionEvento){
 void EVENTOS_listarEventos();
 /*** EndHeader */
 void EVENTOS_listarEventos(){
-	int j;
-	int i;
-   int int_tem;
+	int i, j, int_item;
+	struct tm *p_FechaHora;
+
 	j = 1;
 
 	for (i=0;i<MAX_EVENTS;i++){
-		printf("----------------------------------------:\n" );
+		printf("\n----------------------------------------:\n" );
 		printf("NUMERO DE EVENTO %d:\n", j);
-      int_tem = atoi(&eventos[i].command);
-		printf("COMANDO: %d\n", int_tem);
-      int_tem = atoi(&eventos[i].param);
-		printf("LED : %d\n", int_tem);
-		printf("HORA: %d\n", eventos[i].time); // ver formato
+
+      int_item = atoi(&eventos[i].command);
+		printf("COMANDO: %d\n", int_item);
+
+      int_item = atoi(&eventos[i].param);
+		printf("LED : %d\n", int_item);
+
+      mktm( p_FechaHora, eventos[i].time );
+		printf("HORA:\n");
+      printFechaHora( p_FechaHora );
 
 		j++;
 	}

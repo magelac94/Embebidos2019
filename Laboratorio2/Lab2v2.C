@@ -12,8 +12,8 @@
 
 struct tm* p_FechaHora;
 char opcion_menu[5];
-int int_opcion_menu;
-Event *p_evento;
+int int_opcion_menu, int_lugar_libre;
+Event *p_unEvento;
 
 main(){
 
@@ -58,8 +58,12 @@ main(){
 
 				case( OPCION_3 ):
 					// AGREGAR EVENTO
-					wfd MENU_pedirDatosEvento( p_evento );
-					EVENTOS_agregarEvento( p_evento );
+					// Aca capaz falta una funcion que busque el espacio libre antes de pedir datos.
+					// Evalua si hay sigue sino dice que no hay mas espacio.
+					// int_lugar_libre = quedaLugar( &un_Evento );
+					//p_unEvento = &eventos[0];
+					wfd MENU_pedirDatosEvento( p_unEvento );
+					EVENTOS_agregarEvento( p_unEvento );
 					break;
 
 					case ( OPCION_4 ):

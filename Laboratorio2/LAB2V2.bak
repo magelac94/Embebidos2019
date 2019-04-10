@@ -10,18 +10,16 @@
 #define OFF_TIME	800
 #define ONE_SECOND	1000
 
-  	struct tm* p1_FechaHora;       // para ingresar hora
-	struct tm* p2_FechaHora;       // para consultar hora
+struct tm* p_FechaHora;
+char opcion_menu[5];
+int int_opcion_menu;
+Event un_Evento;
 
 main(){
-	char p_opcion[3];    // Array para opcion del menu principal.
-   char datosEvento[2];       // para pasar los datos de eventos
-   Event *p_evento;
-//   struct tm* p_FechaHora;
 
 // INIT
 	HW_init();
-   EVENTOS_initEventos();
+	EVENTOS_initEventos();
 
 // LOOP MAQUINAS DE ESTADO
 	while(1)
@@ -38,54 +36,53 @@ main(){
 		// Parte 2 - Maquina de estado para mostrar menu y manipular hora y eventos
 		costate MENU always_on
 		{
+			MENU_mostrarMenuPrincipal();
+			waitfor(getswf( opcion_menu ));
+			int_opcion_menu = atoi( opcion_menu );
+			printf("PRUEBA GET: --- %d ---- \n",int_opcion_menu);
 
-       	MENU_mostrarMenuPrincipal();
-         waitfor(getswf( p_opcion )) ;
-         printf("PRUEBA GET: --- %s ---- \n",&p_opcion[0]);
-
-			switch(p_opcion[0]){
-				case ('1'):
-            	// FIJAR HORA EN EL RELOJ
-               wfd MENU_pedirFechaHora( p1_FechaHora );
-            	RTC_fijarFechaHora( p1_FechaHora );
-  					printFechaHora( p1_FechaHora );		// Imprimo la Fecha y hora modificadoS
-               break;
-
-				case ('2'):
-               // CONSULTAR HORA ACTUAL
-               wfd MENU_consultarHora();
-               RTC_leerFechaHora( p2_FechaHora );	// Leo el RTC
-					printFechaHora( p2_FechaHora );		// Imprimo la Fecha y hora
+			switch( int_opcion_menu ){
+				case( OPCION_1 ):
+					// FIJAR HORA EN EL RELOJ
+					wfd MENU_pedirFechaHora( p_FechaHora );
+					RTC_fijarFechaHora( p_FechaHora );
+					printFechaHora( p_FechaHora );		// Imprimo la Fecha y hora modificadoS
 					break;
 
-				case ('3'):
-					//	AGREGAR EVENTO
-				   wfd MENU_pedirDatosEvento( p_evento );
-				   EVENTOS_agregarEvento( p_evento );
+				case( OPCION_2 ):
+					// CONSULTAR HORA ACTUAL
+					wfd MENU_consultarHora();
+					RTC_leerFechaHora( p_FechaHora );	// Leo el RTC
+					printFechaHora( p_FechaHora );		// Imprimo la Fecha y hora
 					break;
 
-				case ('4'):
-            		// ELIMINAR EVENTO SEGUN EL NUMERO DE EVENTO (ES DE 1 EN adelante segun posicion en el array))
-    					wfd MENU_eliminarEvento();
+				case( OPCION_3 ):
+					// AGREGAR EVENTO
+					int_opcion_menu = wfd MENU_pedirDatosEvento();
+					//EVENTOS_agregarEvento( &unEvento );
 					break;
 
-				case ('5'):
+					case ( OPCION_4 ):
+						// ELIMINAR EVENTO SEGUN EL NUMERO DE EVENTO (ES DE 1 EN adelante segun posicion en el array))
+						wfd MENU_eliminarEvento();
+						break;
 
-            	// CONSULTAR EVENTO
+				case( OPCION_5 ):
+					// CONSULTAR EVENTO
 					wfd MENU_consultarEventos();
-               EVENTOS_listarEventos();
-               break;
-
-            case ('6'):
-
-   				printf("Salir");       // Ejecutar para salir
+					EVENTOS_listarEventos();
 					break;
 
-		 		default:
-             	printf("\nOpcion DEFAULT :%s \n",&p_opcion[0]);
-            	printf("Vuelva a ingresar\n");
+				case( OPCION_6 ):
+					// SALIR
+					printf("Salir");
+					break;
 
-			}
+				default:
+					// OPCION INCORRECTA
+					printf("\nOpcion DEFAULT: %d \n", int_opcion_menu);
+					printf("Vuelva a ingresar\n");
+				}
 		}
 
 		// Parte 3 - Maquina de estado para checkear si es momento de ejecutar algun evento programado

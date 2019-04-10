@@ -1,7 +1,7 @@
 // Compilers view of MMU. Note these values are determined by the origin statements in the BIOS.
 //Segment           Origin     Size
-Root Code           00:0000    0025d8
-Root Data           ae:c9e8    00044e
+Root Code           00:0000    001fe2
+Root Data           ae:c9e8    0003ee
 Xmem Code           f8:e200    00082a
 
 
@@ -9,30 +9,32 @@ Xmem Code           f8:e200    00082a
 // Function mapping and source reference.
 // * The size of labels is indeterminate and so is denoted with an asterisk.
 //  Addr     Size   Function                        File                         Line Num
-    1b19      383   MENU_mostrarMenuPrincipal       \MENU.LIB                          22
-    1c98      820   MENU_pedirFechaHora             \MENU.LIB                          50
-    1fcc      102   MENU_consultarHora              \MENU.LIB                          92
-    2032      749   MENU_pedirDatosEvento           \MENU.LIB                          99
-    231f      468   MENU_eliminarEvento             \MENU.LIB                         144
-    24f3      108   MENU_consultarEventos           \MENU.LIB                         168
+    1b19      126   posicionLibre                   \EVENTOS.LIB                       21
+    1b97      124   EVENTOS_initEventos             \EVENTOS.LIB                       37
+    1c13      184   EVENTOS_agregarEvento           \EVENTOS.LIB                       50
+    1ccb       43   EVENTOS_eliminarEvento          \EVENTOS.LIB                       65
+    1cf6      330   EVENTOS_listarEventos           \EVENTOS.LIB                       72
+    1e40      297   EVENTO_ejecutarEventos          \EVENTOS.LIB                      100
 
 
 // Global/static data symbol mapping and source reference.
 //  Addr     Size   Symbol                          File                         Line Num  Type
- ae:c617        2   auxiliarParaDatosEventos        \MENU.LIB                          12  char[]          
- ae:c615        2   p2_FechaHora                    \MENU.LIB                          15  struct p2_FechaHora*
- ae:c611        4   timestamp                       \MENU.LIB                          16  unsigned long   
-    2566        2   _orgtablesize                   \Rabbitbios.c                      41  int             
-    2568        0   _orgtable                       \Rabbitbios.c                      42  struct _orgtable[]
+ ae:c5fb       30   eventos                         \EVENTOS.LIB                       14  struct eventos[]
+    1f70        2   _orgtablesize                   \Rabbitbios.c                      41  int             
+    1f72        0   _orgtable                       \Rabbitbios.c                      42  struct _orgtable[]
 
 // Parameter and local auto symbol mapping and source reference.
 //Offset Rel. to     Size   Symbol                          File                         Line Num  Type
-       4      IX        2   MENU_pedirFechaHora:p_FechaHora \MENU.LIB                          51  struct MENU_pedirFechaHora:p_FechaHora*
-     -10      IX       10   MENU_pedirFechaHora:temp        \MENU.LIB                          53  char[]          
-     -12      IX        2   MENU_pedirFechaHora:int_temp    \MENU.LIB                          54  int             
-      -5      IX        5   MENU_pedirDatosEvento:opcion    \MENU.LIB                         101  char[]          
-      -7      IX        2   MENU_pedirDatosEvento:int_opcion \MENU.LIB                         102  int             
-      -2      IX        2   MENU_eliminarEvento:numEvento   \MENU.LIB                         146  char[]          
+       0      SP        2   posicionLibre:i                 \EVENTOS.LIB                       23  int             
+       0      SP        2   EVENTOS_initEventos:i           \EVENTOS.LIB                       39  int             
+       4      SP        2   EVENTOS_agregarEvento:p_evento  \EVENTOS.LIB                       50  struct EVENTOS_agregarEvento:p_evento*
+       0      SP        2   EVENTOS_agregarEvento:posicion  \EVENTOS.LIB                       52  int             
+       2      SP        2   EVENTOS_eliminarEvento:posicionEvento \EVENTOS.LIB                       66  int             
+       6      SP        2   EVENTOS_listarEventos:i         \EVENTOS.LIB                       74  int             
+       4      SP        2   EVENTOS_listarEventos:j         \EVENTOS.LIB                       74  int             
+       2      SP        2   EVENTOS_listarEventos:int_item  \EVENTOS.LIB                       75  int             
+       0      SP        2   EVENTOS_listarEventos:p_FechaHora \EVENTOS.LIB                       76  struct EVENTOS_listarEventos:p_FechaHora*
+       0      SP        2   EVENTO_ejecutarEventos:i        \EVENTOS.LIB                      102  int             
 
 
 // Macro listing and source reference.
@@ -308,6 +310,7 @@ Xmem Code           f8:e200    00082a
    _RS_XALLOC_START                \MEM.LIB                           81
    _RS_XALLOC_END                  \MEM.LIB                           82
    _xavail                         \MEM.LIB                          514
+   MAX_EVENTS                      \EVENTOS.LIB                        4
 
 
 // Function call graph.

@@ -6,10 +6,8 @@ enum opcionMenu {
 	OPCION_3,
 	OPCION_4,
 	OPCION_5,
-   OPCION_6
+	OPCION_6
 };
-
-char auxiliarParaDatosEventos[2];
 /*** EndHeader */
 
 // Metodos
@@ -30,10 +28,9 @@ void MENU_mostrarMenuPrincipal(){       // char* p_opcion
 }
 
 
-/*** BeginHeader MENU_pedirFechaHora */
-cofunc void MENU_pedirFechaHora( struct tm* p_FechaHora );
-/*** EndHeader */
- /*  struct tm {
+ /*
+Para tener a la vista.
+	struct tm {
 		char tm_sec; // seconds 0-59
 		char tm_min; // 0-59
 		char tm_hour; // 0-23
@@ -41,48 +38,51 @@ cofunc void MENU_pedirFechaHora( struct tm* p_FechaHora );
 		char tm_mon; // 1-12
 		char tm_year; // 80-147 (1980-2047)
 		char tm_wday; // 0-6 0==sunday
-};
-}; */
+	};
+*/
+/*** BeginHeader MENU_pedirFechaHora */
+cofunc void MENU_pedirFechaHora( struct tm* p_FechaHora );
+/*** EndHeader */
 cofunc void MENU_pedirFechaHora( struct tm* p_FechaHora ){   // devolver el struct
+
 	char temp[10];
-
-   int int_temp;
-
+	int int_temp;
+	
 	printf("\n\n-------- CONFIGURACION: FIJAR HORA -------\n");
-	printf(" Ingrese el anio: ");
+	printf("\n Ingrese el anio: ");
 	waitfor( getswf( temp ));
-   // Convertimos a int
-   int_temp = atoi( temp );
-   printf("\nDEBUG: El valor de int_anio es: %d", int_temp);
-   int_temp = ( int_temp - 1900 ); // char tm_year; 80-147 (1980-2047)
-   printf("\nDEBUG: El valor de int_anio ahora es: %d", int_temp);
-   p_FechaHora->tm_year = (char)int_temp;
+	// Convertimos a int
+	int_temp = atoi( temp );
+	int_temp = ( int_temp - 1900 ); // char tm_year; 80-147 (1980-2047)
+	p_FechaHora->tm_year = (char)int_temp;
 
 	printf("\n Ingrese el mes: ");
 	waitfor( getswf( temp ));
-   // Convertimos a int
-   int_temp = atoi( temp );
-   printf("\nDEBUG: El valor de int_mes es: %d", int_temp);
+	// Convertimos a int
+	int_temp = atoi( temp );
+	printf("\nDEBUG: El valor de int_mes es: %d", int_temp);
 	p_FechaHora->tm_mon = (char)int_temp;
 
 	printf("\n Ingrese el dia: ");
 	waitfor( getswf( temp ));
-   // Convertimos a int
-   int_temp = atoi( temp );
-   p_FechaHora->tm_mday = (char)int_temp;
+	// Convertimos a int
+	int_temp = atoi( temp );
+	p_FechaHora->tm_mday = (char)int_temp;
 
-	printf("\n Ingrese el hora: ");
+	printf("\n Ingrese la hora: ");
 	waitfor( getswf( temp ));
-   // Convertimos a int
-   int_temp = atoi( temp );
-   p_FechaHora->tm_hour = (char)int_temp;
+	// Convertimos a int
+	int_temp = atoi( temp );
+	p_FechaHora->tm_hour = (char)int_temp;
 
 	printf("\n Ingrese el minuto: ");
 	waitfor( getswf( temp ));
-   // Convertimos a int
-   int_temp = atoi( temp );
-   p_FechaHora->tm_min = (char)int_temp;
+	// Convertimos a int
+	int_temp = atoi( temp );
+	p_FechaHora->tm_min = (char)int_temp;
+
 }
+
 
 /*** BeginHeader MENU_consultarHora */
 cofunc void MENU_consultarHora();
@@ -91,47 +91,56 @@ cofunc void MENU_consultarHora(){
 	printf("\n\n-------- CONSULTAR HORA ACTUAL -------\n");
 }
 
+
 /*** BeginHeader MENU_pedirDatosEvento */
-cofunc void MENU_pedirDatosEvento( Event* e );
+cofunc void MENU_pedirDatosEvento( Event *p_Evento );
 /*** EndHeader */
-cofunc void MENU_pedirDatosEvento( Event* e ){
-	char tipoevento[10], *p_tipoevento;
-   char led[10], *p_led;
-   int int_tipoevento, int_led;
-   struct tm* p2_FechaHora;
-   unsigned long timestamp;
-
-   p_tipoevento = &tipoevento[0];
-   p_led = &led[0];
-
+cofunc void MENU_pedirDatosEvento( Event *p_Evento ){
+	
+	char opcion[5];
+	int int_opcion;
+	struct tm* p_FechaHora;
+	unsigned long timestamp;
+	
+	printf("\n\n-------- CONFIGURACION: AGREGAR EVENTO -------\n\n");
 	while(1){
-		printf("\n-------- CONFIGURACION: AGREGAR EVENTO -------\n");
-		printf("Tipo de Evento (1-Encender o 2-Apagar):\n");
-		waitfor(getswf( p_tipoevento ));
-      int_tipoevento = atoi(p_tipoevento);
-		if ( int_tipoevento < 0 || int_tipoevento > 1){
-			printf("Debe elegir 1 o 2, volver a ingresar\n");
+		printf("\nTipo de Evento (1-Encender o 2-Apagar): ");
+		waitfor(getswf( opcion ));
+		int_opcion = atoi( opcion );
+
+		// Validacion de tipo evento
+		if ( int_opcion < 0 || int_opcion > 1){
+			printf("\nERROR: Debe elegir 1 o 2. Volver a ingresar\n");
 		}
-      else{
-			printf("Led a Encender(0-7):\n");
-			waitfor(getswf( p_led ));
-         int_led = atoi( p_led );
-			if ( int_led < 0 || int_led > 7){
-				printf("Debe elegir un numero entre  0 y 7\n");
+		else{
+			// Fijo el tipo de evento
+			p_Evento->command = opcion[0];
+
+			// Pido el proximo dato. nro de led
+			printf("\nLed a Encender(0-7): ");
+			waitfor(getswf( opcion ));
+			int_opcion = atoi( opcion );
+
+			// Validacion de nro de led
+			if ( int_opcion < 0 || int_opcion > 7){
+				printf("\nERROR: Debe elegir un numero entre 0 y 7. Volver a ingresar\n");
 			}
-         else{
-				wfd MENU_pedirFechaHora( p2_FechaHora );  // tiene que dar un stuct de la horaFecha para ele evento, falta resolver que pedirHoraFecha devuelva eso.
-            printf("DEBUG: Se ejecuto pedirFechaHora");
-            timestamp = mktime( p2_FechaHora );
-            printFechaHora( p2_FechaHora );
-            e->command = *p_tipoevento;
-            e->param = *p_led;
-            e->time = timestamp;
-            return;
+			else{
+				// Fijo el nro de led
+				p_Evento->param = opcion[0];
+
+				// Pido el siguiente dato. Fecha y Hora
+				wfd MENU_pedirFechaHora( p_FechaHora );  // tiene que dar un stuct de la horaFecha para ele evento, falta resolver que pedirHoraFecha devuelva eso.
+				printf("\nDEBUG: Se ejecuto pedirFechaHora");
+				timestamp = mktime( p_FechaHora );
+				printFechaHora( p_FechaHora );
+				p_Evento->time = timestamp;
+				return;
          }
       }
    }
 }
+
 
 /*** BeginHeader MENU_eliminarEvento */
 cofunc int MENU_eliminarEvento();
@@ -149,7 +158,7 @@ cofunc int MENU_eliminarEvento(){
 			if (numEvento[0] > 0 && numEvento[0] < MAX_EVENTS ){
 				return numEvento[0]-1;
 			}else{
-				printf("Numero de Evento Incorrecto \n");
+				printf("\nNumero de Evento Incorrecto");
 			}
 		}
 
@@ -157,11 +166,12 @@ cofunc int MENU_eliminarEvento(){
 
 }
 
+
 /*** BeginHeader MENU_consultarEventos */
 cofunc void MENU_consultarEventos();
 /*** EndHeader */
 cofunc void MENU_consultarEventos(){
-	printf("-------- CONFIGURACION: LISTAR EVENTOS -------\n");
+	printf("\n\n-------- LISTAR EVENTOS -------\n");
 }
 
 
