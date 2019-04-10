@@ -5,7 +5,8 @@ enum opcionMenu {
 	OPCION_2,
 	OPCION_3,
 	OPCION_4,
-	OPCION_5
+	OPCION_5,
+   OPCION_6
 };
 
 char auxiliarParaDatosEventos[2];

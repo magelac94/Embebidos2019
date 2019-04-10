@@ -38,10 +38,13 @@ void printFechaHora ( struct tm* p_FechaHora );
 /*** EndHeader */
 // Imprime la fecha y la hora de una estructura tm
 void printFechaHora ( struct tm* p_FechaHora ){
+	int anio;
+   anio = (int)p_FechaHora->tm_year;
+   anio = anio + 1900;
 	printf("\nFecha: %d/%d/%d\nHora actual: %d:%d",
 		p_FechaHora->tm_mday,
 		p_FechaHora->tm_mon,
-		p_FechaHora->tm_year,
+		anio,
 		p_FechaHora->tm_hour,
 		p_FechaHora->tm_min
 		);
