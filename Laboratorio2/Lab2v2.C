@@ -1,8 +1,8 @@
 #use IO.LIB
 #use LED.LIB
-#use UTILITIES.LIB
-
 #use EVENTOS.LIB
+
+#use UTILITIES.LIB
 #use RTC.lib
 #use MENU.LIB
 

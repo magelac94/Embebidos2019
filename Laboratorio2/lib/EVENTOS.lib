@@ -45,20 +45,21 @@ void EVENTOS_initEventos(){
 
 
 /*** BeginHeader EVENTOS_agregarEvento */
-void EVENTOS_agregarEvento( Event *p_evento);
+void EVENTOS_agregarEvento( Event *p_tempevento);
 /*** EndHeader */
-void EVENTOS_agregarEvento( Event *p_evento)
+void EVENTOS_agregarEvento( Event *p_tempevento)
 {
 	int posicion;
-   Event e;
+	//Event evento;
 	posicion = posicionLibre() ;
 	if (posicion == -1){
 		printf("\nERROR: No se puede ingresar evento, calendario lleno.");
-	}else{
-      e = eventos[posicion];
-		e.command = (*p_evento).command;
-      e.param = (*p_evento).param;
-      e.time = (*p_evento).time;
+	}
+	else{
+		//evento = eventos[posicion];
+		eventos[posicion].command = p_tempevento->command;
+		eventos[posicion].param = p_tempevento->param;
+		eventos[posicion].time = p_tempevento->time;
 		printf("\nEvento AGREGADO correctamente");
 	}
 }
@@ -74,28 +75,12 @@ void EVENTOS_eliminarEvento(int posicionEvento){
 void EVENTOS_listarEventos();
 /*** EndHeader */
 void EVENTOS_listarEventos(){
-	int i, j, int_item;
-	struct tm *p_FechaHora;
-   char unChar;
+	int i;
 
-	j = 1;
-
-	for (i=0;i<MAX_EVENTS;i++){
+	for ( i=0; i<MAX_EVENTS; i++ ){
 		printf("\n----------------------------------------:\n" );
-		printf("NUMERO DE EVENTO %d:\n", j);
-
-      int_item = atoi(&eventos[i].command);
-      //unChar = UT_ASCIItoCharNum( eventos[i].command );  esto parece que no anda
-      printf("COMANDO: %d\n", int_item);
-
-      int_item = atoi(&eventos[i].param);
-		printf("LED : %d\n", int_item);
-
-      mktm( p_FechaHora, eventos[i].time );
-		printf("HORA:\n");
-      printFechaHora( p_FechaHora );
-
-		j++;
+		printf("NUMERO DE EVENTO %d:\n", i);
+		printEvento( &eventos[i] );
 	}
 }
 
