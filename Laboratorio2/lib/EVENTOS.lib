@@ -13,11 +13,14 @@ typedef struct {		// Struct de eventos
 Event eventos[MAX_EVENTS];		// Lista de Eventos
 /*** EndHeader */
 
+
+
+
+//// Metodos
+
 /*** BeginHeader  posicionLibre */
 int posicionLibre();
 /*** EndHeader */
-
-//// Metodos
 int posicionLibre(){  	// Devuelve primer posicion libre del array de eventos
 	int i;
 	for (i=0;i<MAX_EVENTS;i++){
@@ -65,10 +68,12 @@ void EVENTOS_agregarEvento( Event *p_tempevento)
 }
 
 /*** BeginHeader EVENTOS_eliminarEvento */
-void EVENTOS_eliminarEvento();
+void EVENTOS_eliminarEvento( int posicionEvento );
 /*** EndHeader */
-void EVENTOS_eliminarEvento(int posicionEvento){
+void EVENTOS_eliminarEvento( int posicionEvento ){
 	eventos[posicionEvento].command = 0xFF;
+	eventos[posicionEvento].param = 0xFF;
+	printf("Evento %d eliminado correctamente.", posicionEvento);
 }
 
 /*** BeginHeader EVENTOS_listarEventos */
@@ -79,15 +84,15 @@ void EVENTOS_listarEventos(){
 
 	for ( i=0; i<MAX_EVENTS; i++ ){
 		printf("\n----------------------------------------:\n" );
-		printf("NUMERO DE EVENTO %d:\n", i);
+		printf("NUMERO DE EVENTO: %d\n", i + 1);
 		printEvento( &eventos[i] );
 	}
 }
 
 /*** BeginHeader EVENTOS_ejecutarEventos */
-void EVENTO_ejecutarEventos();
+void EVENTOS_ejecutarEventos();
 /*** EndHeader */
-void EVENTO_ejecutarEventos(){
+void EVENTOS_ejecutarEventos(){
 	int i;
 	for (i=0;i<MAX_EVENTS;i++){
 		if (eventos[i].command != 0xFF){

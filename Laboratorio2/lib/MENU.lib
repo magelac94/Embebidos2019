@@ -47,7 +47,8 @@ cofunc void MENU_pedirFechaHora( struct tm* p_FechaHora ){   // devolver el stru
 
 	char temp[10];
 	int int_temp;
-	
+
+	//ClearScreen();
 	printf("\n\n-------- CONFIGURACION: FIJAR HORA -------\n");
 	printf("\n Ingrese el anio: ");
 	waitfor( getswf( temp ));
@@ -60,7 +61,6 @@ cofunc void MENU_pedirFechaHora( struct tm* p_FechaHora ){   // devolver el stru
 	waitfor( getswf( temp ));
 	// Convertimos a int
 	int_temp = atoi( temp );
-	printf("\nDEBUG: El valor de int_mes es: %d", int_temp);
 	p_FechaHora->tm_mon = (char)int_temp;
 
 	printf("\n Ingrese el dia: ");
@@ -96,12 +96,12 @@ cofunc void MENU_consultarHora(){
 cofunc void MENU_pedirDatosEvento( Event *p_Evento );
 /*** EndHeader */
 cofunc void MENU_pedirDatosEvento( Event *p_Evento ){
-	
+
 	char opcion[5];
 	int int_opcion;
 	struct tm* p_FechaHora;
 	unsigned long timestamp;
-	
+
 	printf("\n\n-------- CONFIGURACION: AGREGAR EVENTO -------\n\n");
 	while(1){
 		printf("\nTipo de Evento (1-Encender o 2-Apagar): ");
@@ -130,8 +130,7 @@ cofunc void MENU_pedirDatosEvento( Event *p_Evento ){
 				p_Evento->param = opcion[0];
 
 				// Pido el siguiente dato. Fecha y Hora
-				wfd MENU_pedirFechaHora( p_FechaHora );  // tiene que dar un stuct de la horaFecha para ele evento, falta resolver que pedirHoraFecha devuelva eso.
-				printf("\nDEBUG: Se ejecuto pedirFechaHora");
+				wfd MENU_pedirFechaHora( p_FechaHora );
 				timestamp = mktime( p_FechaHora );
 				printFechaHora( p_FechaHora );
 				p_Evento->time = timestamp;
@@ -143,21 +142,28 @@ cofunc void MENU_pedirDatosEvento( Event *p_Evento ){
 
 
 /*** BeginHeader MENU_eliminarEvento */
-cofunc int MENU_eliminarEvento();
+cofunc int MENU_eliminarEvento( );
 /*** EndHeader */
-cofunc int MENU_eliminarEvento(){
-	char numEvento[2];
+cofunc int MENU_eliminarEvento( ){
+
+	char numEvento[5];
+	int int_numEvento;
+
 	while(1){
-		printf("-------- CONFIGURACION: ELIMINAR EVENTO -------\n");
-		printf("Para eliminar ingrese numero de evento (0 para listar los eventos): \n");
+		printf("\n\n-------- ELIMINAR EVENTO -------\n");
+		printf("\nPara eliminar ingrese numero de evento (0 para listar los eventos): \n");
 		waitfor(getswf( numEvento ));
-		printf("EVENTO ELEGIDO: --- %s ---- \n",&numEvento[0]);
-		if (numEvento[0] == '0'){
+		int_numEvento = atoi( numEvento );
+		if ( int_numEvento == 0 ){
 			EVENTOS_listarEventos();
-		}else{
-			if (numEvento[0] > 0 && numEvento[0] < MAX_EVENTS ){
-				return numEvento[0]-1;
-			}else{
+		}
+		else{
+			if ( int_numEvento > 0 && int_numEvento <= MAX_EVENTS ){
+				int_numEvento = int_numEvento - 1;
+				printf( "\nMENU_eliminarEvento int a devolver: %d", int_numEvento );
+				return int_numEvento;
+			}
+			else{
 				printf("\nNumero de Evento Incorrecto");
 			}
 		}

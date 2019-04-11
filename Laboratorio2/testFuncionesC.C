@@ -3,6 +3,7 @@
 #use RTC.lib
 #use Utilities.lib
 
+
 #define TEN		10
 char entrada[10];
 struct tm FechaHora;
