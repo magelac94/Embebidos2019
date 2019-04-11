@@ -64,9 +64,9 @@ main(){
 
 				case ( OPCION_4 ):
 					// ELIMINAR EVENTO SEGUN EL NUMERO DE EVENTO (ES DE 1 EN adelante segun posicion en el array))
-					int_id_evento = wfd MENU_eliminarEvento( );
+					wfd MENU_eliminarEvento( &int_id_evento );
 					printf("\nint_id_evento es : %d", int_id_evento);
-					EVENTOS_eliminarEvento( int_id_evento );
+					EVENTOS_eliminarEvento( &int_id_evento );
 					break;
 
 				case( OPCION_5 ):

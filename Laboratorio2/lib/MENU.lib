@@ -142,9 +142,9 @@ cofunc void MENU_pedirDatosEvento( Event *p_Evento ){
 
 
 /*** BeginHeader MENU_eliminarEvento */
-cofunc int MENU_eliminarEvento( );
+cofunc void MENU_eliminarEvento( int *p_posicionEvento );
 /*** EndHeader */
-cofunc int MENU_eliminarEvento( ){
+cofunc void MENU_eliminarEvento( int *p_posicionEvento ){
 
 	char numEvento[5];
 	int int_numEvento;
@@ -159,9 +159,8 @@ cofunc int MENU_eliminarEvento( ){
 		}
 		else{
 			if ( int_numEvento > 0 && int_numEvento <= MAX_EVENTS ){
-				int_numEvento = int_numEvento - 1;
-				printf( "\nMENU_eliminarEvento int a devolver: %d", int_numEvento );
-				return int_numEvento;
+				*p_posicionEvento = int_numEvento - 1;
+				printf( "\nMENU_eliminarEvento int a devolver: %d", *p_posicionEvento );
 			}
 			else{
 				printf("\nNumero de Evento Incorrecto");
