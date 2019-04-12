@@ -1,3 +1,7 @@
+// Integrantes: Aguerrondo, Carballo, Martin
+// Abril 2019 UCU
+
+
 #use IO.LIB
 #use LED.LIB
 #use EVENTOS.LIB
