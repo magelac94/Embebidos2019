@@ -98,5 +98,10 @@ main(){
 			EVENTOS_ejecutarEventos();
 		}
 
+		// Parte 3 - Maquina de estado para checkear si es momento de ejecutar algun evento programado
+		costate TCP always_on
+		{
+			//EVENTOS_ejecutarEventos();
+		}
 	}
 }
