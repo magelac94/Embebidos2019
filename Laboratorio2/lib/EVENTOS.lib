@@ -94,21 +94,21 @@ void EVENTOS_ejecutarEventos();
 /*** EndHeader */
 void EVENTOS_ejecutarEventos(){
 	int i;
-	for (i=0;i<MAX_EVENTS;i++){
+	
+	for ( i=0; i<MAX_EVENTS; i++ ){
 		if (eventos[i].command != 0xFF){
-
-			// verifico hora
-			if (eventos[i].time < RTC_leerFechaHora)  { /// LA COMPARACION ESTA MAL REALIZARLA BIEN CON EL STRUC CORREPONDIENTE
-														/// DEBE COMPARAR SI LA FECHA DEL EVENTO ES MAS CHICA QUE LA ACTUAL PARA EJECUTAR EL COMANDO
+			
+			// verifico hora del evento comparando con el timestamp de la hora actual
+			if ( eventos[i].time < RTC_leerTimestamp() )  { 
 				// verifico si debe encender o apagar el led
-				if (eventos[i].command == 0){
-					LED_RESET(eventos[i].param);
-				}else{
-					LED_SET(eventos[i].param);
+				if ( eventos[i].command == '0' ){
+					LED_RESET( eventos[i].param );
 				}
-				EVENTOS_eliminarEvento(i); // Borro el elemento
+				else {
+					LED_SET( eventos[i].param );
+				}
+				//EVENTOS_eliminarEvento(i); // Borro el elemento
 			}
 		}
 	}
-	printf("No hay mas Eventos\n");
 }

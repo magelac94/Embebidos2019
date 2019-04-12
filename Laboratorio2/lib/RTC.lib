@@ -25,3 +25,12 @@ void RTC_leerFechaHora( struct tm* p_FechaHora ){
 	timestamp = read_rtc();
 	mktm( p_FechaHora, timestamp );
 }
+
+/*** BeginHeader RTC_leerTimestamp */
+unsigned long RTC_leerTimestamp();
+/*** EndHeader */
+// Lee un timestamp desde el RTC y lo convierte en una
+// estructura tm devolviendolo en el puntero p_FechaHora
+unsigned long RTC_leerTimestamp(){
+	return read_rtc();
+}

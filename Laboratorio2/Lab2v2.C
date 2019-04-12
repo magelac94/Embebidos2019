@@ -64,6 +64,7 @@ main(){
 
 				case ( OPCION_4 ):
 					// ELIMINAR EVENTO SEGUN EL NUMERO DE EVENTO (ES DE 1 EN adelante segun posicion en el array))
+               // Elimina siempre el 1 aunque el menu nos retorna el id correcto.
 					int_id_evento = wfd MENU_eliminarEvento( );
 					printf("\nint_id_evento es : %d", int_id_evento);
 					EVENTOS_eliminarEvento( int_id_evento );
@@ -90,8 +91,7 @@ main(){
 		// Parte 3 - Maquina de estado para checkear si es momento de ejecutar algun evento programado
 		costate EVENT_CHECKER always_on
 		{
-	  	//	wfd MENU_consultarEventos();
-    //     EVENTO_ejecutarEventos();
+			EVENTOS_ejecutarEventos();
 		}
 
 	}

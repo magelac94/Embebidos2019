@@ -109,7 +109,7 @@ cofunc void MENU_pedirDatosEvento( Event *p_Evento ){
 		int_opcion = atoi( opcion );
 
 		// Validacion de tipo evento
-		if ( int_opcion < 0 || int_opcion > 1){
+		if ( int_opcion < 1 || int_opcion > 2 ){
 			printf("\nERROR: Debe elegir 1 o 2. Volver a ingresar\n");
 		}
 		else{
