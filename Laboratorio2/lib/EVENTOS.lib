@@ -68,12 +68,12 @@ void EVENTOS_agregarEvento( Event *p_tempevento)
 }
 
 /*** BeginHeader EVENTOS_eliminarEvento */
-void EVENTOS_eliminarEvento( int *p_posicionEvento );
+void EVENTOS_eliminarEvento( int posicionEvento );
 /*** EndHeader */
-void EVENTOS_eliminarEvento( int *p_posicionEvento ){
-	eventos[*p_posicionEvento].command = 0xFF;
-	eventos[*p_posicionEvento].param = 0xFF;
-	printf("Evento %d eliminado correctamente.", *p_posicionEvento);
+void EVENTOS_eliminarEvento( int posicionEvento ){
+	eventos[posicionEvento].command = 0xFF;
+	eventos[posicionEvento].param = 0xFF;
+	printf("Evento %d eliminado correctamente.", posicionEvento);
 }
 
 /*** BeginHeader EVENTOS_listarEventos */
