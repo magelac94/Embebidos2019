@@ -1,0 +1,143 @@
+// Integrantes: Aguerrondo, Carballo, Martin
+// Abril 2019 UCU
+
+/*** BeginHeader */
+
+/*** EndHeader */
+
+/*** BeginHeader UT_delay */
+void UT_delay( long p_ms );
+/*** EndHeader */
+void UT_delay( long p_ms )
+{
+	long timer;
+
+	timer = MS_TIMER + p_ms;
+
+	while ((long)(MS_TIMER - timer) < 0);
+}
+
+/*** BeginHeader UT_ASCIItoCharNum */
+char UT_ASCIItoCharNum( char p_input );
+/*** EndHeader */
+char UT_ASCIItoCharNum( char p_input )
+{
+	if( p_input >= '0' && p_input <= '9' )
+	{
+		return (p_input-'0');
+	}
+	else if( p_input >= 'A' && p_input <= 'F')
+	{
+		return (p_input + 10 - 'A');
+	}
+	else
+	{
+		return -1;
+	}
+}
+
+/*** BeginHeader printFechaHora */
+void printFechaHora ( struct tm* p_FechaHora );
+/*** EndHeader */
+// Imprime la fecha y la hora de una estructura tm
+void printFechaHora ( struct tm* p_FechaHora ){
+	int dia, mes, anio, hora, minuto;
+
+	anio = (int)p_FechaHora->tm_year;
+	anio = anio + 1900;
+	mes = (int)p_FechaHora->tm_mon;
+	dia = (int)p_FechaHora->tm_mday;
+	hora = (int)p_FechaHora->tm_hour;
+	minuto = (int)p_FechaHora->tm_min;
+	
+	if ( mes < 10 ){
+		if ( dia < 10){
+			if ( hora < 10 ){
+				if ( minuto < 10 ){
+					printf("\nFecha: 0%u/0%u/%u\nHora: 0%u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: 0%u/0%u/%u\nHora: 0%u:%u", dia, mes, anio, hora, minuto);
+				}
+			} else {
+				if ( minuto < 10 ){
+					printf("\nFecha: 0%u/0%u/%u\nHora: %u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: 0%u/0%u/%u\nHora: %u:%u", dia, mes, anio, hora, minuto);
+				}
+			}
+		} else {
+			if ( hora < 10 ){
+				if ( minuto < 10 ){
+					printf("\nFecha: %u/0%u/%u\nHora: 0%u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: %u/0%u/%u\nHora: 0%u:%u", dia, mes, anio, hora, minuto);
+				}
+			} else {
+				if ( minuto < 10 ){
+					printf("\nFecha: %u/0%u/%u\nHora: %u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: %u/0%u/%u\nHora: %u:%u", dia, mes, anio, hora, minuto);
+				}
+			}
+		}
+	} else {
+		if ( dia < 10){
+			if ( hora < 10 ){
+				if ( minuto < 10 ){
+					printf("\nFecha: 0%u/%u/%u\nHora: 0%u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: 0%u/%u/%u\nHora: 0%u:%u", dia, mes, anio, hora, minuto);
+				}
+			} else {
+				if ( minuto < 10 ){
+					printf("\nFecha: 0%u/%u/%u\nHora: %u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: 0%u/%u/%u\nHora: %u:%u", dia, mes, anio, hora, minuto);
+				}
+			}
+		} else {
+			if ( hora < 10 ){
+				if ( minuto < 10 ){
+					printf("\nFecha: %u/%u/%u\nHora: 0%u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: %u/%u/%u\nHora: 0%u:%u", dia, mes, anio, hora, minuto);
+				}
+			} else {
+				if ( minuto < 10 ){
+					printf("\nFecha: %u/%u/%u\nHora: %u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: %u/%u/%u\nHora: %u:%u", dia, mes, anio, hora, minuto);
+				}
+			}
+		}
+	}
+}
+
+/*** BeginHeader printEvento */
+void printEvento ( Event *p_evento );
+/*** EndHeader */
+void printEvento ( Event *p_evento ){
+	struct tm FechaHora;
+	printf("\nCommand: %c", p_evento->command );
+	printf("\nParam: %c", p_evento->param );
+
+	printf("\nTime: ");
+	mktm( &FechaHora, p_evento->time );
+	printFechaHora( &FechaHora );
+}
+
+/*** BeginHeader  ClearScreen*/
+void ClearScreen();	
+/*** EndHeader */
+/* START FUNCTION DESCRIPTION ********************************************
+ClearScreen                  <Func_IO.LIB>
+
+SYNTAX:        void ClearScreen();	
+
+DESCRIPTION:   Ejecuta un clear en la consola stdio
+RETURN VALUE:	Void.
+END DESCRIPTION **********************************************************/
+void ClearScreen()
+{
+   printf ( "\x1Bt" );            	// Space Opens Window
+}

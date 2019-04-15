@@ -1,0 +1,130 @@
+// Integrantes: Aguerrondo, Carballo, Martin
+// Abril 2019 UCU
+
+/*** BeginHeader */
+// Definicion de macros
+#define MAX_EVENTS 16
+
+// Definicion de estructuras
+typedef struct {		// Struct de eventos
+	char command;
+	char param;
+	unsigned long time;
+} Event;
+
+// Definicion de variables
+Event eventos[MAX_EVENTS];		// Lista de Eventos
+
+/*** EndHeader */
+
+
+
+
+//// Metodos
+
+/*** BeginHeader  posicionLibre */
+void posicionLibre( int *p_posicion );
+/*** EndHeader */
+void posicionLibre( int *p_posicion ){  	// Devuelve primer posicion libre del array de eventos
+	int i;
+	for ( i = 0 ; i < MAX_EVENTS ; i++ ){
+		if (eventos[i].command == 0xFF){
+			*p_posicion = i;
+			return;
+		}
+	}
+	// Si no salio por el for es que no hay mas lugar. Retorno -1
+	*p_posicion = -1;
+	return;
+}
+
+/*** BeginHeader EVENTOS_initEventos*/
+void EVENTOS_initEventos();
+/*** EndHeader */
+void EVENTOS_initEventos(){
+	int i;
+	for (i=0;i<MAX_EVENTS;i++){
+		eventos[i].command = 0xFF;
+      eventos[i].param = 0xFF;
+	}
+	printf("\nEventos iniciados correctamente");
+}
+
+
+/*** BeginHeader EVENTOS_agregarEvento */
+void EVENTOS_agregarEvento( Event *p_tempevento);
+/*** EndHeader */
+void EVENTOS_agregarEvento( Event *p_tempevento)
+{
+	int posicion;
+	//Event evento;
+	posicionLibre( &posicion );
+	//printf("\nDEBUG: Posicion libre encontrada: %d", posicion );
+	if (posicion == -1){
+		printf("\nERROR: No se puede ingresar evento, calendario lleno.");
+	}
+	else{
+		//evento = eventos[posicion];
+		eventos[posicion].command = p_tempevento->command;
+		eventos[posicion].param = p_tempevento->param;
+		eventos[posicion].time = p_tempevento->time;
+		printf("\nINFO: Evento AGREGADO correctamente");
+	}
+}
+
+/*** BeginHeader EVENTOS_eliminarEvento */
+void EVENTOS_eliminarEvento( int posicionEvento );
+/*** EndHeader */
+void EVENTOS_eliminarEvento( int posicionEvento ){
+	eventos[posicionEvento].command = 0xFF;
+	eventos[posicionEvento].param = 0xFF;
+	printf("\nINFO: Evento %d eliminado correctamente.", posicionEvento);
+}
+
+/*** BeginHeader EVENTOS_listarEventos */
+void EVENTOS_listarEventos();
+/*** EndHeader */
+void EVENTOS_listarEventos(){
+	int i;
+
+	for ( i=0; i<MAX_EVENTS; i++ ){
+		if ( eventos[i].command != 0xFF ){
+			printf("\n----------------------------------------:\n" );
+			printf("NUMERO DE EVENTO: %d\n", i + 1);
+			printEvento( &eventos[i] );
+		}
+
+	}
+}
+
+/*** BeginHeader EVENTOS_ejecutarEventos */
+void EVENTOS_ejecutarEventos();
+/*** EndHeader */
+void EVENTOS_ejecutarEventos(){
+	int i, comando;
+
+	for ( i=0; i<MAX_EVENTS; i++ ){
+		if (eventos[i].command != 0xFF){
+
+			// verifico hora del evento comparando con el timestamp de la hora actual
+			if ( eventos[i].time < RTC_leerTimestamp() )  {
+
+				// Verifico el tipo de evento
+				comando = eventos[i].command  - '0';
+				//printf("\nDEBUG: El comando es %u", comando);
+				switch( comando ){
+					case( OPCION_1 ):
+						printf("\nDEBUG: Evento PRENDER LED");
+						LED_SET( eventos[i].param );
+						break;
+
+					case( OPCION_2 ):
+						printf("\nDEBUG: Evento APAGAR LED");
+						LED_RESET( eventos[i].param );
+						break;
+				}
+				EVENTOS_eliminarEvento(i); // Borro el elemento
+			}
+		}
+	}
+}
