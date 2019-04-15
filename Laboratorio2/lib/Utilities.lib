@@ -41,16 +41,76 @@ void printFechaHora ( struct tm* p_FechaHora );
 /*** EndHeader */
 // Imprime la fecha y la hora de una estructura tm
 void printFechaHora ( struct tm* p_FechaHora ){
-	int anio;
+	int dia, mes, anio, hora, minuto;
+
 	anio = (int)p_FechaHora->tm_year;
 	anio = anio + 1900;
-	printf("\nFecha: %d/%d/%d\nHora actual: %d:%d",
-		p_FechaHora->tm_mday,
-		p_FechaHora->tm_mon,
-		anio,
-		p_FechaHora->tm_hour,
-		p_FechaHora->tm_min
-		);
+	mes = (int)p_FechaHora->tm_mon;
+	dia = (int)p_FechaHora->tm_mday;
+	hora = (int)p_FechaHora->tm_hour;
+	minuto = (int)p_FechaHora->tm_min;
+	
+	if ( mes < 10 ){
+		if ( dia < 10){
+			if ( hora < 10 ){
+				if ( minuto < 10 ){
+					printf("\nFecha: 0%u/0%u/%u\nHora: 0%u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: 0%u/0%u/%u\nHora: 0%u:%u", dia, mes, anio, hora, minuto);
+				}
+			} else {
+				if ( minuto < 10 ){
+					printf("\nFecha: 0%u/0%u/%u\nHora: %u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: 0%u/0%u/%u\nHora: %u:%u", dia, mes, anio, hora, minuto);
+				}
+			}
+		} else {
+			if ( hora < 10 ){
+				if ( minuto < 10 ){
+					printf("\nFecha: %u/0%u/%u\nHora: 0%u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: %u/0%u/%u\nHora: 0%u:%u", dia, mes, anio, hora, minuto);
+				}
+			} else {
+				if ( minuto < 10 ){
+					printf("\nFecha: %u/0%u/%u\nHora: %u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: %u/0%u/%u\nHora: %u:%u", dia, mes, anio, hora, minuto);
+				}
+			}
+		}
+	} else {
+		if ( dia < 10){
+			if ( hora < 10 ){
+				if ( minuto < 10 ){
+					printf("\nFecha: 0%u/%u/%u\nHora: 0%u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: 0%u/%u/%u\nHora: 0%u:%u", dia, mes, anio, hora, minuto);
+				}
+			} else {
+				if ( minuto < 10 ){
+					printf("\nFecha: 0%u/%u/%u\nHora: %u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: 0%u/%u/%u\nHora: %u:%u", dia, mes, anio, hora, minuto);
+				}
+			}
+		} else {
+			if ( hora < 10 ){
+				if ( minuto < 10 ){
+					printf("\nFecha: %u/%u/%u\nHora: 0%u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: %u/%u/%u\nHora: 0%u:%u", dia, mes, anio, hora, minuto);
+				}
+			} else {
+				if ( minuto < 10 ){
+					printf("\nFecha: %u/%u/%u\nHora: %u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: %u/%u/%u\nHora: %u:%u", dia, mes, anio, hora, minuto);
+				}
+			}
+		}
+	}
 }
 
 /*** BeginHeader printEvento */
@@ -58,8 +118,8 @@ void printEvento ( Event *p_evento );
 /*** EndHeader */
 void printEvento ( Event *p_evento ){
 	struct tm FechaHora;
-	printf("\nCommand: %d", p_evento->command );
-	printf("\nParam: %d", p_evento->param );
+	printf("\nCommand: %c", p_evento->command );
+	printf("\nParam: %c", p_evento->param );
 
 	printf("\nTime: ");
 	mktm( &FechaHora, p_evento->time );

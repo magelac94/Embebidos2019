@@ -62,7 +62,7 @@ main(){
 
 				case( OPCION_3 ):
 					// AGREGAR EVENTO
-					wfd MENU_pedirDatosEvento( &unEvento );
+					wfd MENU_pedirDatosEvento( &unEvento, &FechaHora );
 					EVENTOS_agregarEvento( &unEvento );
 					break;
 

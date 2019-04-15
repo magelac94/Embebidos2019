@@ -4,7 +4,8 @@
 /*** BeginHeader */
 // Definicion de estructuras
 enum opcionMenu {
-	OPCION_1 = 1,
+	OPCION_0 = 0,
+	OPCION_1,
 	OPCION_2,
 	OPCION_3,
 	OPCION_4,
@@ -46,12 +47,11 @@ Para tener a la vista.
 /*** BeginHeader MENU_pedirFechaHora */
 cofunc void MENU_pedirFechaHora( struct tm* p_FechaHora );
 /*** EndHeader */
-cofunc void MENU_pedirFechaHora( struct tm* p_FechaHora ){   // devolver el struct
+cofunc void MENU_pedirFechaHora( struct tm* p_FechaHora ){
 
 	char temp[10];
 	int int_temp;
 
-	//ClearScreen();
 	printf("\n\n-------- CONFIGURACION: FIJAR HORA -------\n");
 	printf("\n Ingrese el anio: ");
 	waitfor( getswf( temp ));
@@ -83,6 +83,9 @@ cofunc void MENU_pedirFechaHora( struct tm* p_FechaHora ){   // devolver el stru
 	// Convertimos a int
 	int_temp = atoi( temp );
 	p_FechaHora->tm_min = (char)int_temp;
+	
+	// Seteamos segundos en cero
+	p_FechaHora->tm_sec = 0x00;
 
 }
 
@@ -91,21 +94,21 @@ cofunc void MENU_pedirFechaHora( struct tm* p_FechaHora ){   // devolver el stru
 cofunc void MENU_consultarHora();
 /*** EndHeader */
 cofunc void MENU_consultarHora(){
-	printf("\n\n-------- CONSULTAR HORA ACTUAL -------\n");
+	printf("\n\n-------- CONSULTAR HORA ACTUAL -------\n\n");
 }
 
 
 /*** BeginHeader MENU_pedirDatosEvento */
-cofunc void MENU_pedirDatosEvento( Event *p_Evento );
+cofunc void MENU_pedirDatosEvento( Event *p_Evento, struct tm *p_FechaHora );
 /*** EndHeader */
-cofunc void MENU_pedirDatosEvento( Event *p_Evento ){
+cofunc void MENU_pedirDatosEvento( Event *p_Evento, struct tm *p_FechaHora ){
 
 	char opcion[5];
 	int int_opcion;
-	struct tm* p_FechaHora;
+	//struct tm p_FechaHora;
 	unsigned long timestamp;
 
-	printf("\n\n-------- CONFIGURACION: AGREGAR EVENTO -------\n\n");
+	printf("\n\n-------- AGREGAR EVENTO --------------\n\n");
 	while(1){
 		printf("\nTipo de Evento (1-Encender o 2-Apagar): ");
 		waitfor(getswf( opcion ));
@@ -134,8 +137,8 @@ cofunc void MENU_pedirDatosEvento( Event *p_Evento ){
 
 				// Pido el siguiente dato. Fecha y Hora
 				wfd MENU_pedirFechaHora( p_FechaHora );
-				timestamp = mktime( p_FechaHora );
 				printFechaHora( p_FechaHora );
+				timestamp = mktime( p_FechaHora );
 				p_Evento->time = timestamp;
 				return;
          }

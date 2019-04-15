@@ -3,7 +3,7 @@
 
 /*** BeginHeader */
 // Definicion de macros
-#define MAX_EVENTS 5
+#define MAX_EVENTS 8
 
 // Definicion de estructuras
 typedef struct {		// Struct de eventos
@@ -14,6 +14,7 @@ typedef struct {		// Struct de eventos
 
 // Definicion de variables
 Event eventos[MAX_EVENTS];		// Lista de Eventos
+
 /*** EndHeader */
 
 
@@ -66,7 +67,7 @@ void EVENTOS_agregarEvento( Event *p_tempevento)
 		eventos[posicion].command = p_tempevento->command;
 		eventos[posicion].param = p_tempevento->param;
 		eventos[posicion].time = p_tempevento->time;
-		printf("\nEvento AGREGADO correctamente");
+		printf("\nINFO: Evento AGREGADO correctamente");
 	}
 }
 
@@ -76,7 +77,7 @@ void EVENTOS_eliminarEvento( int posicionEvento );
 void EVENTOS_eliminarEvento( int posicionEvento ){
 	eventos[posicionEvento].command = 0xFF;
 	eventos[posicionEvento].param = 0xFF;
-	printf("Evento %d eliminado correctamente.", posicionEvento);
+	printf("\nINFO: Evento %d eliminado correctamente.", posicionEvento);
 }
 
 /*** BeginHeader EVENTOS_listarEventos */
@@ -86,9 +87,12 @@ void EVENTOS_listarEventos(){
 	int i;
 
 	for ( i=0; i<MAX_EVENTS; i++ ){
-		printf("\n----------------------------------------:\n" );
-		printf("NUMERO DE EVENTO: %d\n", i + 1);
-		printEvento( &eventos[i] );
+		if ( eventos[i].command != 0xFF ){
+			printf("\n----------------------------------------:\n" );
+			printf("NUMERO DE EVENTO: %d\n", i + 1);
+			printEvento( &eventos[i] );
+		}
+
 	}
 }
 
@@ -96,21 +100,29 @@ void EVENTOS_listarEventos(){
 void EVENTOS_ejecutarEventos();
 /*** EndHeader */
 void EVENTOS_ejecutarEventos(){
-	int i;
-	
+	int i, comando;
+
 	for ( i=0; i<MAX_EVENTS; i++ ){
 		if (eventos[i].command != 0xFF){
-			
+
 			// verifico hora del evento comparando con el timestamp de la hora actual
-			if ( eventos[i].time < RTC_leerTimestamp() )  { 
-				// verifico si debe encender o apagar el led
-				if ( eventos[i].command == '0' ){
-					LED_RESET( eventos[i].param );
+			if ( eventos[i].time < RTC_leerTimestamp() )  {
+
+				// Verifico el tipo de evento
+				comando = eventos[i].command  - '0';
+				printf("EL COMANDO ES %u", comando);
+				switch( comando ){
+					case( OPCION_1 ):
+						printf("\nEVENTO PRENDER LED");
+						LED_SET( eventos[i].param );
+						break;
+
+					case( OPCION_2 ):
+						printf("\nEVENTO APAGAR LED");
+						LED_RESET( eventos[i].param );
+						break;
 				}
-				else {
-					LED_SET( eventos[i].param );
-				}
-				//EVENTOS_eliminarEvento(i); // Borro el elemento
+				EVENTOS_eliminarEvento(i); // Borro el elemento
 			}
 		}
 	}
