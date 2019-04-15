@@ -3,7 +3,7 @@
 
 /*** BeginHeader */
 // Definicion de macros
-#define MAX_EVENTS 8
+#define MAX_EVENTS 16
 
 // Definicion de estructuras
 typedef struct {		// Struct de eventos
@@ -23,19 +23,19 @@ Event eventos[MAX_EVENTS];		// Lista de Eventos
 //// Metodos
 
 /*** BeginHeader  posicionLibre */
-int posicionLibre();
+void posicionLibre( int *p_posicion );
 /*** EndHeader */
-int posicionLibre(){  	// Devuelve primer posicion libre del array de eventos
+void posicionLibre( int *p_posicion ){  	// Devuelve primer posicion libre del array de eventos
 	int i;
-	for (i=0;i<MAX_EVENTS;i++){
+	for ( i = 0 ; i < MAX_EVENTS ; i++ ){
 		if (eventos[i].command == 0xFF){
-			return i;
+			*p_posicion = i;
+			return;
 		}
 	}
-	if (i==MAX_EVENTS-1){	// Indica que el array esta lleno
-		return -1;
-	}
-
+	// Si no salio por el for es que no hay mas lugar. Retorno -1
+	*p_posicion = -1;
+	return;
 }
 
 /*** BeginHeader EVENTOS_initEventos*/
@@ -58,7 +58,8 @@ void EVENTOS_agregarEvento( Event *p_tempevento)
 {
 	int posicion;
 	//Event evento;
-	posicion = posicionLibre() ;
+	posicionLibre( &posicion );
+	//printf("\nDEBUG: Posicion libre encontrada: %d", posicion );
 	if (posicion == -1){
 		printf("\nERROR: No se puede ingresar evento, calendario lleno.");
 	}
@@ -110,15 +111,15 @@ void EVENTOS_ejecutarEventos(){
 
 				// Verifico el tipo de evento
 				comando = eventos[i].command  - '0';
-				printf("EL COMANDO ES %u", comando);
+				//printf("\nDEBUG: El comando es %u", comando);
 				switch( comando ){
 					case( OPCION_1 ):
-						printf("\nEVENTO PRENDER LED");
+						printf("\nDEBUG: Evento PRENDER LED");
 						LED_SET( eventos[i].param );
 						break;
 
 					case( OPCION_2 ):
-						printf("\nEVENTO APAGAR LED");
+						printf("\nDEBUG: Evento APAGAR LED");
 						LED_RESET( eventos[i].param );
 						break;
 				}

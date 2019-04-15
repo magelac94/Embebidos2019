@@ -125,3 +125,19 @@ void printEvento ( Event *p_evento ){
 	mktm( &FechaHora, p_evento->time );
 	printFechaHora( &FechaHora );
 }
+
+/*** BeginHeader  ClearScreen*/
+void ClearScreen();	
+/*** EndHeader */
+/* START FUNCTION DESCRIPTION ********************************************
+ClearScreen                  <Func_IO.LIB>
+
+SYNTAX:        void ClearScreen();	
+
+DESCRIPTION:   Ejecuta un clear en la consola stdio
+RETURN VALUE:	Void.
+END DESCRIPTION **********************************************************/
+void ClearScreen()
+{
+   printf ( "\x1Bt" );            	// Space Opens Window
+}

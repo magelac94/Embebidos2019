@@ -62,6 +62,7 @@ main(){
 
 				case( OPCION_3 ):
 					// AGREGAR EVENTO
+					// Deberiamos chequear antes de pedir los datos si hoy lugar o no.
 					wfd MENU_pedirDatosEvento( &unEvento, &FechaHora );
 					EVENTOS_agregarEvento( &unEvento );
 					break;

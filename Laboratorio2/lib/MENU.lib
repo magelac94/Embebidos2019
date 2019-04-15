@@ -51,7 +51,8 @@ cofunc void MENU_pedirFechaHora( struct tm* p_FechaHora ){
 
 	char temp[10];
 	int int_temp;
-
+	
+	ClearScreen();
 	printf("\n\n-------- CONFIGURACION: FIJAR HORA -------\n");
 	printf("\n Ingrese el anio: ");
 	waitfor( getswf( temp ));
@@ -94,6 +95,7 @@ cofunc void MENU_pedirFechaHora( struct tm* p_FechaHora ){
 cofunc void MENU_consultarHora();
 /*** EndHeader */
 cofunc void MENU_consultarHora(){
+	ClearScreen();
 	printf("\n\n-------- CONSULTAR HORA ACTUAL -------\n\n");
 }
 
@@ -108,6 +110,7 @@ cofunc void MENU_pedirDatosEvento( Event *p_Evento, struct tm *p_FechaHora ){
 	//struct tm p_FechaHora;
 	unsigned long timestamp;
 
+	ClearScreen();
 	printf("\n\n-------- AGREGAR EVENTO --------------\n\n");
 	while(1){
 		printf("\nTipo de Evento (1-Encender o 2-Apagar): ");
@@ -154,7 +157,8 @@ cofunc int MENU_eliminarEvento( ){
 
 	char numEvento[5];
 	int int_numEvento;
-
+	
+	ClearScreen();
 	while(1){
 		printf("\n\n-------- ELIMINAR EVENTO -------\n");
 		printf("\nPara eliminar ingrese numero de evento (0 para listar los eventos): \n");
@@ -183,6 +187,7 @@ cofunc int MENU_eliminarEvento( ){
 cofunc void MENU_consultarEventos();
 /*** EndHeader */
 cofunc void MENU_consultarEventos(){
+	ClearScreen();
 	printf("\n\n-------- LISTAR EVENTOS -------\n");
 }
 
