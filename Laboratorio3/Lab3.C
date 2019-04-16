@@ -9,6 +9,7 @@
 #use UTILITIES.LIB
 #use RTC.lib
 #use MENU.LIB
+#use TCP_CON.lib
 
 #define ON_TIME	400
 #define OFF_TIME	800
@@ -98,10 +99,9 @@ main(){
 			EVENTOS_ejecutarEventos();
 		}
 
-		// Parte 3 - Maquina de estado para checkear si es momento de ejecutar algun evento programado
 		costate TCP always_on
 		{
-			//EVENTOS_ejecutarEventos();
+			TCP_conexion();
 		}
 	}
 }
