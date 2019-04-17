@@ -1,7 +1,3 @@
-// Integrantes: Aguerrondo, Carballo, Martin
-// Abril 2019 UCU
-
-
 #use IO.LIB
 #use LED.LIB
 #use EVENTOS.LIB
@@ -10,6 +6,8 @@
 #use RTC.lib
 #use MENU.LIB
 #use TCP_CON.lib
+#use MENUF.LIB
+
 
 #define ON_TIME	400
 #define OFF_TIME	800
@@ -19,6 +17,8 @@ struct tm FechaHora;
 char opcion_menu[5];
 int int_opcion_menu, int_lugar_libre, int_id_evento;
 Event unEvento;
+
+//int status;
 
 main(){
 
@@ -41,11 +41,10 @@ main(){
 		// Parte 2 - Maquina de estado para mostrar menu y manipular hora y eventos desde consola
 		costate MENU always_on
 		{
-			MENU_mostrarMenuPrincipal();
+			wfd MENU_mostrarMenuPrincipalF(1);
 			waitfor(getswf( opcion_menu ));
 			int_opcion_menu = atoi( opcion_menu );
-			printf("PRUEBA GET: --- %d ---- \n",int_opcion_menu);
-
+ 	
 			switch( int_opcion_menu ){
 				case( OPCION_1 ):
 					// FIJAR HORA EN EL RELOJ
@@ -61,7 +60,7 @@ main(){
 					printFechaHora( &FechaHora );		// Imprimo la Fecha y hora
 					break;
 
-				case( OPCION_3 ):
+				case( OPCION_3):
 					// AGREGAR EVENTO
 					wfd MENU_pedirDatosEvento( &unEvento );
 					EVENTOS_agregarEvento( &unEvento );
@@ -102,7 +101,26 @@ main(){
 		// Laboratorio 3 - Maquina de estado para manejar los eventos desde TCP.
 		costate TCP always_on
 		{
-			TCP_conexion();
+			
+		
+			wfd TCP_conexion();
+
+
+
+
+
+
+	/*		while(tcp_tick(&echosock))
+		{
+ 			sock_puts(&echosock,"Elija una Opcion: ");
+            
+            sock_wait_input(&echosock,0,NULL,&status);
+			if(sock_gets(&echosock,buffer,2048)){
+				sock_puts(&echosock,buffer);
+			}
+		}*/
+
+
 		}
 	}
 }
