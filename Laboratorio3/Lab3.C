@@ -38,7 +38,7 @@ main(){
 			waitfor(DelayMs(OFF_TIME));
 		}
 
-		// Parte 2 - Maquina de estado para mostrar menu y manipular hora y eventos
+		// Parte 2 - Maquina de estado para mostrar menu y manipular hora y eventos desde consola
 		costate MENU always_on
 		{
 			MENU_mostrarMenuPrincipal();
@@ -99,6 +99,7 @@ main(){
 			EVENTOS_ejecutarEventos();
 		}
 
+		// Laboratorio 3 - Maquina de estado para manejar los eventos desde TCP.
 		costate TCP always_on
 		{
 			TCP_conexion();
