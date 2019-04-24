@@ -1,0 +1,359 @@
+// Integrantes: Aguerrondo, Carballo, Martin
+// Abril 2019 UCU
+
+/*** BeginHeader */
+// Definicion de estructuras
+enum opcionMenuF {
+	OPCION_0F = 0,
+	OPCION_1F,
+	OPCION_2F,
+	OPCION_3F,
+	OPCION_4F,
+	OPCION_5F,
+	OPCION_6F
+};
+
+char bufferText[500];
+char temp[10];
+int int_temp;
+/*** EndHeader */
+
+/*** BeginHeader MENU_mostrarMenuPrincipalF */
+cofunc void MENU_mostrarMenuPrincipalF(int tipoConsola);   //char* p_opcion
+/*** EndHeader */
+cofunc void MENU_mostrarMenuPrincipalF(int tipoConsola){  // FUNCIONA BIEN!
+
+/*	printf("\n\n\n          Elija una opcion\n");
+	printf("-----------------------------------------\n");
+	printf(" 1 - Fijar la hora del reloj\n");
+	printf(" 2 - Consultar la hora del reloj\n");
+	printf(" 3 - Agregar evento del calendario\n");
+	printf(" 4 - Quitar evento del calendario\n");
+	printf(" 5 - Consultar lista de eventos activos\n");
+	printf(" 6 - Salir\n\n");
+	printf(" >> ");*/
+
+      sprintf(bufferText,"Elija una opcion\n------------------\n1 - Fijar Hora\n2 - Consultar Hora\n3 -Agregar Evento\n4 - Quitar Evento\n5 - Consultar Evento\n >>");
+      if (tipoConsola == 1){
+      	printf("%s",bufferText);	 // imprime por consola DynamiC
+      }else{
+		sock_puts(&echosock,bufferText);
+
+      }
+
+
+}
+
+
+ /*
+Para tener a la vista.
+	struct tm {
+		char tm_sec; // seconds 0-59
+		char tm_min; // 0-59
+		char tm_hour; // 0-23
+		char tm_mday; // 1-31
+		char tm_mon; // 1-12
+		char tm_year; // 80-147 (1980-2047)
+		char tm_wday; // 0-6 0==sunday
+	};
+*/
+/*** BeginHeader MENU_pedirFechaHoraF */
+cofunc void MENU_pedirFechaHoraF( struct tm* p_FechaHora, int tipoConsola );
+/*** EndHeader */
+cofunc void MENU_pedirFechaHoraF( struct tm* p_FechaHora, int tipoConsola ){
+
+
+
+	ClearScreen();
+
+	// CONSULTA AÑO
+	sprintf(bufferText,"\n-------- CONFIGURACION: FIJAR HORA -------\n\n Ingrese el anio:");
+	if (tipoConsola == 1){
+      	printf("%s",bufferText);	 // imprime por consola DynamiC
+      	waitfor( getswf( temp ));    // espero valor
+      }else{
+		sock_puts(&echosock,bufferText);	// imprimo el texto en patanlla
+		 sock_wait_input(&echosock,0,NULL,&status);  // espero se ingrese algo  --- ME ESTA DANDO UN ERROR EN sock_err - ESTO ANDA EN TCP_CON PERO NO ACA, PUSE EL STATUS GLOBAL Y NO CAMBIO
+		 if(sock_gets(&echosock,temp,2048)){  // buffer es el valor ingresado
+		  	sock_puts(&echosock,temp);		// imprimo el valor ingresado para ver si esta ok
+		  }
+      }
+
+	// Convertimos a int
+	int_temp = atoi( temp );
+	int_temp = ( int_temp - 1900 ); // char tm_year; 80-147 (1980-2047)
+	p_FechaHora->tm_year = (char)int_temp;
+
+	// CONSULTA MES
+	sprintf(bufferText,"\nIngrese el mes:");
+	 if (tipoConsola == 1){
+      	printf("%s",bufferText);	 // imprime por consola DynamiC
+      	waitfor( getswf( temp ));    // espero valor
+      }else{
+		sock_puts(&echosock,bufferText);	// imprimo el texto en patanlla
+		 sock_wait_input(&echosock,0,NULL,&status);  // espero se ingrese algo
+		 if(sock_gets(&echosock,temp,2048)){  // buffer es el valor ingresado
+		  	sock_puts(&echosock,temp);		// imprimo el valor ingresado para ver si esta ok
+		  }
+      }
+
+//	printf("\n Ingrese el mes: ");
+//	waitfor( getswf( temp ));
+
+	// Convertimos a int
+	int_temp = atoi( temp );
+	p_FechaHora->tm_mon = (char)int_temp;
+
+
+// CONSULTA DIA
+	sprintf(bufferText,"\nIngrese el dia:");
+	 if (tipoConsola == 1){
+      	printf("%s",bufferText);	 // imprime por consola DynamiC
+      	waitfor( getswf( temp ));    // espero valor
+      }else{
+		sock_puts(&echosock,bufferText);	// imprimo el texto en patanlla
+		 sock_wait_input(&echosock,0,NULL,&status);  // espero se ingrese algo
+		 if(sock_gets(&echosock,temp,2048)){  // buffer es el valor ingresado
+		  	sock_puts(&echosock,temp);		// imprimo el valor ingresado para ver si esta ok
+		  }
+      }
+//	printf("\n Ingrese el dia: ");
+//	waitfor( getswf( temp ));
+
+	// Convertimos a int
+	int_temp = atoi( temp );
+	p_FechaHora->tm_mday = (char)int_temp;
+
+	// CONSULTA HORA
+	sprintf(bufferText,"\nIngrese la hora:");
+	 if (tipoConsola == 1){
+      	printf("%s",bufferText);	 // imprime por consola DynamiC
+      	waitfor( getswf( temp ));    // espero valor
+      }else{
+		sock_puts(&echosock,bufferText);	// imprimo el texto en patanlla
+		 sock_wait_input(&echosock,0,NULL,&status);  // espero se ingrese algo
+		 if(sock_gets(&echosock,temp,2048)){  // buffer es el valor ingresado
+		  	sock_puts(&echosock,temp);		// imprimo el valor ingresado para ver si esta ok
+		  }
+      }
+//	printf("\n Ingrese la hora: ");
+//	waitfor( getswf( temp ));
+
+
+	// Convertimos a int
+	int_temp = atoi( temp );
+	p_FechaHora->tm_hour = (char)int_temp;
+
+
+	// CONSULTA MINUTO
+	sprintf(bufferText,"\nIngrese el minuto:");
+	 if (tipoConsola == 1){
+      	printf("%s",bufferText);	 // imprime por consola DynamiC
+      	waitfor( getswf( temp ));    // espero valor
+      }else{
+		sock_puts(&echosock,bufferText);	// imprimo el texto en patanlla
+		 sock_wait_input(&echosock,0,NULL,&status);  // espero se ingrese algo
+		 if(sock_gets(&echosock,temp,2048)){  // buffer es el valor ingresado
+		  	sock_puts(&echosock,temp);		// imprimo el valor ingresado para ver si esta ok
+		  }
+      }
+
+//	printf("\n Ingrese el minuto: ");
+//	waitfor( getswf( temp ));
+	// Convertimos a int
+	int_temp = atoi( temp );
+	p_FechaHora->tm_min = (char)int_temp;
+
+	// Seteamos segundos en cero
+	p_FechaHora->tm_sec = 0x00;
+
+}
+
+
+/*** BeginHeader MENU_consultarHoraF */
+cofunc void MENU_consultarHoraF(int tipoConsola);
+/*** EndHeader */
+cofunc void MENU_consultarHoraF(int tipoConsola){
+	ClearScreen();
+	sprintf(bufferText, "\n\n-------- CONSULTAR HORA ACTUAL -------\n\n");
+	 if (tipoConsola == 1){
+      	printf("%s",bufferText);	 // imprime por consola DynamiC
+      }else{
+		sock_puts(&echosock,bufferText);	// imprimo el texto en patalla TCP
+      }
+}
+
+
+/*** BeginHeader MENU_pedirDatosEventoF */
+cofunc void MENU_pedirDatosEventoF( Event *p_Evento, struct tm *p_FechaHora, int tipoConsola );
+/*** EndHeader */
+cofunc void MENU_pedirDatosEventoF( Event *p_Evento, struct tm *p_FechaHora, int tipoConsola ){
+
+	char opcion[5];
+	int int_opcion;
+	//struct tm p_FechaHora;
+	unsigned long timestamp;
+
+	ClearScreen();
+	printf("\n\n-------- AGREGAR EVENTO --------------\n\n");
+	while(1){
+		printf("\nTipo de Evento (1-Encender o 2-Apagar): ");
+		waitfor(getswf( opcion ));
+		int_opcion = atoi( opcion );
+
+		// Validacion de tipo evento
+		if ( int_opcion < 1 || int_opcion > 2 ){
+			printf("\nERROR: Debe elegir 1 o 2. Volver a ingresar\n");
+		}
+		else{
+			// Fijo el tipo de evento
+			p_Evento->command = opcion[0];
+
+			// Pido el proximo dato. nro de led
+			printf("\nLed a Encender(0-7): ");
+			waitfor(getswf( opcion ));
+			int_opcion = atoi( opcion );
+
+			// Validacion de nro de led
+			if ( int_opcion < 0 || int_opcion > 7){
+				printf("\nERROR: Debe elegir un numero entre 0 y 7. Volver a ingresar\n");
+			}
+			else{
+				// Fijo el nro de led
+				p_Evento->param = opcion[0];
+
+				// Pido el siguiente dato. Fecha y Hora
+				wfd MENU_pedirFechaHora( p_FechaHora );
+				printFechaHora( p_FechaHora );
+				timestamp = mktime( p_FechaHora );
+				p_Evento->time = timestamp;
+				return;
+         }
+      }
+   }
+}
+
+
+/*** BeginHeader MENU_eliminarEventoF */
+cofunc int MENU_eliminarEventoF(int tipoConsola );
+/*** EndHeader */
+cofunc int MENU_eliminarEventoF( int tipoConsola ){
+
+	char numEvento[5];
+	int int_numEvento;
+
+	ClearScreen();
+	while(1){
+		printf("\n\n-------- ELIMINAR EVENTO -------\n");
+		printf("\nPara eliminar ingrese numero de evento (0 para listar los eventos): \n");
+		waitfor(getswf( numEvento ));
+		int_numEvento = atoi( numEvento );
+		if ( int_numEvento == 0 ){
+			EVENTOS_listarEventos();
+		}
+		else{
+			if ( int_numEvento > 0 && int_numEvento <= MAX_EVENTS ){
+				int_numEvento = int_numEvento - 1;
+				printf( "\nMENU_eliminarEvento int a devolver: %d", int_numEvento );
+				return int_numEvento;
+			}
+			else{
+				printf("\nNumero de Evento Incorrecto");
+			}
+		}
+
+	}
+
+}
+
+
+/*** BeginHeader MENU_consultarEventosF */
+cofunc void MENU_consultarEventosF( int tipoConsola );
+/*** EndHeader */
+cofunc void MENU_consultarEventosF( int tipoConsola ){
+	ClearScreen();
+	sprintf(bufferText, "\n\n-------- LISTAR EVENTOS -------\n");
+	 if (tipoConsola == 1){
+      	printf("%s",bufferText);	 // imprime por consola DynamiC
+      }else{
+		sock_puts(&echosock,bufferText);	// imprimo el texto en patalla TCP
+      }
+}
+
+
+
+
+
+
+
+
+/*
+int bisiesto(char p_ano){
+	return ((ano % 4 == 0 && ano % 100 != 0) || ano % 400   == 0);
+}
+
+//bool validarano( char ano);
+bool validarano( char p_ano ){
+	while(1){
+		if ( p_ano > "1900" && ano < "5000"){
+			return true;
+		}
+	}
+}
+
+
+//bool validarmes( char mes);
+bool validarmes( char mes){
+	while(1){
+		if (mes > "0" && ano < "13"){
+			return true;
+		}
+	}
+}
+
+//bool validardia( char dia, char mes, char ano);
+bool validardia( char dia, char mes, char ano){
+	while(1){
+		if (mes == '4' || mes== '6' || mes == '9' || mes == "11"){
+			if (dia > 0 && dia < 31){
+				return true;
+			}
+		}
+		if (mes == '2'){
+			if (bisiesto(ano)){
+				if (dia > 0 && dia < 30){
+					return true;
+				}
+			}else{
+				if (dia > 0 && dia < 29){
+					return true;
+				}
+			}
+
+
+		}
+		else {
+			if (dia > 0 && dia < 32){
+				return true;
+			}
+		}
+	}
+}
+
+//bool validarhora( char hora);
+bool validarhora( char hora){
+	while(1){
+		if (hora > "0" && hora < "25"){
+			return true;
+		}
+	}
+}
+
+//bool validarminuto( char minuto);
+bool validarminuto( char minuto){
+	while(1){
+		if (minuto > "0" && minuto < "60"){
+			return true;
+		}
+	}
+}  */

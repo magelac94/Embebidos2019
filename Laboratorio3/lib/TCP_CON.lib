@@ -1,0 +1,118 @@
+/*** BeginHeader */
+
+#define TCPCONFIG 0
+
+#define USE_ETHERNET		1
+#define MY_IP_ADDRESS "10.10.0.10"
+#define MY_NETMASK "255.255.255.0"
+#define MY_GATEWAY "10.10.0.1"
+
+
+#memmap xmem
+#use "dcrtcp.lib"
+
+#define PORT 7
+
+tcp_Socket echosock;
+int status;
+
+/*** EndHeader */
+
+
+/*** BeginHeader  TCP_conexion */
+cofunc void TCP_conexion();
+/*** EndHeader */
+
+cofunc void TCP_conexion(){
+	char buffer[2048];
+	int status;
+//	char op[5];
+	int int_op;
+
+	printf("Iniciando Socket\n");
+	sock_init();
+	printf("Iniciado\n");
+
+	while(1)
+	{
+		tcp_listen(&echosock,PORT,0,0,NULL,0);
+		sock_wait_established(&echosock,sock_delay,NULL,&status)
+		printf("Conectado\n");
+		sock_mode(&echosock,TCP_MODE_ASCII);
+
+		while(tcp_tick(&echosock))
+		{
+			wfd MENU_mostrarMenuPrincipalF(2);		// muestro el menu para consola TCP
+ 			//sock_puts(&echosock,"Elija una Opcion: ");
+
+            sock_wait_input(&echosock,0,NULL,&status);  // espero se ingrese algo
+			if(sock_gets(&echosock,buffer,2048)){  // buffer es el valor ingresado
+				sock_puts(&echosock,buffer);		// imprimo el valor ingresado
+
+				int_op = atoi( buffer );  // trabajo con el valor ingresado, lo paso a int
+				printf("VALOR CONVERTIDO: %d\n", int_op);
+
+				switch( int_op ){
+				case( OPCION_1 ):
+					// FIJAR HORA EN EL RELOJ
+					wfd MENU_pedirFechaHoraF( &FechaHora, 2 );
+					RTC_fijarFechaHora( &FechaHora );
+					printFechaHora( &FechaHora );		// Imprimo la Fecha y hora modificadoS // pasarlo para imprimir en tcp
+					break;
+
+				case( OPCION_2 ):
+					// CONSULTAR HORA ACTUAL
+					wfd MENU_consultarHoraF(2);
+					RTC_leerFechaHora( &FechaHora );	// Leo el RTC
+					printFechaHora( &FechaHora );		// Imprimo la Fecha y hora
+					break;
+
+				case( OPCION_3):
+					// AGREGAR EVENTO
+					wfd MENU_pedirDatosEventoF( &unEvento,2 );
+					EVENTOS_agregarEvento( &unEvento );
+					break;
+
+				case ( OPCION_4 ):
+					// ELIMINAR EVENTO SEGUN EL NUMERO DE EVENTO (ES DE 1 EN adelante segun posicion en el array))
+               // Elimina siempre el 1 aunque el menu nos retorna el id correcto.
+					wfd {int_id_evento = MENU_eliminarEventoF(2 )};
+					printf("\nint_id_evento es : %d", int_id_evento);
+					EVENTOS_eliminarEvento( int_id_evento );
+					break;
+
+				case( OPCION_5 ):
+					// CONSULTAR EVENTO
+					wfd MENU_consultarEventosF(2);
+					EVENTOS_listarEventos();
+					break;
+
+				case( OPCION_6 ):
+					// SALIR
+					printf("Salir");
+					break;
+
+				default:
+					// OPCION INCORRECTA
+					printf("\nOpcion DEFAULT: %d \n", int_opcion_menu);
+					printf("Vuelva a ingresar\n");
+				}
+
+			}
+		}
+
+		// Sock_Error_Fun();
+		sock_err:
+		switch(status)
+		{
+			case 1: /* foreign host closed */
+				printf("User closed session\n");
+				break;
+			case -1: /* time-out */
+				printf("Connection timed out\n");
+				break;
+		}
+
+
+	}
+}
