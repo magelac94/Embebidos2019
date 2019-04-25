@@ -10,7 +10,8 @@ enum opcionMenu {
 	OPCION_3,
 	OPCION_4,
 	OPCION_5,
-	OPCION_6
+	OPCION_6,
+	OPCION_7
 };
 /*** EndHeader */
 
@@ -27,7 +28,8 @@ void MENU_mostrarMenuPrincipal(){       // char* p_opcion
 	printf(" 3 - Agregar evento del calendario\n");
 	printf(" 4 - Quitar evento del calendario\n");
 	printf(" 5 - Consultar lista de eventos activos\n");
-	printf(" 6 - Salir\n\n");
+	printf(" 6 - Consultar entradas analogicas\n");
+	printf(" 7 - Salir\n\n");
 	printf(" >> ");
 }
 
@@ -192,9 +194,33 @@ cofunc void MENU_consultarEventos(){
 }
 
 
+/*** BeginHeader MENU_pedirEntradaAnalogica */
+cofunc void MENU_pedirEntradaAnalogica( &entradaAnalogica );
+/*** EndHeader */
+cofunc void MENU_pedirEntradaAnalogica( &entradaAnalogica ){
+	ClearScreen();
+	
+	while(1){
+		printf("\n\n-------- Entrada Analogica -------\n");
+		printf("\n\nIngrese entrada analogica (1 o 2)\n");
+		waitfor(getswf( entradaAnalogica ));
+		int_entAnalogica = atoi( entradaAnalogica );
+		if ( int_numEvento < 1 || int_numEvento > 2 ){
+			EVENTOS_listarEventos();
+		}
+		else{
+			if ( int_numEvento > 0 && int_numEvento <= MAX_EVENTS ){
+				int_numEvento = int_numEvento - 1;
+				printf( "\nMENU_eliminarEvento int a devolver: %d", int_numEvento );
+				return int_numEvento;
+			}
+			else{
+				printf("\nNumero de Evento Incorrecto");
+			}
+		}
 
-
-
+	}
+}
 
 
 

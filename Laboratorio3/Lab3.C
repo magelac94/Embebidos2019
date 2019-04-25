@@ -14,6 +14,7 @@
 #define ONE_SECOND	1000
 
 struct tm FechaHora;
+char entradaAnalogica[2];
 char opcion_menu[5];
 int int_opcion_menu, int_lugar_libre, int_id_evento;
 Event unEvento;
@@ -81,6 +82,13 @@ main(){
 					break;
 
 				case( OPCION_6 ):
+					// Consulta analogica
+					wfd MENU_pedirEntradaAnalogica( &entradaAnalogica );
+					int IO_getAnalogInput( &entradaAnalogica ); //el valor que toma por parametro es un unsigned char
+					//revisar si el IO_getAnalogInput imprime en pantalla
+					break;
+					
+				case( OPCION_7 ):
 					// SALIR
 					printf("Salir");
 					break;
