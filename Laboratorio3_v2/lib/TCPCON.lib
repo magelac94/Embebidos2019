@@ -1,0 +1,59 @@
+/*** BeginHeader */
+#define TCPCONFIG 0
+#define USE_ETHERNET		1
+#define MY_IP_ADDRESS "10.10.0.10"
+#define MY_NETMASK "255.255.255.0"
+#define PORT 7
+#define MY_GATEWAY "10.10.0.1"
+
+#memmap xmem
+#use "dcrtcp.lib"
+
+/*
+3.2 Allocating TCP and UDP Sockets
+In all versions of Dynamic C, TCP and UDP socket structures must be allocated in static data storage. This
+is simply accomplished by declaring a static variable of type tcp_Socket or udp_Socket:
+static tcp_Socket my_sock;
+*/
+static tcp_Socket mi_socket_tcp;
+int status;
+char buffer[2048];
+/*** EndHeader */
+
+
+/*** BeginHeader  TCPCON_conexion */
+cofunc void TCPCON_conexion();
+/*** EndHeader */
+cofunc void TCPCON_conexion(){
+
+	while(1) {
+		// Si se cerro la conexion, vuelve a abrir el socket y espera
+		tcp_listen( &mi_socket_tcp, PORT,0,0,NULL,0);
+		printf("INFO: Esperando conexion...\n");
+		// Queda esperando pero cede el procesador luego de cada chequeo
+		while(!sock_established(&mi_socket_tcp) && sock_bytesready(&mi_socket_tcp)==-1){
+			tcp_tick(NULL);
+			yield;
+		}
+		printf("INFO: Conexion establecida...\n");
+
+		// Mientras esta la conexion establecida, cede el CPU
+		while(tcp_tick( &mi_socket_tcp )){
+			yield;
+		}
+		printf("INFO: Connection closed...\n");
+
+		/*
+		sock_err::
+		switch(status)
+		{
+			case 1: // foreign host closed
+				printf("User closed session\n");
+				break;
+			case -1: // time-out
+				printf("Connection timed out\n");
+				break;
+		}
+		*/
+	}
+}
