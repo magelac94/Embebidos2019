@@ -29,19 +29,19 @@ cofunc void TCPCON_conexion(){
 	while(1) {
 		// Si se cerro la conexion, vuelve a abrir el socket y espera
 		tcp_listen( &mi_socket_tcp, PORT,0,0,NULL,0);
-		printf("INFO: Esperando conexion...\n");
+		printf("\nINFO: Esperando conexion...\n");
 		// Queda esperando pero cede el procesador luego de cada chequeo
 		while(!sock_established(&mi_socket_tcp) && sock_bytesready(&mi_socket_tcp)==-1){
 			tcp_tick(NULL);
 			yield;
 		}
-		printf("INFO: Conexion establecida...\n");
+		printf("\nINFO: Conexion establecida...\n");
 
 		// Mientras esta la conexion establecida, cede el CPU
 		while(tcp_tick( &mi_socket_tcp )){
 			yield;
 		}
-		printf("INFO: Connection closed...\n");
+		printf("\nINFO: Connection closed...\n");
 
 		/*
 		sock_err::
