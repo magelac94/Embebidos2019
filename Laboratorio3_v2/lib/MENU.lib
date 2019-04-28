@@ -10,7 +10,8 @@ enum opcionMenu {
 	OPCION_3,
 	OPCION_4,
 	OPCION_5,
-	OPCION_6
+	OPCION_6,
+	OPCION_7
 };
 
 enum tipoUI {
@@ -94,7 +95,7 @@ cofunc void MENU_mostrarMenuPrincipal( enum tipoUI interfazAUsar );
 cofunc void MENU_mostrarMenuPrincipal( enum tipoUI interfazAUsar ){
 
 	// Metemos en el buffer el texto formateado
-	sprintf( bufferText, "Elija una opcion\n------------------\n1 - Fijar Hora\n2 - Consultar Hora\n3 -Agregar Evento\n4 - Quitar Evento\n5 - Consultar Evento\n >>" );
+	sprintf( bufferText, "Elija una opcion\n------------------\n1 - Fijar Hora\n2 - Consultar Hora\n3 -Agregar Evento\n4 - Quitar Evento\n5 - Consultar Evento\n6 - Consultar entradas analogicas\n7 - Salir\n >>" );
 	// Mandamos el buffer a la interfaz a usar
 	enviar_a_ui( interfazAUsar, bufferText );
 }
@@ -400,6 +401,37 @@ void MENU_printFechaHora ( struct tm* p_FechaHora, enum tipoUI interfazAUsar ){
 		}
 	}
 }
+
+/*** BeginHeader MENU_pedirEntradaAnalogica */
+cofunc void MENU_pedirEntradaAnalogica( enum tipoUI interfazAUsar, char *temp );
+/*** EndHeader */
+cofunc void MENU_pedirEntradaAnalogica( enum tipoUI interfazAUsar, char *temp ){
+	while(1){
+		// Metemos en el buffer el texto formateado
+		sprintf( bufferText,"\n\n-------- Entrada Analogica -------\n\n\nIngrese entrada analogica (1 o 2): \n");
+		// Mandamos el buffer a la interfaz a usar
+		enviar_a_ui( interfazAUsar, bufferText);
+		// Obtenemos la opcion de la UI deseada
+		wfd obtener_de_ui( interfazAUsar, temp );
+		int_entAnalogica = atoi( temp );
+		if ( int_numEvento = 1 || int_numEvento = 2 ){
+			return;
+		}
+		sprintf( bufferText,"\n\n-- Valor incorrecto, ingrese nuevamente --\n\n");
+		enviar_a_ui( interfazAUsar, bufferText);
+	}
+}
+
+/*** BeginHeader MENU_mostrarEntradaAnalogica */
+cofunc void MENU_mostrarEntradaAnalogica( enum tipoUI interfazAUsar, int *temp );
+/*** EndHeader */
+cofunc void MENU_mostrarEntradaAnalogica( enum tipoUI interfazAUsar, int *temp ){
+	// Metemos en el buffer el texto formateado
+	sprintf( bufferText,"\n\nEl valor de la entrada analogica es: %u", *temp);
+	// Mandamos el buffer a la interfaz a usar
+	enviar_a_ui( interfazAUsar, bufferText);
+}
+
 
 /*** BeginHeader MENU_printEvento */
 void MENU_printEvento ( Event *p_evento, enum tipoUI interfazAUsar );
