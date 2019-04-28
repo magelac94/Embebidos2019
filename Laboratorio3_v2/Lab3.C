@@ -15,7 +15,7 @@ char opcion_menu[5];
 int int_opcion_menu, int_lugar_libre, int_id_evento;
 Event unEvento;
 
-cofunc void programaPrincipal( enum tipoUI interfazAUsar ){
+cofunc void programaPrincipal[2]( enum tipoUI interfazAUsar ){
 
 	wfd MENU_mostrarMenuPrincipal( interfazAUsar );
 	wfd MENU_obtenerOpcion( interfazAUsar, opcion_menu );
@@ -108,15 +108,15 @@ main(){
 			wfd TCPCON_conexion();
 		}
 
-		//Maquina de estado para mostrar menu y manipular hora y eventos desde consola
+		// Laboratorio 3 - Maquina de estado para mostrar menu y manipular hora y eventos desde consola
 		costate INSTANCIA_CONSOLA always_on
 		{
-			wfd programaPrincipal( CONSOLA );
+			wfd programaPrincipal[CONSOLA]( CONSOLA );
 		}
 		// Laboratorio 3 - Maquina de estado para manejar los eventos desde TCP.
 		costate INSTANCIA_TCP always_on
 		{
-			wfd programaPrincipal( TCP );
+			wfd programaPrincipal[TCP]( TCP );
 		}
 
 		//Maquina de estado para checkear si es momento de ejecutar algun evento programado

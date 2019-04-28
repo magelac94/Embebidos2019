@@ -94,7 +94,7 @@ cofunc void MENU_mostrarMenuPrincipal( enum tipoUI interfazAUsar );
 cofunc void MENU_mostrarMenuPrincipal( enum tipoUI interfazAUsar ){
 
 	// Metemos en el buffer el texto formateado
-	sprintf( bufferText, "Elija una opcion\n------------------\n1 - Fijar Hora\n2 - Consultar Hora\n3 -Agregar Evento\n4 - Quitar Evento\n5 - Consultar Evento\n >>" );
+	sprintf( bufferText, "Elija una opcion\n------------------\n1 - Fijar Hora\n2 - Consultar Hora\n3 - Agregar Evento\n4 - Quitar Evento\n5 - Consultar Evento\n >>" );
 	// Mandamos el buffer a la interfaz a usar
 	enviar_a_ui( interfazAUsar, bufferText );
 }
