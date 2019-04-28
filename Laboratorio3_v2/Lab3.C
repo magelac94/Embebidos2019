@@ -11,6 +11,7 @@
 #define ONE_SECOND	1000
 
 struct tm FechaHora;
+char entradaAnalogica[2];
 char opcion_menu[5];
 int int_opcion_menu, int_lugar_libre, int_id_evento;
 Event unEvento;
@@ -53,8 +54,15 @@ cofunc void programaPrincipal( enum tipoUI interfazAUsar ){
 			wfd MENU_consultarEventos( interfazAUsar );
 			EVENTOS_listarEventos();
 			break;
-
+			
 		case( OPCION_6 ):
+			// Consulta analogica
+			wfd MENU_pedirEntradaAnalogica( interfazAUsar, &entradaAnalogica );
+			wfd {int_Analog_Value = IO_getAnalogInput( &entradaAnalogica )}; //el valor que toma por parametro es un unsigned char
+			wfd MENU_mostrarEntradaAnalogica( interfazAUsar, &int_Analog_Value );
+			break;
+
+		case( OPCION_7 ):
 			// SALIR
 			printf("Salir");
 			break;
