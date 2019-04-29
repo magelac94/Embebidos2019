@@ -20,7 +20,7 @@ enum tipoUI {
 };
 
 // Definicion de variables
-char bufferText[500];
+char bufferText[1000];
 char temp[10];
 int int_temp;
 /*** EndHeader */
@@ -53,14 +53,14 @@ cofunc void obtener_de_ui( enum tipoUI interfazAUsar, char *temp ){
 		case( CONSOLA ):
 			waitfor( getswf( temp ) );    // espero valor
 			break;
-		
+
 /*		case ( TCP ):
 			sock_wait_input(&mi_socket_tcp,0,NULL,&status);
 			if(sock_gets(&mi_socket_tcp,buffer,2048))
 			{
 				sock_puts(&mi_socket_tcp,buffer);
 			}
-			
+
 			sock_err:
          	switch(status){
             	case 1: // foreign host closed
@@ -79,7 +79,7 @@ cofunc void obtener_de_ui( enum tipoUI interfazAUsar, char *temp ){
 }
 
 /*** BeginHeader MENU_mostrarMenuPrincipal */
-void MENU_mostrarMenuPrincipal( enum tipoUI interfazAUsar );
+cofunc void MENU_mostrarMenuPrincipal( enum tipoUI interfazAUsar );
 /*** EndHeader */
 /*
 	(ESTO ES LO QUE MUESTRA ESTE MENU)
@@ -94,12 +94,22 @@ void MENU_mostrarMenuPrincipal( enum tipoUI interfazAUsar );
 	" 6 - Salir                             \n\n"
 	" >> "
 */
-void MENU_mostrarMenuPrincipal( enum tipoUI interfazAUsar ){
+cofunc void MENU_mostrarMenuPrincipal( enum tipoUI interfazAUsar ){
 
 	// Metemos en el buffer el texto formateado
-	sprintf( bufferText, "\n\n\nElija una opcion\n------------------\n1 - Fijar Hora\n2 - Consultar Hora\n3 - Agregar Evento\n4 - Quitar Evento\n5 - Consultar Evento\n6 - Consultar entradas analogicas\n7 - Salir\n >>" );
+	sprintf( bufferText,\
+"\n   Elija una opcion\n\
+----------------------------------------\n\
+1 - Fijar la hora del reloj\n\
+2 - Consultar la hora del reloj\n\
+3 - Agregar evento del calendario\n\
+4 - Quitar evento del calendario\n\
+5 - Consultar lista de eventos activos\n\
+6 - Consultar entradas analogicas\n\
+7 - Salir\n \
+>>" );
 	// Mandamos el buffer a la interfaz a usar
-	enviar_a_ui( interfazAUsar, bufferText );
+	//enviar_a_ui( interfazAUsar, bufferText );
 }
 
 /*** BeginHeader MENU_obtenerOpcion */
