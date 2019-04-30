@@ -2,6 +2,9 @@
 // Abril 2019 UCU
 
 /*** BeginHeader */
+
+//#DEFINE STDIO_ENABLE_LONG_STRINGS
+
 // Definicion de estructuras
 enum opcionMenu {
 	OPCION_0 = 0,
@@ -35,10 +38,9 @@ void enviar_a_ui(enum tipoUI interfazAUsar, char *bufferText ){
 			printf( "%s", bufferText );
 			break;
 
-/*		case ( TCP ):
+		case ( TCP ):
 			sock_puts( &mi_socket_tcp, bufferText );
 			break;
-*/
 		default:
 			printf( "ERROR DE SISTEMA: No existe la interfazAUsar elegida. Vea funcion enviar_a_ui" ); //EL ERROR SOLO SALE EN LA CONSOLA
 			break;
@@ -54,7 +56,7 @@ cofunc void obtener_de_ui( enum tipoUI interfazAUsar, char *temp ){
 			waitfor( getswf( temp ) );    // espero valor
 			break;
 
-/*		case ( TCP ):
+		case ( TCP ):
 			sock_wait_input(&mi_socket_tcp,0,NULL,&status);
 			if(sock_gets(&mi_socket_tcp,buffer,2048))
 			{
@@ -71,7 +73,7 @@ cofunc void obtener_de_ui( enum tipoUI interfazAUsar, char *temp ){
 						break;
             }
 			break;
-*/
+
 		default:
 			printf( "ERROR DE SISTEMA: No existe la interfazAUsar elegida. Vea funcion obtener_de_ui" ); //aca hay que manejar bien lo que pasa al fallar
 			break;
