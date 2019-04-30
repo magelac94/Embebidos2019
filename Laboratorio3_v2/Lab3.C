@@ -121,7 +121,7 @@ main(){
 // LOOP MAQUINAS DE ESTADO
 	while(1)
 	{
-		loophead();
+	  //	loophead();
 		//Maquina de estado para verificar que no estamos colgados
 		costate RED_LED always_on
 		{
