@@ -58,4 +58,6 @@ dkms.conf
 *.BDL
 *.org
 *.rom
+*.MD1
+*.HX1
 
