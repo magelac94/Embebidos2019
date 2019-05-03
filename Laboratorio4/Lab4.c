@@ -30,7 +30,8 @@ while(1){
 }
 
 void ProgramaPrincipal(enum tipoUI interfazAUsar){
-   //MENU_mostrarMenuPrincipal( interfazAUsar );
+	 //	OSTaskCreate(MENU_mostrarMenuPrincipal, NULL, 256, 5);
+//   MENU_mostrarMenuPrincipal( interfazAUsar );
 
 }
 
@@ -43,7 +44,7 @@ main(){
 	OSTaskCreate(Led_Red, NULL, 256, 4);
 
 	// Tarea 2 Mostrar Menu Para Consola
-	OSTaskCreate(ProgramaPrincipal(CONSOLA), NULL, 256, 3);
+	OSTaskCreate(ProgramaPrincipal, NULL, 256, 3);
 
 
 	OSStart();
