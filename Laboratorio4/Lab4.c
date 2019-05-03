@@ -30,7 +30,7 @@ while(1){
 }
 
 void ProgramaPrincipal(enum tipoUI interfazAUsar){
-	MENU_mostrarMenuPrincipal( interfazAUsar );
+   //MENU_mostrarMenuPrincipal( interfazAUsar );
 
 }
 
