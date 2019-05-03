@@ -44,7 +44,7 @@ main(){
 	OSTaskCreate(Led_Red, NULL, 256, 4);
 
 	// Tarea 2 Mostrar Menu Para Consola
-	OSTaskCreate(ProgramaPrincipal, NULL, 256, 3);
+	OSTaskCreate(ProgramaPrincipal,(void*) 1 , NULL, 256, 3);
 
 
 	OSStart();
