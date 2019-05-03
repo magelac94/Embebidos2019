@@ -1,23 +1,11 @@
+#define STACK_CNT_256 3
+#define STACK_CNT_512 3
+#define OS_TASK_DEL_EN 1
+
 #use IO.LIB
-#use ucos2.LIB
 #use LED.LIB
 #use MENU.LIB
-
-enum opcionMenu {
-	OPCION_0 = 0,
-	OPCION_1,
-	OPCION_2,
-	OPCION_3,
-	OPCION_4,
-	OPCION_5,
-	OPCION_6,
-	OPCION_7
-};
-
-enum tipoUI {
-	CONSOLA = 0,
-	TCP
-};
+#use ucos2.LIB
 
 
 void Led_Red(){
@@ -29,22 +17,40 @@ while(1){
    }
 }
 
-void ProgramaPrincipal(enum tipoUI interfazAUsar){
-	 //	OSTaskCreate(MENU_mostrarMenuPrincipal, NULL, 256, 5);
-//   MENU_mostrarMenuPrincipal( interfazAUsar );
 
-}
+void ProgramaPrincipal(void* pdata){
+	char opcion_menu;
+	int int_opcion_menu;
+    enum tipoUI interfazAUsar;
+    interfazAUsar = *(int*)pdata;
+
+	MENU_mostrarMenuPrincipal( interfazAUsar );
+	MENU_obtenerOpcion( interfazAUsar, &opcion_menu );
+	int_opcion_menu = atoi( &opcion_menu );
+
+  }
+
+
 
 
 main(){
+
+	int parametro;
+
 	HW_init();
 	OSInit();
+
+
 
 	// Tarea 1 Prende LED
 	OSTaskCreate(Led_Red, NULL, 256, 4);
 
+	parametro = CONSOLA;
 	// Tarea 2 Mostrar Menu Para Consola
-	OSTaskCreate(ProgramaPrincipal,(void*) 1 , NULL, 256, 3);
+	OSTaskCreate(ProgramaPrincipal , &parametro, 512, 3);
+   //   OSTaskDel(3);
+
+	// Tareas 3 Mostrar Menu Por TCP
 
 
 	OSStart();
