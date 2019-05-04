@@ -121,9 +121,9 @@ main(){
 	parametro = CONSOLA;
 	// Tarea 2 Mostrar Menu Para Consola
 	OSTaskCreate(ProgramaPrincipal , &parametro, 512, 3);
-   //   OSTaskDel(3);
 
-	parametro = TCP;
+
+	//parametro = TCP;
 	// Se crean N tareas para Mostrar Menu Por TCP
 	/*for ( i=0 ; i<SESIONES_TCP; i++){                   //  // ver y agregar todas las funciones de tcp
 		OSTaskCreate(ProgramaPrincipal, &parametro, 512, i);
