@@ -2,11 +2,13 @@
 #define STACK_CNT_512 3
 #define OS_TASK_DEL_EN 1
 
+
 #use IO.LIB
 #use LED.LIB
-#use MENU.LIB
+#use EVENTOS.LIB
 #use UTILITIES.LIB
 #use RTC.lib
+#use MENU.LIB
 #use ucos2.LIB
 
 void Led_Red(){
@@ -20,6 +22,7 @@ while(1){
 
 
 void ProgramaPrincipal(void* pdata){
+	Event unEvento;
 	struct tm FechaHora;
 	char opcion_menu;
 	int int_opcion_menu;
@@ -48,6 +51,13 @@ void ProgramaPrincipal(void* pdata){
 				RTC_leerFechaHora( &FechaHora );	// Leo el RTC
 				MENU_printFechaHora( &FechaHora, interfazAUsar ); // Imprimo la Fecha y hora
 				break;
+
+			case( OPCION_3 ):
+				// AGREGAR EVENTO
+				MENU_pedirDatosEvento( &unEvento, &FechaHora, interfazAUsar );
+			//	EVENTOS_agregarEvento( &unEvento );
+				break;
+
 			default:
 				// OPCION INCORRECTA
 				printf("\nOpcion DEFAULT: %d \n", int_opcion_menu);
