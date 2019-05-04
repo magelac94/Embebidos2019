@@ -2,6 +2,8 @@
 #define STACK_CNT_512 3
 #define OS_TASK_DEL_EN 1
 
+#define SESIONES_TCP 5
+
 //#define MAX_EVENTS 16
 
 
@@ -106,6 +108,7 @@ void ProgramaPrincipal(void* pdata){
 main(){
 
 	int parametro;
+	int i;
 
 	HW_init();
 	OSInit();
@@ -120,7 +123,11 @@ main(){
 	OSTaskCreate(ProgramaPrincipal , &parametro, 512, 3);
    //   OSTaskDel(3);
 
-	// Tareas 3 Mostrar Menu Por TCP
+	parametro = TCP;
+	// Se crean N tareas para Mostrar Menu Por TCP
+	/*for ( i=0 ; i<SESIONES_TCP; i++){                   //  // ver y agregar todas las funciones de tcp
+		OSTaskCreate(ProgramaPrincipal, &parametro, 512, i);
+	}      */
 
 
 	OSStart();
