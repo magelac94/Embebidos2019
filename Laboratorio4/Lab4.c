@@ -25,29 +25,35 @@ void ProgramaPrincipal(void* pdata){
 	int int_opcion_menu;
     enum tipoUI interfazAUsar;
     interfazAUsar = *(int*)pdata;
+    while(1){ // LOOP menu
 
-	MENU_mostrarMenuPrincipal( interfazAUsar );
-	MENU_obtenerOpcion( interfazAUsar, &opcion_menu );
-	int_opcion_menu = atoi( &opcion_menu );
+    	// Muestra Menu y pide una opcion
+		MENU_mostrarMenuPrincipal( interfazAUsar );
+		MENU_obtenerOpcion( interfazAUsar, &opcion_menu );
+		int_opcion_menu = atoi( &opcion_menu );
 
-	switch( int_opcion_menu ){
-		case( OPCION_1 ):
-			MENU_pedirFechaHora( &FechaHora, interfazAUsar );
-			RTC_fijarFechaHora( &FechaHora );
-			MENU_printFechaHora( &FechaHora, interfazAUsar );		// Imprimo la Fecha y hora modificadoS
+		// Evaluacion de la Opcion
+		switch( int_opcion_menu ){
+			case( OPCION_1 ):
+				// CONFIGURAR FECHA HORA
+				MENU_pedirFechaHora( &FechaHora, interfazAUsar );
+				RTC_fijarFechaHora( &FechaHora );
+				MENU_printFechaHora( &FechaHora, interfazAUsar );		// Imprimo la Fecha y hora modificadoS
 
-			break;
+				break;
 
-		case( OPCION_2 ):
-			// CONSULTAR HORA ACTUAL
-			MENU_consultarHora( interfazAUsar );
-			RTC_leerFechaHora( &FechaHora );	// Leo el RTC
-			MENU_printFechaHora( &FechaHora, interfazAUsar ); // Imprimo la Fecha y hora
-			break;
-		default:
-			// OPCION INCORRECTA
-			printf("\nOpcion DEFAULT: %d \n", int_opcion_menu);
-			printf("Vuelva a ingresar\n");
+			case( OPCION_2 ):
+				// CONSULTAR FECHA HORA ACTUAL
+				MENU_consultarHora( interfazAUsar );
+				RTC_leerFechaHora( &FechaHora );	// Leo el RTC
+				MENU_printFechaHora( &FechaHora, interfazAUsar ); // Imprimo la Fecha y hora
+				break;
+			default:
+				// OPCION INCORRECTA
+				printf("\nOpcion DEFAULT: %d \n", int_opcion_menu);
+				printf("Vuelva a ingresar\n");
+			}
+
 		}
   }
 
