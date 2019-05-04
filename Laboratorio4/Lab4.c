@@ -37,6 +37,13 @@ void ProgramaPrincipal(void* pdata){
 			MENU_printFechaHora( &FechaHora, interfazAUsar );		// Imprimo la Fecha y hora modificadoS
 
 			break;
+
+		case( OPCION_2 ):
+			// CONSULTAR HORA ACTUAL
+			MENU_consultarHora( interfazAUsar );
+			RTC_leerFechaHora( &FechaHora );	// Leo el RTC
+			MENU_printFechaHora( &FechaHora, interfazAUsar ); // Imprimo la Fecha y hora
+			break;
 		default:
 			// OPCION INCORRECTA
 			printf("\nOpcion DEFAULT: %d \n", int_opcion_menu);
