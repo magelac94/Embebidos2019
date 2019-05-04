@@ -2,6 +2,8 @@
 #define STACK_CNT_512 3
 #define OS_TASK_DEL_EN 1
 
+//#define MAX_EVENTS 16
+
 
 #use IO.LIB
 #use LED.LIB
@@ -12,12 +14,13 @@
 #use ucos2.LIB
 
 void Led_Red(){
-while(1){
-	LED_RED_SET();
-	OSTimeDlySec(1);
-	LED_RED_RESET();
-	OSTimeDlySec(1);
-   }
+
+	while(1){
+		LED_RED_SET();
+		OSTimeDlySec(1);
+		LED_RED_RESET();
+		OSTimeDlySec(1);
+   	}
 }
 
 
@@ -25,9 +28,15 @@ void ProgramaPrincipal(void* pdata){
 	Event unEvento;
 	struct tm FechaHora;
 	char opcion_menu;
-	int int_opcion_menu;
+	char aux[2];
+	int int_opcion_menu, int_id_evento, int_Analog_Value;
     enum tipoUI interfazAUsar;
     interfazAUsar = *(int*)pdata;
+
+    // Defino Array de Eventos
+//    Event eventos[MAX_EVENTS];		// Lista de Eventos
+//    EVENTOS_Eventos_init(&eventos);   // Inicializo array de eventos para cada llamada a programa principal, son n instancias, son n arrays;
+
     while(1){ // LOOP menu
 
     	// Muestra Menu y pide una opcion
@@ -55,8 +64,32 @@ void ProgramaPrincipal(void* pdata){
 			case( OPCION_3 ):
 				// AGREGAR EVENTO
 				MENU_pedirDatosEvento( &unEvento, &FechaHora, interfazAUsar );
-			//	EVENTOS_agregarEvento( &unEvento );
+			//	EVENTOS_agregarEvento( &eventos, &unEvento ); // ver el tema del array de eventos, lo agregue en el mail lo saque del Eventos para poder manejar diferentes array , 1 por instancia, a no ser que sea todo el emis
 				break;
+			case ( OPCION_4 ):
+				// ELIMINAR EVENTO SEGUN EL NUMERO DE EVENTO (ES DE 1 EN adelante segun posicion en el array))
+				int_id_evento = MENU_eliminarEvento( interfazAUsar );
+				printf("%d\n", int_id_evento);
+			//	EVENTOS_eliminarEvento( int_id_evento );  // revisar despues de agregarEvento
+				break;
+			case( OPCION_5 ):
+				// CONSULTAR EVENTO
+				MENU_consultarEventos( interfazAUsar );
+				EVENTOS_listarEventos();
+				break;
+
+			case( OPCION_6 ):
+				// CONSULTA ANALOGICA
+				MENU_pedirEntradaAnalogica( interfazAUsar, aux );
+				int_opcion_menu = atoi(aux);
+				int_Analog_Value = IO_getAnalogInput( int_opcion_menu ); //el valor que toma por parametro es un unsigned char
+				MENU_mostrarEntradaAnalogica( interfazAUsar, &int_Analog_Value );
+				break;
+			case( OPCION_7 ):
+				// SALIR
+				printf("Salir");
+				break;
+
 
 			default:
 				// OPCION INCORRECTA
