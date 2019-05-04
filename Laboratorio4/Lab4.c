@@ -5,8 +5,9 @@
 #use IO.LIB
 #use LED.LIB
 #use MENU.LIB
+#use UTILITIES.LIB
+#use RTC.lib
 #use ucos2.LIB
-
 
 void Led_Red(){
 while(1){
@@ -19,6 +20,7 @@ while(1){
 
 
 void ProgramaPrincipal(void* pdata){
+	struct tm FechaHora;
 	char opcion_menu;
 	int int_opcion_menu;
     enum tipoUI interfazAUsar;
@@ -28,6 +30,17 @@ void ProgramaPrincipal(void* pdata){
 	MENU_obtenerOpcion( interfazAUsar, &opcion_menu );
 	int_opcion_menu = atoi( &opcion_menu );
 
+	switch( int_opcion_menu ){
+		case( OPCION_1 ):
+			MENU_pedirFechaHora( &FechaHora, interfazAUsar );
+			RTC_fijarFechaHora( &FechaHora );
+
+			break;
+		default:
+			// OPCION INCORRECTA
+			printf("\nOpcion DEFAULT: %d \n", int_opcion_menu);
+			printf("Vuelva a ingresar\n");
+		}
   }
 
 
