@@ -34,6 +34,7 @@ void ProgramaPrincipal(void* pdata){
 		case( OPCION_1 ):
 			MENU_pedirFechaHora( &FechaHora, interfazAUsar );
 			RTC_fijarFechaHora( &FechaHora );
+			MENU_printFechaHora( &FechaHora, interfazAUsar );		// Imprimo la Fecha y hora modificadoS
 
 			break;
 		default:
