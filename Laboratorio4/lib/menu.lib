@@ -1,0 +1,458 @@
+
+/*** BeginHeader */
+#define STDIO_ENABLE_LONG_STRINGS
+
+// Definicion de estructuras
+
+char bufferText[350];
+
+
+enum opcionMenu {
+	OPCION_0 = 0,
+	OPCION_1,
+	OPCION_2,
+	OPCION_3,
+	OPCION_4,
+	OPCION_5,
+	OPCION_6,
+	OPCION_7
+};
+
+enum tipoUI {
+	CONSOLA = 0,
+	TCP
+};
+
+
+/*** EndHeader */
+
+
+/*** BeginHeader enviar_a_ui */
+void enviar_a_ui(enum tipoUI interfazAUsar, char *bufferText );
+/*** EndHeader */
+void enviar_a_ui(enum tipoUI interfazAUsar, char *bufferText ){
+
+	switch(interfazAUsar){
+		case( CONSOLA ):
+			printf( "%s", bufferText );
+			break;
+
+	/*	case ( TCP ):
+			sock_puts( &mi_socket_tcp, bufferText );
+			break;*/
+		default:
+			printf( "ERROR DE SISTEMA: No existe la interfazAUsar elegida. Vea funcion enviar_a_ui" ); //EL ERROR SOLO SALE EN LA CONSOLA
+			break;
+	}
+}
+
+
+/*** BeginHeader obtener_de_ui */
+void obtener_de_ui( enum tipoUI interfazAUsar, char *temp );
+/*** EndHeader */
+void obtener_de_ui( enum tipoUI interfazAUsar, char *temp ){
+	switch( interfazAUsar ){
+		case( CONSOLA ):
+		 //	*temp = getchar();    // espero valor
+			gets(temp);
+			printf("\n NUMERO INGRESADO   .....>  %s\n",temp );
+			break;
+
+	/*	case ( TCP ):
+			sock_wait_input(&mi_socket_tcp,0,NULL,&status);
+			if(sock_gets(&mi_socket_tcp,buffer,2048))
+			{
+				sock_puts(&mi_socket_tcp,buffer);
+			}
+
+			sock_err:
+         	switch(status){
+            	case 1: // foreign host closed
+						printf("User closed session\n");
+						break;
+					case -1: // time-out
+						printf("Connection timed out\n");
+						break;
+            }
+			break;*/
+
+		default:
+			printf( "ERROR DE SISTEMA: No existe la interfazAUsar elegida. Vea funcion obtener_de_ui" ); //aca hay que manejar bien lo que pasa al fallar
+			break;
+	}
+}
+
+
+
+/*** BeginHeader MENU_mostrarMenuPrincipal */
+void MENU_mostrarMenuPrincipal( enum tipoUI interfazAUsar );
+/*** EndHeader */
+
+
+void MENU_mostrarMenuPrincipal( enum tipoUI interfazAUsar ){
+	  ClearScreen( interfazAUsar );
+	// Metemos en el buffer el texto formateado
+	sprintf( bufferText,\
+"\n   Elija una opcion\n\
+----------------------------------------\n\
+1 - Fijar la hora del reloj\n\
+2 - Consultar la hora del reloj\n\
+3 - Agregar evento del calendario\n\
+4 - Quitar evento del calendario\n\
+5 - Consultar lista de eventos activos\n\
+6 - Consultar entradas analogicas\n\
+7 - Salir\n \
+>>" );
+	// Mandamos el buffer a la interfaz a usar
+	enviar_a_ui( interfazAUsar, bufferText );
+
+
+}
+
+/*** BeginHeader MENU_obtenerOpcion */
+void MENU_obtenerOpcion( enum tipoUI interfazAUsar, char *temp );
+/*** EndHeader */
+void MENU_obtenerOpcion( enum tipoUI interfazAUsar, char *temp ){
+	// Obtenemos la opcion de la UI deseada
+	obtener_de_ui( interfazAUsar, temp );
+}
+
+
+/*** BeginHeader MENU_pedirFechaHora */
+void MENU_pedirFechaHora( struct tm* p_FechaHora, enum tipoUI interfazAUsar );
+/*** EndHeader */
+void MENU_pedirFechaHora( struct tm* p_FechaHora, enum tipoUI interfazAUsar ){
+	char temp[10];
+	int int_temp;
+
+//	ClearScreen( interfazAUsar );
+
+	////// CONSULTA AÑO
+	// Metemos en el buffer el texto formateado
+	sprintf(bufferText,"\n-------- CONFIGURACION: FIJAR HORA -------\n\n Ingrese el anio:");
+	// Mandamos el buffer a la interfaz a usar
+	enviar_a_ui( interfazAUsar, bufferText);
+	// Obtenemos la opcion de la UI deseada
+	obtener_de_ui( interfazAUsar, temp );
+
+	// Convertimos a int y guardamos el dato
+	int_temp = atoi( temp );
+	int_temp = ( int_temp - 1900 ); // char tm_year; 80-147 (1980-2047)
+	p_FechaHora->tm_year = (char)int_temp;
+
+
+	////// CONSULTA MES
+	// Metemos en el buffer el texto formateado
+	sprintf(bufferText,"\nIngrese el mes:");
+	// Mandamos el buffer a la interfaz a usar
+	enviar_a_ui( interfazAUsar, bufferText);
+	// Obtenemos la opcion de la UI deseada
+	obtener_de_ui( interfazAUsar, temp );
+
+	// Convertimos a int y guardamos el dato
+	int_temp = atoi( temp );
+	p_FechaHora->tm_mon = (char)int_temp;
+
+
+	////// CONSULTA DIA
+	// Metemos en el buffer el texto formateado
+	sprintf(bufferText,"\nIngrese el dia:");
+	// Mandamos el buffer a la interfaz a usar
+	enviar_a_ui( interfazAUsar, bufferText);
+	// Obtenemos la opcion de la UI deseada
+	obtener_de_ui( interfazAUsar, temp );
+
+	// Convertimos a int y guardamos el dato
+	int_temp = atoi( temp );
+	p_FechaHora->tm_mday = (char)int_temp;
+
+
+	////// CONSULTA HORA
+	// Metemos en el buffer el texto formateado
+	sprintf(bufferText,"\nIngrese la hora:");
+	// Mandamos el buffer a la interfaz a usar
+	enviar_a_ui( interfazAUsar, bufferText);
+	// Obtenemos la opcion de la UI deseada
+	obtener_de_ui( interfazAUsar, temp );
+
+	// Convertimos a int y guardamos el dato
+	int_temp = atoi( temp );
+	p_FechaHora->tm_hour = (char)int_temp;
+
+
+	////// CONSULTA MINUTO
+	// Metemos en el buffer el texto formateado
+	sprintf(bufferText,"\nIngrese el minuto:");
+	// Mandamos el buffer a la interfaz a usar
+	enviar_a_ui( interfazAUsar, bufferText);
+	// Obtenemos la opcion de la UI deseada
+	obtener_de_ui( interfazAUsar, temp );
+
+	// Convertimos a int y guardamos el dato
+	int_temp = atoi( temp );
+	p_FechaHora->tm_min = (char)int_temp;
+
+
+	// Seteamos segundos en cero
+	p_FechaHora->tm_sec = 0x00;
+
+}
+
+
+/*** BeginHeader MENU_printFechaHora */
+void MENU_printFechaHora ( struct tm* p_FechaHora, enum tipoUI interfazAUsar );
+/*** EndHeader */
+// Imprime la fecha y la hora de una estructura tm
+void MENU_printFechaHora ( struct tm* p_FechaHora, enum tipoUI interfazAUsar ){
+	int dia, mes, anio, hora, minuto;
+	char aux[2];
+
+	anio = (int)p_FechaHora->tm_year;
+	anio = anio + 1900;
+	mes = (int)p_FechaHora->tm_mon;
+	dia = (int)p_FechaHora->tm_mday;
+	hora = (int)p_FechaHora->tm_hour;
+	minuto = (int)p_FechaHora->tm_min;
+
+	if ( mes < 10 ){
+		if ( dia < 10){
+			if ( hora < 10 ){
+				if ( minuto < 10 ){
+					printf("\nFecha: 0%u/0%u/%u\nHora: 0%u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: 0%u/0%u/%u\nHora: 0%u:%u", dia, mes, anio, hora, minuto);
+				}
+			} else {
+				if ( minuto < 10 ){
+					printf("\nFecha: 0%u/0%u/%u\nHora: %u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: 0%u/0%u/%u\nHora: %u:%u", dia, mes, anio, hora, minuto);
+				}
+			}
+		} else {
+			if ( hora < 10 ){
+				if ( minuto < 10 ){
+					printf("\nFecha: %u/0%u/%u\nHora: 0%u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: %u/0%u/%u\nHora: 0%u:%u", dia, mes, anio, hora, minuto);
+				}
+			} else {
+				if ( minuto < 10 ){
+					printf("\nFecha: %u/0%u/%u\nHora: %u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: %u/0%u/%u\nHora: %u:%u", dia, mes, anio, hora, minuto);
+				}
+			}
+		}
+	} else {
+		if ( dia < 10){
+			if ( hora < 10 ){
+				if ( minuto < 10 ){
+					printf("\nFecha: 0%u/%u/%u\nHora: 0%u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: 0%u/%u/%u\nHora: 0%u:%u", dia, mes, anio, hora, minuto);
+				}
+			} else {
+				if ( minuto < 10 ){
+					printf("\nFecha: 0%u/%u/%u\nHora: %u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: 0%u/%u/%u\nHora: %u:%u", dia, mes, anio, hora, minuto);
+				}
+			}
+		} else {
+			if ( hora < 10 ){
+				if ( minuto < 10 ){
+					printf("\nFecha: %u/%u/%u\nHora: 0%u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: %u/%u/%u\nHora: 0%u:%u", dia, mes, anio, hora, minuto);
+				}
+			} else {
+				if ( minuto < 10 ){
+					printf("\nFecha: %u/%u/%u\nHora: %u:0%u", dia, mes, anio, hora, minuto);
+				} else {
+					printf("\nFecha: %u/%u/%u\nHora: %u:%u", dia, mes, anio, hora, minuto);
+				}
+			}
+		}
+	}
+	gets(aux);
+}
+
+
+/*** BeginHeader MENU_consultarHora */
+void MENU_consultarHora( enum tipoUI interfazAUsar );
+/*** EndHeader */
+void MENU_consultarHora( enum tipoUI interfazAUsar ){
+//	ClearScreen( interfazAUsar );
+
+	// Metemos en el buffer el texto formateado
+	sprintf(bufferText, "\n\n-------- CONSULTAR HORA ACTUAL -------\n\n");
+	// Mandamos el buffer a la interfaz a usar
+	enviar_a_ui( interfazAUsar, bufferText);
+}
+
+
+/*** BeginHeader MENU_pedirDatosEvento */
+void MENU_pedirDatosEvento( Event *p_Evento, struct tm *p_FechaHora, enum tipoUI interfazAUsar );
+/*** EndHeader */
+void MENU_pedirDatosEvento( Event *p_Evento, struct tm *p_FechaHora, enum tipoUI interfazAUsar ){
+
+	char opcion[5];
+	int int_opcion;
+	unsigned long timestamp;
+
+//	ClearScreen( interfazAUsar );
+
+	// Metemos en el buffer el texto formateado
+	sprintf( bufferText, "\n\n-------- AGREGAR EVENTO --------------\n\n" );
+	// Mandamos el buffer a la interfaz a usar
+	enviar_a_ui( interfazAUsar, bufferText);
+
+	while(1){
+		// Metemos en el buffer el texto formateado
+		sprintf( bufferText, "\nTipo de Evento (1-Encender o 2-Apagar): ");
+		// Mandamos el buffer a la interfaz a usar
+		enviar_a_ui( interfazAUsar, bufferText );
+		// Obtenemos la opcion de la UI deseada
+		obtener_de_ui( interfazAUsar, opcion );
+
+		// Convertimos a int
+		int_opcion = atoi( opcion );
+		// Validacion de tipo evento
+		if ( int_opcion < 1 || int_opcion > 2 ){
+			// MENSAJE DE ERROR
+			// Metemos en el buffer el texto formateado
+			sprintf( bufferText, "\nERROR: Debe elegir 1 o 2. Volver a ingresar\n" );
+			// Mandamos el buffer a la interfaz a usar
+			enviar_a_ui( interfazAUsar, bufferText );
+		}
+		else{
+			// Fijo el tipo de evento
+			p_Evento->command = opcion[0];
+
+			// PIDO EL PROXIMO DATO. NRO DE LED
+			// Metemos en el buffer el texto formateado
+			sprintf( bufferText, "\nLed a Encender(0-7): ");
+			// Mandamos el buffer a la interfaz a usar
+			enviar_a_ui( interfazAUsar, bufferText);
+			// Obtenemos la opcion de la UI deseada
+			obtener_de_ui( interfazAUsar, opcion );
+
+			// Convertimos a int
+			int_opcion = atoi( opcion );
+			// Validacion de nro de led
+			if ( int_opcion < 0 || int_opcion > 7){
+				// Metemos en el buffer el texto formateado
+				sprintf( bufferText,"\nERROR: Debe elegir un numero entre 0 y 7. Volver a ingresar\n");
+				// Mandamos el buffer a la interfaz a usar
+				enviar_a_ui( interfazAUsar, bufferText);
+			}
+			else{
+				// Fijo el nro de led
+				p_Evento->param = opcion[0];
+
+				// PIDO EL SIGUIENTE DATO. FECHA Y HORA
+				MENU_pedirFechaHora( p_FechaHora, interfazAUsar );
+				MENU_printFechaHora( p_FechaHora, interfazAUsar );
+				timestamp = mktime( p_FechaHora );
+				p_Evento->time = timestamp;
+				return;
+			}
+		}
+	}
+}
+
+
+/*** BeginHeader MENU_eliminarEvento */
+int MENU_eliminarEvento( enum tipoUI interfazAUsar );
+/*** EndHeader */
+int MENU_eliminarEvento( enum tipoUI interfazAUsar ){ //Esta funcion anda solo por consola el listado. Falta adaptarla
+	char aux[2];
+	char numEvento[5];
+	int int_numEvento;
+
+	//ClearScreen( interfazAUsar );
+
+	while(1){
+		// Metemos en el buffer el texto formateado
+		sprintf( bufferText,"\n\n-------- ELIMINAR EVENTO -------\n\nPara eliminar ingrese numero de evento (0 para listar los eventos): \n");
+		// Mandamos el buffer a la interfaz a usar
+		enviar_a_ui( interfazAUsar, bufferText);
+		// Obtenemos la opcion de la UI deseada
+		obtener_de_ui( interfazAUsar, numEvento );
+
+		// Convertimos a int
+		int_numEvento = atoi( numEvento );
+		if ( int_numEvento == OPCION_0 ){
+			EVENTOS_listarEventos( bufferText );
+
+		}
+		else{
+			if ( int_numEvento > 0 && int_numEvento <= MAX_EVENTS ){
+				int_numEvento = int_numEvento - 1;
+				printf( "\nMENU_eliminarEvento int a devolver: %d", int_numEvento );
+				gets(aux);  // Para poder ver el printf
+				return int_numEvento;
+			}
+			else{
+				printf("\nNumero de Evento Incorrecto");
+				gets(aux);
+			}
+		}
+
+	}
+
+}
+
+
+/*** BeginHeader MENU_consultarEventos */
+void MENU_consultarEventos( enum tipoUI interfazAUsar );
+/*** EndHeader */
+void MENU_consultarEventos( enum tipoUI interfazAUsar ){
+	char aux[5];
+	//ClearScreen( interfazAUsar );
+
+	// Metemos en el buffer el texto formateado
+	sprintf( bufferText, "\n\n-------- LISTAR EVENTOS -------\n" );
+	// Mandamos el buffer a la interfaz a usar
+	enviar_a_ui( interfazAUsar, bufferText );
+	gets(aux); // Para poder ver el Printf
+}
+
+/*** BeginHeader MENU_pedirEntradaAnalogica */
+void MENU_pedirEntradaAnalogica( enum tipoUI interfazAUsar, char *temp );
+/*** EndHeader */
+void MENU_pedirEntradaAnalogica( enum tipoUI interfazAUsar, char *temp ){
+	char aux[2];
+	ClearScreen( interfazAUsar );
+
+	while(1){
+		// Metemos en el buffer el texto formateado
+		sprintf( bufferText,"\n\n-------- Entrada Analogica -------\n\n\nIngrese entrada analogica (0 o 1): \n");
+		// Mandamos el buffer a la interfaz a usar
+		enviar_a_ui( interfazAUsar, bufferText);
+		// Obtenemos la opcion de la UI deseada
+		obtener_de_ui( interfazAUsar, temp );
+		if ( *temp == '0' || *temp == '1' ){
+			return;
+		}
+		sprintf( bufferText,"\n\n-- Valor incorrecto, ingrese nuevamente --\n\n");
+		enviar_a_ui( interfazAUsar, bufferText);
+	}
+	gets(aux);
+}
+
+/*** BeginHeader MENU_mostrarEntradaAnalogica */
+void MENU_mostrarEntradaAnalogica( enum tipoUI interfazAUsar, int *temp );
+/*** EndHeader */
+void MENU_mostrarEntradaAnalogica( enum tipoUI interfazAUsar, int *temp ){
+	char aux[2];
+	ClearScreen( interfazAUsar );
+
+	// Metemos en el buffer el texto formateado
+	sprintf( bufferText,"\n\nEl valor de la entrada analogica es: %u\n", *temp);
+	// Mandamos el buffer a la interfaz a usar
+	enviar_a_ui( interfazAUsar, bufferText);
+	gets(aux);
+}
+
