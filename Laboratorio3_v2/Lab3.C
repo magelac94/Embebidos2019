@@ -36,58 +36,58 @@ caso TCP en funciones: enviar_a_ui y obtener_de_ui
 #define ON_TIME	400
 #define OFF_TIME	800
 #define ONE_SECOND	1000
+#define INSTANCIAS 2
 
 struct tm FechaHora;
 char opcion_menu[5];
 int int_opcion_menu, int_lugar_libre, int_id_evento, int_Analog_Value;
 Event unEvento;
 
-cofunc void programaPrincipal[2]( enum tipoUI interfazAUsar ){
-//cofunc void programaPrincipal( enum tipoUI interfazAUsar ){
+cofunc void programaPrincipal[INSTANCIAS]( enum tipoUI interfazAUsar ){
 
-	wfd MENU_mostrarMenuPrincipal( interfazAUsar );
-	wfd MENU_obtenerOpcion( interfazAUsar, opcion_menu );
+	MENU_mostrarMenuPrincipal[interfazAUsar]( interfazAUsar );
+	wfd MENU_obtenerOpcion[interfazAUsar]( interfazAUsar, opcion_menu );
 	int_opcion_menu = atoi( opcion_menu );
 
 	switch( int_opcion_menu ){
 		case( OPCION_1 ):
 			// FIJAR HORA EN EL RELOJ
-			wfd MENU_pedirFechaHora( &FechaHora, interfazAUsar );
+			wfd MENU_pedirFechaHora[interfazAUsar]( &FechaHora, interfazAUsar );
 			RTC_fijarFechaHora( &FechaHora );
-			MENU_printFechaHora( &FechaHora, interfazAUsar );		// Imprimo la Fecha y hora modificadoS
+			MENU_printFechaHora[interfazAUsar]( &FechaHora, interfazAUsar );		// Imprimo la Fecha y hora modificadoS
 			break;
 
 		case( OPCION_2 ):
 			// CONSULTAR HORA ACTUAL
-			wfd MENU_consultarHora( interfazAUsar );
+			wfd MENU_consultarHora[interfazAUsar]( interfazAUsar );
 			RTC_leerFechaHora( &FechaHora );	// Leo el RTC
-			MENU_printFechaHora( &FechaHora, interfazAUsar );		// Imprimo la Fecha y hora
+			MENU_printFechaHora[interfazAUsar]( &FechaHora, interfazAUsar );		// Imprimo la Fecha y hora
 			break;
 
 		case( OPCION_3 ):
 			// AGREGAR EVENTO
-			wfd MENU_pedirDatosEvento( &unEvento, &FechaHora, interfazAUsar );
+			wfd MENU_pedirDatosEvento[interfazAUsar]( &unEvento, &FechaHora, interfazAUsar );
 			EVENTOS_agregarEvento( &unEvento );
 			break;
 
 		case ( OPCION_4 ):
 			// ELIMINAR EVENTO SEGUN EL NUMERO DE EVENTO (ES DE 1 EN adelante segun posicion en el array))
-			wfd {int_id_evento = MENU_eliminarEvento( interfazAUsar )};
+			wfd {int_id_evento = MENU_eliminarEvento[interfazAUsar]( interfazAUsar )};
 			EVENTOS_eliminarEvento( int_id_evento );
 			break;
 
 		case( OPCION_5 ):
 			// CONSULTAR EVENTO
-			wfd MENU_consultarEventos( interfazAUsar );
+			wfd MENU_consultarEventos[interfazAUsar]( interfazAUsar );
 			EVENTOS_listarEventos();
 			break;
 
 		case( OPCION_6 ):
 			// Consulta analogica
-			wfd MENU_pedirEntradaAnalogica( interfazAUsar, opcion_menu );
+			wfd MENU_pedirEntradaAnalogica[interfazAUsar]( interfazAUsar, opcion_menu );
 			int_opcion_menu = atoi(opcion_menu);
 			int_Analog_Value = IO_getAnalogInput( int_opcion_menu ); //el valor que toma por parametro es un unsigned char
-			wfd MENU_mostrarEntradaAnalogica( interfazAUsar, &int_Analog_Value );
+			wfd MENU_mostrarEntradaAnalogica[interfazAUsar]( interfazAUsar, &int_Analog_Value );
 			break;
 
 		case( OPCION_7 ):
@@ -113,7 +113,7 @@ main(){
 	TCP/IP functions, with the possible exception of ifconfig().
 	*/
 	printf("Iniciando Socket\n");
-   sock_init();
+	sock_init();
 	printf("Socket Iniciado\n");
 
 	EVENTOS_Eventos_init();
@@ -121,7 +121,6 @@ main(){
 // LOOP MAQUINAS DE ESTADO
 	while(1)
 	{
-	  //	loophead();
 		//Maquina de estado para verificar que no estamos colgados
 		costate RED_LED always_on
 		{
@@ -141,13 +140,11 @@ main(){
 		costate INSTANCIA_CONSOLA always_on
 		{
 			wfd programaPrincipal[CONSOLA]( CONSOLA );
-		  //	wfd programaPrincipal( CONSOLA );
 		}
 		// Laboratorio 3 - Maquina de estado para manejar los eventos desde TCP.
 		costate INSTANCIA_TCP always_on
 		{
 			wfd programaPrincipal[TCP]( TCP );
-			//wfd programaPrincipal( TCP );
 		}
 
 		//Maquina de estado para checkear si es momento de ejecutar algun evento programado
