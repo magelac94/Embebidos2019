@@ -18,11 +18,14 @@
 
 #use IO.LIB
 #use LED.LIB
+#use TCPCON.LIB
 #use EVENTOS.LIB
 #use UTILITIES.LIB
 #use RTC.lib
 #use MENU.LIB
+#memmap xmem
 #use ucos2.LIB
+#use "dcrtcp.lib"
 
 void Led_Red(){
 
@@ -116,27 +119,47 @@ void ProgramaPrincipal(void* pdata){
 
 main(){
 
-	int parametro;
+	int consola;
+	int tcp;
 	int i;
 
 	HW_init();
 	OSInit();
 
+	printf("Iniciando Socket\n");
+    sock_init();
+	printf("Socket Iniciado\n");
+
+	tcp_reserveport(7);// enable SYN queuing on port 7.
 
 
 	// Tarea 1 Prende LED
 	OSTaskCreate(Led_Red, NULL, 256, 4);
 
-	parametro = CONSOLA;
+	consola = CONSOLA;
 	// Tarea 2 Mostrar Menu Para Consola
-	OSTaskCreate(ProgramaPrincipal , &parametro, 512, 3);
+	OSTaskCreate(ProgramaPrincipal , &consola, 512, 3);
 
 
-	//parametro = TCP;
+	tcp = TCP;
+
+	OSTaskCreate(TCPCON_conexion, NULL, 512, 5);
+
+
 	// Se crean N tareas para Mostrar Menu Por TCP
-	/*for ( i=0 ; i<SESIONES_TCP; i++){                   //  // ver y agregar todas las funciones de tcp
-		OSTaskCreate(ProgramaPrincipal, &parametro, 512, i);
-	}      */
+	for ( i=7 ; i<15; i++){                   //  // ver y agregar todas las funciones de tcp
+		OSTaskCreate(TCPCON_conexion, NULL, 512, i);
+		OSTaskCreate(ProgramaPrincipal, &tcp, 512, 6);
+
+	}
+
+
+
+
+
+//	OSTaskCreate(TCPCON_conexion, NULL, 512, 5);
+
+//	OSTaskCreate(ProgramaPrincipal, &tcp, 512, 6);
 
 
 	OSStart();
