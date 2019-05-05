@@ -113,7 +113,7 @@ main(){
 	TCP/IP functions, with the possible exception of ifconfig().
 	*/
 	printf("Iniciando Socket\n");
-   sock_init();
+    sock_init();
 	printf("Socket Iniciado\n");
 
 	EVENTOS_Eventos_init();
