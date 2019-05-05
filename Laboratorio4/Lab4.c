@@ -1,10 +1,19 @@
-#define STACK_CNT_256 3
-#define STACK_CNT_512 3
-#define OS_TASK_DEL_EN 1
+//#class auto 			// Change default storage class for local variables: on the stack
 
-#define SESIONES_TCP 5
+/* uCOS configuration */
+#define OS_MAX_TASKS			6  		// Maximum number of tasks system can create (less stat and idle tasks)
+#define OS_SEM_EN				1		// Enable semaphores
+#define OS_TIME_DLY_HMSM_EN		1		// Habilitar la funcion de delay para pasar fecha y hora
+#define OS_MAX_EVENTS			8		// MAX_TCP_SOCKET_BUFFERS + 2 + 1 (1 semaphore is used in this app)
 
-//#define MAX_EVENTS 16
+
+#define STACK_CNT_256			3
+#define STACK_CNT_512			2		// LED blink task + main()
+#define STACK_CNT_2K         	2		// TCP/IP needs a 2K stack
+#define MAX_TCP_SOCKET_BUFFERS	5
+
+// #define OS_TASK_DEL_EN 1
+// #define MAX_EVENTS 16
 
 
 #use IO.LIB
