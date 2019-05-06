@@ -1,12 +1,14 @@
 /*** BeginHeader */
+/* TCP/IP configuration */
 #define TCPCONFIG 0
 #define USE_ETHERNET		1
 #define MY_IP_ADDRESS "10.10.0.10"
 #define MY_NETMASK "255.255.255.0"
 #define PORT 7
 #define MY_GATEWAY "10.10.0.1"
-
 #memmap xmem
+
+/* Use libs */
 #use "dcrtcp.lib"
 
 /*
@@ -15,16 +17,18 @@ In all versions of Dynamic C, TCP and UDP socket structures must be allocated in
 is simply accomplished by declaring a static variable of type tcp_Socket or udp_Socket:
 static tcp_Socket my_sock;
 */
+
+static char buffer[2048];
 static tcp_Socket mi_socket_tcp;
 int status;
-char buffer[2048];
+//auto int length;
 /*** EndHeader */
 
 
 /*** BeginHeader  TCPCON_conexion */
-cofunc void TCPCON_conexion();
+void TCPCON_conexion();
 /*** EndHeader */
-cofunc void TCPCON_conexion(){
+void TCPCON_conexion(){
 
 	while(1) {
 		// Si se cerro la conexion, vuelve a abrir el socket y espera

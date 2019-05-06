@@ -60,9 +60,6 @@ dkms.conf
 *.rom
 *.MD1
 *.HX1
-
 *.bin
 *.DBG
-*.bin
-*.MD1
-*.HX1
+*.bak
