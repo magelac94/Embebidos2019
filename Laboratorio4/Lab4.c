@@ -17,14 +17,18 @@
 
 #use IO.LIB
 #use LED.LIB
-#use TCPCON.LIB
+
 #use EVENTOS.LIB
 #use UTILITIES.LIB
 #use RTC.lib
-#use MENU.LIB
+
 #memmap xmem
 #use ucos2.LIB
-//#use "dcrtcp.lib"
+//#use TCPCON.LIB
+#use TCP_ALL.LIB
+#use MENU.LIB
+
+
 
 // Tarea para prender el led que indica que todo esta funcionando sin bloqueos
 void Led_Red(){
@@ -37,6 +41,7 @@ void Led_Red(){
    	}
 }
 
+/*
 // Tarea principal que interactua con el usuario por CONSOLA o TCP
 void ProgramaPrincipal(void* pdata){
 	Event unEvento;
@@ -46,6 +51,7 @@ void ProgramaPrincipal(void* pdata){
 	int int_opcion_menu, int_id_evento, int_Analog_Value;
     enum tipoUI interfazAUsar;
     interfazAUsar = *(int*)pdata;
+    printf("INTERFAZ A USAR POR CONSOLA LEEE %d\n",interfazAUsar );
 
 //    // Defino Array de Eventos
 //    Event eventos[MAX_EVENTS];		// Lista de Eventos
@@ -111,7 +117,7 @@ void ProgramaPrincipal(void* pdata){
 				printf("Vuelva a ingresar\n");
 			}
 
-		OSTaskSuspend(4);
+		OSTaskSuspend(OS_PRIO_SELF);
 		}
   }
 
@@ -120,9 +126,13 @@ void Tarea3(void* pdata){
 	while(1){
 		printf("esta es la tercer tarea");
       gets(aux);
-      OSTaskResume(4);
+
+      	OSTaskResume(5);
+        OSTaskResume(6);
 	}
 }
+*/
+
 
 
 main(){
@@ -130,36 +140,41 @@ main(){
 	int consola;
 	int tcp;
 	int i;
+	consola = CONSOLA;
+	tcp = TCP;
 
 	HW_init();
 	OSInit();
 
-/*	printf("Iniciando Socket\n");
+	printf("Iniciando Socket\n");
     sock_init();
 	printf("Socket Iniciado\n");
 
 	tcp_reserveport(7);// enable SYN queuing on port 7.
-*/
+
 
 	// Tarea 1 Prende LED
 	OSTaskCreate(Led_Red, NULL, 256, 3);
 
-	consola = CONSOLA;
+	
 	// Tarea 2 Mostrar Menu Para Consola
-	OSTaskCreate(ProgramaPrincipal , &consola, 512, 4);
-   OSTaskCreate(Tarea3 , NULL, 512, 5);
+	//OSTaskCreate(ProgramaPrincipal , &consola, 512, 4); // ANDA OK
 
-	/*tcp = TCP;
+ // OSTaskCreate(Tarea3 , NULL, 512, 7); // ok
 
-	OSTaskCreate(TCPCON_conexion, NULL, 512, 5);
+	
+   // Tarea 3 TCP
+	OSTaskCreate(TareaTCP, NULL, 2048, 4);
 
 
+/*
 	// Se crean N tareas para Mostrar Menu Por TCP
 	for ( i=7 ; i<15; i++){                   //  // ver y agregar todas las funciones de tcp
 		OSTaskCreate(TCPCON_conexion, NULL, 512, i);
 		OSTaskCreate(ProgramaPrincipal, &tcp, 512, 6);
 
 	}
+
 
 
 

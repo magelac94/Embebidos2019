@@ -6,7 +6,7 @@
 #define PORT 7
 #define MY_GATEWAY "10.10.0.1"
 
-
+#use dcrtcp.lib
 
 /*
 3.2 Allocating TCP and UDP Sockets
@@ -17,6 +17,10 @@ static tcp_Socket my_sock;
 /*static tcp_Socket mi_socket_tcp;
 int status;
 char buffer[2048];*/
+
+	static tcp_Socket mi_socket_tcp;
+	int status;
+	static char buffer[2048];
 /*** EndHeader */
 
 
@@ -24,10 +28,9 @@ char buffer[2048];*/
 void TCPCON_conexion();
 /*** EndHeader */
 void TCPCON_conexion(){
-	
-	static tcp_Socket mi_socket_tcp;
+/*static tcp_Socket mi_socket_tcp;
 	int status;
-	static char buffer[2048];
+	static char buffer[2048];*/
 
 	while(1) {
 
@@ -42,10 +45,10 @@ void TCPCON_conexion(){
 		printf("\nINFO: Conexion establecida...\n");
 
 		// Mientras esta la conexion establecida, cede el CPU
-		while(tcp_tick( &mi_socket_tcp )){
+	/*	while(tcp_tick( &mi_socket_tcp )){
 			OSTimeDlyHMSM(0,0,0,100);  // del ejemplo del dynamic
 
-		}
+		}*/
 		printf("\nINFO: Connection closed...\n");
 
 		/*
@@ -62,3 +65,25 @@ void TCPCON_conexion(){
 		*/
 	}
 }
+
+
+void TCPCON_obtener(){
+
+			sock_wait_input(&mi_socket_tcp,0,NULL,&status);
+			if(sock_gets(&mi_socket_tcp,buffer,2048))
+			{
+				sock_puts(&mi_socket_tcp,buffer);
+			}
+
+			sock_err:
+         	switch(status){
+            	case 1: // foreign host closed
+						printf("User closed session\n");
+						break;
+					case -1: // time-out
+						printf("Connection timed out\n");
+						break;
+            }
+
+}
+
