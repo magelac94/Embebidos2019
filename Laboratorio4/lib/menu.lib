@@ -4,7 +4,7 @@
 
 // Definicion de estructuras
 
-char bufferText[350];
+char bufferText[512];
 
 
 enum opcionMenu {
@@ -26,7 +26,7 @@ enum tipoUI {
 
 /*** EndHeader */
 
-
+#ifdef ESTONO
 /*** BeginHeader enviar_a_ui */
 void enviar_a_ui(enum tipoUI interfazAUsar, char *bufferText, tcp_Socket *echo_socket );
 /*** EndHeader */
@@ -83,18 +83,18 @@ void obtener_de_ui( enum tipoUI interfazAUsar, char *temp, tcp_Socket *echo_sock
 			break;
 	}
 }
-
+#endif
 
 
 /*** BeginHeader MENU_mostrarMenuPrincipal */
-void MENU_mostrarMenuPrincipal( enum tipoUI interfazAUsar, tcp_Socket *echo_socket );
+void MENU_mostrarMenuPrincipal( enum tipoUI interfazAUsar, char* buffer );
 /*** EndHeader */
 
 
-void MENU_mostrarMenuPrincipal( enum tipoUI interfazAUsar, tcp_Socket *echo_socket ){
-	  ClearScreen( interfazAUsar );
+void MENU_mostrarMenuPrincipal( enum tipoUI interfazAUsar, char* buffer ){
+	//ClearScreen( interfazAUsar );
 	// Metemos en el buffer el texto formateado
-	sprintf( bufferText,\
+	sprintf( buffer,\
 "\n   Elija una opcion\n\
 ----------------------------------------\n\
 1 - Fijar la hora del reloj\n\
@@ -106,10 +106,9 @@ void MENU_mostrarMenuPrincipal( enum tipoUI interfazAUsar, tcp_Socket *echo_sock
 7 - Salir\n \
 >>" );
 	// Mandamos el buffer a la interfaz a usar
-	enviar_a_ui( interfazAUsar, bufferText, echo_socket);
-
-
+	//enviar_a_ui( interfazAUsar, bufferText, echo_socket);
 }
+
 
 /*** BeginHeader MENU_obtenerOpcion */
 void MENU_obtenerOpcion( enum tipoUI interfazAUsar, char *temp, tcp_Socket *echo_socket, char * buffer);
@@ -295,7 +294,7 @@ void MENU_consultarHora( enum tipoUI interfazAUsar,tcp_Socket* echo_socket ){
 
 
 /*** BeginHeader MENU_pedirDatosEvento */
-void MENU_pedirDatosEvento( Event *p_Evento, struct tm *p_FechaHora, enum tipoUI interfazAUsar, tcp_Socket* echo_socket, char * buffer );
+void MENU_pedirDatosEvento( Event *p_Evento, struct tm *p_FechaHora, enum tipoUI interfazAUsar, tcp_Socket* echo_socket, char* buffer );
 /*** EndHeader */
 void MENU_pedirDatosEvento( Event *p_Evento, struct tm *p_FechaHora, enum tipoUI interfazAUsar, tcp_Socket* echo_socket, char * buffer ){
 
@@ -403,7 +402,6 @@ int MENU_eliminarEvento( enum tipoUI interfazAUsar, tcp_Socket* echo_socket, cha
 		}
 
 	}
-
 }
 
 
@@ -457,4 +455,3 @@ void MENU_mostrarEntradaAnalogica( enum tipoUI interfazAUsar, int *temp, tcp_Soc
 	enviar_a_ui( interfazAUsar, bufferText, echo_socket);
 	gets(aux);
 }
-
