@@ -75,7 +75,7 @@ void interfaz_tcp(void* pdata){
 #ifdef DEBUG
 		printf("\nDEBUG: Escuchando en puerto 7 por conexiones\n");
 #endif
-		while( !sock_established(&tcp_socket)){ // && sock_bytesready(&tcp_socket)==-1 ) {
+		while( !sock_established(&tcp_socket) && sock_bytesready(&tcp_socket)==-1 ) {
 			tcp_tick(NULL);
 			OSTimeDlyHMSM(0,0,1,0);
 		}
