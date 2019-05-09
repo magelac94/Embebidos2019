@@ -1,5 +1,7 @@
 //#class auto 			// Change default storage class for local variables: on the stack
 #define DEBUG			// activo para imprimir estado de conexion TCP
+#define NOANDA        //Activo si quiero probar el caso que no anda
+
 /* uCOS configuration */
 #define OS_MAX_TASKS			2  		// Maximum number of tasks system can create (less stat and idle tasks)
 #define OS_TASK_SUSPEND_EN		1		// Habilitar suspender y resumir tareas
@@ -103,19 +105,11 @@ void interfaz_tcp(void* pdata){
 	         }
 			}
 #endif
+
 			MENU_obtenerOpcion( TCP, buffer_recepcion, &un_tcp_socket );
-			printf("\nHemos recibido: %s", buffer_recepcion );
-			OSTimeDlyHMSM(0,0,5,0);
-
-			/* Esta funcion lee del buffer del socket tcp hasta el lago de
-			buffer_recepcion - 1 y lo guarda en buffer_recepcion. Si no lo puede llenar
-			lee lo que hay y retorna */
-			/*bytes_leidos=sock_fastread( &un_tcp_socket, buffer_recepcion, sizeof(buffer_recepcion)-1 );
-			if(bytes_leidos>0) {
-				buffer_recepcion[bytes_leidos]=0; // Terminamos la cadena del string
-			}*/
-
-
+#ifdef DEBUG
+         printf("\nDEBUG: Hemos recibido: %s", buffer_recepcion );
+#endif
 
 		} while(tcp_tick(&un_tcp_socket));
 #ifdef DEBUG
