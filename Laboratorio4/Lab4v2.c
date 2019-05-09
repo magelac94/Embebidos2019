@@ -58,12 +58,12 @@ Debemos asignarle un stack de 2K por el socket tcp.
 void interfaz_tcp(void* pdata){
 
 	static char buffer_recepcion[TAMANIO_BUFFER_LE], buffer_envio[TAMANIO_BUFFER_LE];
-	static tcp_Socket tcp_socket;
+	static tcp_Socket un_tcp_socket;
 	auto int bytes_leidos, bytes_enviados, i;
 
 	while(1) {
 		// Ponemos el socket en estado de escucha
-		tcp_listen(&tcp_socket, 7, 0, 0, NULL, 0);	// Ponemos a escuchar el puerto
+		tcp_listen(&un_tcp_socket, 7, 0, 0, NULL, 0);	// Ponemos a escuchar el puerto
 
 		// Inicializamos los buffers para sacar la basura
 		for ( i = 0; i < TAMANIO_BUFFER_LE; i++ ){
@@ -71,46 +71,53 @@ void interfaz_tcp(void* pdata){
 			buffer_envio[i] = ' ';
 		}
 
-		// Esperamos por la conexion y si no esta establecida y pronta, suspende por 1 seg.
+      // Le damos un tiempo para que el socket quede pronto
+		OSTimeDlySec(5);
 #ifdef DEBUG
 		printf("\nDEBUG: Escuchando en puerto 7 por conexiones\n");
 #endif
-		while( !sock_established(&tcp_socket) && sock_bytesready(&tcp_socket)==-1 ) {
+		// Esperamos por la conexion y si no esta establecida y pronta, suspende por 500ms.
+		while( !sock_established(&un_tcp_socket) && sock_bytesready(&un_tcp_socket)==-1 ) {
 			tcp_tick(NULL);
-			OSTimeDlyHMSM(0,0,1,0);
+			OSTimeDlyHMSM(0,0,0,500);
 		}
 
+		// Un delay para que se establezca la conexion
+		OSTimeDlyHMSM(0,0,0,500);
 #ifdef DEBUG
 		printf("\nDEBUG: Conexion establecida\n");
 #endif
-		// Un delay para que se establezca la conexion
-		OSTimeDlyHMSM(0,0,2,0);
-		//Hago primero y al final actualizo el socket
 
+		//Hago primero y al final actualizo el socket
 		// Mandamos y revibimos del socket
 		do {
 			// Aca pongo el programa principal. Cuando espero por input hago ticks mientras espero
 			// Esto es una prueba de concepto.
-			MENU_mostrarMenuPrincipal( TCP, buffer_envio );
+			MENU_mostrarMenuPrincipal( TCP, buffer_envio, &un_tcp_socket );
+
+#ifndef NOANDA
+         bytes_enviados=sock_fastwrite( &un_tcp_socket, buffer_envio, sizeof(buffer_envio)-1 );
+			if(bytes_enviados>0) {
+	         for ( i = 0; i < bytes_enviados; i++ ){
+	            buffer_envio[i] = ' ';
+	         }
+			}
+#endif
+			MENU_obtenerOpcion( TCP, buffer_recepcion, &un_tcp_socket );
+			printf("\nHemos recibido: %s", buffer_recepcion );
 			OSTimeDlyHMSM(0,0,5,0);
 
 			/* Esta funcion lee del buffer del socket tcp hasta el lago de
 			buffer_recepcion - 1 y lo guarda en buffer_recepcion. Si no lo puede llenar
 			lee lo que hay y retorna */
-			bytes_leidos=sock_fastread( &tcp_socket, buffer_recepcion, sizeof(buffer_recepcion)-1 );
+			/*bytes_leidos=sock_fastread( &un_tcp_socket, buffer_recepcion, sizeof(buffer_recepcion)-1 );
 			if(bytes_leidos>0) {
 				buffer_recepcion[bytes_leidos]=0; // Terminamos la cadena del string
-			}
-
-			/* Esta funcion escribe en el buffer del socket tcp hasta el largo
-			de buffer_envio
-			*/
-			bytes_enviados=sock_fastwrite( &tcp_socket, buffer_envio, sizeof(buffer_envio)-1 );
-			/*if(bytes_enviados>0) {
-				//buffer_envio[bytes_leidos]=0; // Terminamos la cadena del string
 			}*/
 
-		} while(tcp_tick(&tcp_socket));
+
+
+		} while(tcp_tick(&un_tcp_socket));
 #ifdef DEBUG
 		printf("\nDEBUG: Conexion finalizada....\n");
 #endif
