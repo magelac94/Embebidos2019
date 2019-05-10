@@ -230,7 +230,7 @@ main(){
 
 	//Creacion de tareas
 	Error = OSTaskCreate(Led_Red, NULL, 256, 3 );
-	//	Error = OSTaskCreate(interfaz_tcp, NULL, 2048, 4 );
+	Error = OSTaskCreate(interfaz_tcp, NULL, 2048, 4 );
 	Error = OSTaskCreate(interfaz_consola,NULL,512, 5);
 
 	// Re-habilitamos scheduling
