@@ -87,7 +87,7 @@ void obtener_de_ui( enum tipoUI interfazAUsar, char* buffer_recepcion, tcp_Socke
 					buffer_recepcion[bytes_leidos]=0; // Terminamos la cadena del string
 					break;
 				}
-				OSTimeDlyHMSM(0,0,0,500);
+				OSTimeDlyHMSM(0,0,0,100);
 			}
          break;
 
@@ -120,7 +120,7 @@ void MENU_mostrarMenuPrincipal( enum tipoUI interfazAUsar, char* buffer_envio, t
 >>" );
 	// Mandamos el buffer a la interfaz a usar
 	enviar_a_ui( interfazAUsar, buffer_envio, un_tcp_socket);
-	OSTimeDlyHMSM(0,0,0,500);
+
 
 }
 
@@ -297,7 +297,9 @@ void MENU_printFechaHora ( struct tm* p_FechaHora, enum tipoUI interfazAUsar ){
 			}
 		}
 	}
-	gets(aux);  //esto solo funciona en la consola.
+	if (interfazAUsar == CONSOLA){
+		gets(aux);	
+	}
 }
 
 
@@ -320,7 +322,7 @@ void MENU_pedirDatosEvento( Event *p_Evento, struct tm *p_FechaHora, enum tipoUI
 /*** EndHeader */
 void MENU_pedirDatosEvento( Event *p_Evento, struct tm *p_FechaHora, enum tipoUI interfazAUsar, tcp_Socket* echo_socket, char * buffer ){
 
-	char opcion[5];
+	//char opcion[5];
 	int int_opcion;
 	unsigned long timestamp;
 
@@ -340,7 +342,7 @@ void MENU_pedirDatosEvento( Event *p_Evento, struct tm *p_FechaHora, enum tipoUI
 		obtener_de_ui( interfazAUsar, buffer, echo_socket);
 
 		// Convertimos a int
-		int_opcion = atoi( opcion );
+		int_opcion = atoi( buffer );
 		// Validacion de tipo evento
 		if ( int_opcion < 1 || int_opcion > 2 ){
 			// MENSAJE DE ERROR
@@ -351,7 +353,7 @@ void MENU_pedirDatosEvento( Event *p_Evento, struct tm *p_FechaHora, enum tipoUI
 		}
 		else{
 			// Fijo el tipo de evento
-			p_Evento->command = opcion[0];
+			p_Evento->command = buffer[0];
 
 			// PIDO EL PROXIMO DATO. NRO DE LED
 			// Metemos en el buffer el texto formateado
@@ -362,7 +364,7 @@ void MENU_pedirDatosEvento( Event *p_Evento, struct tm *p_FechaHora, enum tipoUI
 			obtener_de_ui( interfazAUsar, buffer, echo_socket);
 
 			// Convertimos a int
-			int_opcion = atoi( opcion );
+			int_opcion = atoi( buffer );
 			// Validacion de nro de led
 			if ( int_opcion < 0 || int_opcion > 7){
 				// Metemos en el buffer el texto formateado
@@ -372,7 +374,7 @@ void MENU_pedirDatosEvento( Event *p_Evento, struct tm *p_FechaHora, enum tipoUI
 			}
 			else{
 				// Fijo el nro de led
-				p_Evento->param = opcion[0];
+				p_Evento->param = buffer[0];
 
 				// PIDO EL SIGUIENTE DATO. FECHA Y HORA
 				MENU_pedirFechaHora( p_FechaHora, interfazAUsar, echo_socket, buffer);
@@ -414,12 +416,16 @@ int MENU_eliminarEvento( enum tipoUI interfazAUsar, tcp_Socket* echo_socket, cha
 			if ( int_numEvento > 0 && int_numEvento <= MAX_EVENTS ){
 				int_numEvento = int_numEvento - 1;
 				printf( "\nMENU_eliminarEvento int a devolver: %d", int_numEvento );
-				gets(aux);  // Para poder ver el printf
+				if (interfazAUsar == CONSOLA){
+					gets(aux);	
+				}
 				return int_numEvento;
 			}
 			else{
 				printf("\nNumero de Evento Incorrecto");
-				gets(aux);
+				if (interfazAUsar == CONSOLA){
+					gets(aux);	
+				}
 			}
 		}
 
@@ -439,7 +445,9 @@ void MENU_consultarEventos( enum tipoUI interfazAUsar,tcp_Socket *echo_socket ){
 	sprintf( bufferText, "\n\n-------- LISTAR EVENTOS -------\n" );
 	// Mandamos el buffer a la interfaz a usar
 	enviar_a_ui( interfazAUsar, bufferText, echo_socket );
-	gets(aux); // Para poder ver el Printf
+	if (interfazAUsar == CONSOLA){
+		gets(aux);	
+	}
 }
 
 /*** BeginHeader MENU_pedirEntradaAnalogica */
@@ -462,7 +470,9 @@ void MENU_pedirEntradaAnalogica( enum tipoUI interfazAUsar, char *temp, tcp_Sock
 		sprintf( buffer,"\n\n-- Valor incorrecto, ingrese nuevamente --\n\n");
 		enviar_a_ui( interfazAUsar, buffer, echo_socket );
 	}
-	gets(aux);
+	if (interfazAUsar == CONSOLA){
+		gets(aux);	
+	}
 }
 
 /*** BeginHeader MENU_mostrarEntradaAnalogica */
@@ -477,5 +487,7 @@ void MENU_mostrarEntradaAnalogica( enum tipoUI interfazAUsar, int *temp, tcp_Soc
 	sprintf( bufferText,"\n\nEl valor de la entrada analogica es: %u\n", *temp);
 	// Mandamos el buffer a la interfaz a usar
 	enviar_a_ui( interfazAUsar, bufferText, echo_socket);
-	gets(aux);
+	if (interfazAUsar == CONSOLA){
+		gets(aux);	
+	}
 }

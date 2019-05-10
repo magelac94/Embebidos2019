@@ -87,7 +87,7 @@ void interfaz_consola(void* pdata){
 			case( OPCION_3 ):
 				// AGREGAR EVENTO
 				MENU_pedirDatosEvento( &unEvento, &FechaHora, CONSOLA, NULL, buffer );
-			//	EVENTOS_agregarEvento( &eventos, &unEvento ); // ver el tema del array de eventos, lo agregue en el mail lo saque del Eventos para poder manejar diferentes array , 1 por instancia, a no ser que sea todo el emis
+				EVENTOS_agregarEvento( &unEvento );
 				break;
 			case ( OPCION_4 ):
 				// ELIMINAR EVENTO SEGUN EL NUMERO DE EVENTO (ES DE 1 EN adelante segun posicion en el array))
@@ -178,29 +178,34 @@ void interfaz_tcp(void* pdata){
 					// CONFIGURAR FECHA HORA
 					printf("\nOPCION 1\n");
 					MENU_pedirFechaHora( &FechaHora, TCP, &un_tcp_socket, buffer_recepcion );
-					//RTC_fijarFechaHora( &FechaHora );
+					RTC_fijarFechaHora( &FechaHora );
+			    	OSTimeDlyHMSM(0,0,100,0);
 					break;
 				case( OPCION_2 ):
 					// CONSULTAR FECHA HORA ACTUAL
 					MENU_consultarHora( TCP, &un_tcp_socket );
 					RTC_leerFechaHora( &FechaHora );	// Leo el RTC
-				//	MENU_printFechaHora( &FechaHora, TCP); // Imprimo la Fecha y hora
+					MENU_printFechaHora( &FechaHora, TCP); // Imprimo la Fecha y hora
+					OSTimeDlyHMSM(0,0,0,500);
 					break;
 				case( OPCION_3 ):
 					// AGREGAR EVENTO
 					MENU_pedirDatosEvento( &unEvento, &FechaHora, TCP, &un_tcp_socket, buffer_recepcion);
-				//	EVENTOS_agregarEvento( &eventos, &unEvento ); // ver el tema del array de eventos, lo agregue en el mail lo saque del Eventos para poder manejar diferentes array , 1 por instancia, a no ser que sea todo el emis
+					EVENTOS_agregarEvento( &unEvento ); // ver el tema del array de eventos, lo agregue en el mail lo saque del Eventos para poder manejar diferentes array , 1 por instancia, a no ser que sea todo el emis
+					OSTimeDlyHMSM(0,0,0,500);
 					break;
 				case ( OPCION_4 ):
 					// ELIMINAR EVENTO SEGUN EL NUMERO DE EVENTO (ES DE 1 EN adelante segun posicion en el array))
 					int_id_evento = MENU_eliminarEvento( TCP, &un_tcp_socket, buffer_recepcion );
 					printf("%d\n", int_id_evento);
-				//	EVENTOS_eliminarEvento( int_id_evento );  // revisar despues de agregarEvento
+					EVENTOS_eliminarEvento( int_id_evento );  // revisar despues de agregarEvento
+					OSTimeDlyHMSM(0,0,0,500);
 					break;
 				case( OPCION_5 ):
 					// CONSULTAR EVENTO
 					MENU_consultarEventos( TCP, &un_tcp_socket );
 					EVENTOS_listarEventos();
+					OSTimeDlyHMSM(0,0,0,500);
 					break;
 
 				case( OPCION_6 ):
@@ -209,10 +214,12 @@ void interfaz_tcp(void* pdata){
 					int_opcion_menu = atoi(aux);
 					int_Analog_Value = IO_getAnalogInput( int_opcion_menu ); //el valor que toma por parametro es un unsigned char
 					MENU_mostrarEntradaAnalogica( TCP, &int_Analog_Value, &un_tcp_socket );
+					OSTimeDlyHMSM(0,0,0,500);
 					break;
 				case( OPCION_7 ):
 					// SALIR
 					printf("Salir");
+					OSTimeDlyHMSM(0,0,0,500);
 					break;
 
 
@@ -220,8 +227,9 @@ void interfaz_tcp(void* pdata){
 					// OPCION INCORRECTA
 					printf("\nOpcion DEFAULT: %d \n", int_opcion_menu);
 					printf("Vuelva a ingresar\n");
+					OSTimeDlyHMSM(0,0,0,500);
 			}
-
+			OSTimeDlyHMSM(0,0,0,500);
 
 
 
@@ -259,16 +267,18 @@ main(){
 	// Habilita encolado de SYN en puerto 7
 	tcp_reserveport(7);
 
+	EVENTOS_Eventos_init();
 	// Deshabilitamos el scheduling mientras se crean las tareas
-	OSSchedLock();
+//		OSSchedLock();
 
 	//Creacion de tareas
-	Error = OSTaskCreate(Led_Red, NULL, 256, 3 );
-	Error = OSTaskCreate(interfaz_tcp, NULL, 2048, 4 );
-	Error = OSTaskCreate(interfaz_consola,NULL,512, 5);
+	Error = OSTaskCreate(Led_Red, NULL, 256, 5);
+	Error = OSTaskCreate(interfaz_consola,NULL,512, 7);
+  	Error = OSTaskCreate(interfaz_tcp, NULL, 2048, 6 );
+	
 
 	// Re-habilitamos scheduling
-	OSSchedUnlock();
+//	OSSchedUnlock();
 
 	// Iniciamos el sistema operativo comenzando por la tarea en estado "ready" de nayor prioridad
 	OSStart();
