@@ -55,9 +55,6 @@ void interfaz_consola(void* pdata){
 	char aux[2];
 	char buffer[50];
 	int int_opcion_menu, int_id_evento, int_Analog_Value;
-    enum tipoUI interfazAUsar;
-    interfazAUsar = *(int*)pdata;
-    printf("INTERFAZ A USAR POR CONSOLA LEEE %d\n",interfazAUsar );
 
 //    // Defino Array de Eventos
 //    Event eventos[MAX_EVENTS];		// Lista de Eventos
@@ -133,10 +130,11 @@ Cuando hay una conexion activa, muestra el menu por la interfaz tcp.
 Debemos asignarle un stack de 2K por el socket tcp.
 */
 void interfaz_tcp(void* pdata){
+	Event unEvento;
 	struct tm FechaHora;
-	char buffer_recepcion[TAMANIO_BUFFER_LE], buffer_envio[TAMANIO_BUFFER_LE];
+	char buffer_recepcion[TAMANIO_BUFFER_LE], buffer_envio[TAMANIO_BUFFER_LE], aux[2];
 	static tcp_Socket un_tcp_socket;
-	auto int bytes_leidos, bytes_enviados, i, int_opcion_menu;
+	auto int bytes_leidos, bytes_enviados, i, int_opcion_menu, int_id_evento, int_Analog_Value;
 
 	while(1) {
 		// Ponemos el socket en estado de escucha
@@ -182,6 +180,42 @@ void interfaz_tcp(void* pdata){
 					MENU_pedirFechaHora( &FechaHora, TCP, &un_tcp_socket, buffer_recepcion );
 					//RTC_fijarFechaHora( &FechaHora );
 					break;
+				case( OPCION_2 ):
+					// CONSULTAR FECHA HORA ACTUAL
+					MENU_consultarHora( TCP, &un_tcp_socket );
+					RTC_leerFechaHora( &FechaHora );	// Leo el RTC
+				//	MENU_printFechaHora( &FechaHora, TCP); // Imprimo la Fecha y hora
+					break;
+				case( OPCION_3 ):
+					// AGREGAR EVENTO
+					MENU_pedirDatosEvento( &unEvento, &FechaHora, TCP, &un_tcp_socket, buffer_recepcion);
+				//	EVENTOS_agregarEvento( &eventos, &unEvento ); // ver el tema del array de eventos, lo agregue en el mail lo saque del Eventos para poder manejar diferentes array , 1 por instancia, a no ser que sea todo el emis
+					break;
+				case ( OPCION_4 ):
+					// ELIMINAR EVENTO SEGUN EL NUMERO DE EVENTO (ES DE 1 EN adelante segun posicion en el array))
+					int_id_evento = MENU_eliminarEvento( TCP, &un_tcp_socket, buffer_recepcion );
+					printf("%d\n", int_id_evento);
+				//	EVENTOS_eliminarEvento( int_id_evento );  // revisar despues de agregarEvento
+					break;
+				case( OPCION_5 ):
+					// CONSULTAR EVENTO
+					MENU_consultarEventos( TCP, &un_tcp_socket );
+					EVENTOS_listarEventos();
+					break;
+
+				case( OPCION_6 ):
+					// CONSULTA ANALOGICA
+					MENU_pedirEntradaAnalogica( TCP, aux, &un_tcp_socket, buffer_recepcion );
+					int_opcion_menu = atoi(aux);
+					int_Analog_Value = IO_getAnalogInput( int_opcion_menu ); //el valor que toma por parametro es un unsigned char
+					MENU_mostrarEntradaAnalogica( TCP, &int_Analog_Value, &un_tcp_socket );
+					break;
+				case( OPCION_7 ):
+					// SALIR
+					printf("Salir");
+					break;
+
+
 				default:
 					// OPCION INCORRECTA
 					printf("\nOpcion DEFAULT: %d \n", int_opcion_menu);
