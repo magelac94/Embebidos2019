@@ -3,12 +3,12 @@
 //#define NOANDA        //Activo si quiero probar el caso que no anda
 
 /* uCOS configuration */
-#define OS_MAX_TASKS			2  		// Maximum number of tasks system can create (less stat and idle tasks)
+#define OS_MAX_TASKS			4  		// Maximum number of tasks system can create (less stat and idle tasks)
 #define OS_TASK_SUSPEND_EN		1		// Habilitar suspender y resumir tareas
 #define OS_TIME_DLY_HMSM_EN		1		// Habilitar la funcion de delay para pasar fecha y hora
 #define STACK_CNT_256			2		// Led_Red + idle
-#define STACK_CNT_512			2		// main()
-#define STACK_CNT_2K			1		// 1 Tarea TCP
+#define STACK_CNT_512			1		// main()
+#define STACK_CNT_2K			2		// 1 Tarea TCP
 
 /* TCP/IP configuration */
 #define TCPCONFIG 0
@@ -53,12 +53,17 @@ void interfaz_consola(void* pdata){
 	struct tm FechaHora;
 	char opcion_menu;
 	char aux[2];
-	char buffer[50];
-	int int_opcion_menu, int_id_evento, int_Analog_Value;
+	char buffer[TAMANIO_BUFFER_LE];
+	int int_opcion_menu, int_id_evento, int_Analog_Value, i;
 
 //    // Defino Array de Eventos
 //    Event eventos[MAX_EVENTS];		// Lista de Eventos
 //    EVENTOS_Eventos_init(&eventos);   // Inicializo array de eventos para cada llamada a programa principal, son n instancias, son n arrays;
+
+	for ( i = 0; i < TAMANIO_BUFFER_LE; i++ ){
+			//buffer_recepcion[i] = ' ';
+			buffer[i] = ' ';
+	}
 
     while(1){ // LOOP menu
 
@@ -135,6 +140,7 @@ void interfaz_tcp(void* pdata){
 	char buffer_recepcion[TAMANIO_BUFFER_LE], buffer_envio[TAMANIO_BUFFER_LE], aux[2];
 	static tcp_Socket un_tcp_socket;
 	auto int bytes_leidos, bytes_enviados, i, int_opcion_menu, int_id_evento, int_Analog_Value;
+
 
 	while(1) {
 		// Ponemos el socket en estado de escucha
@@ -269,16 +275,18 @@ main(){
 
 	EVENTOS_Eventos_init();
 	// Deshabilitamos el scheduling mientras se crean las tareas
-//		OSSchedLock();
+		OSSchedLock();
 
 	//Creacion de tareas
 	Error = OSTaskCreate(Led_Red, NULL, 256, 5);
-	Error = OSTaskCreate(interfaz_consola,NULL,512, 7);
-  	Error = OSTaskCreate(interfaz_tcp, NULL, 2048, 6 );
-	
+	Error = OSTaskCreate(interfaz_tcp, NULL, 2048, 6 );
+	Error = OSTaskCreate(interfaz_consola,NULL, 2048, 7);
+
+
+
 
 	// Re-habilitamos scheduling
-//	OSSchedUnlock();
+	OSSchedUnlock();
 
 	// Iniciamos el sistema operativo comenzando por la tarea en estado "ready" de nayor prioridad
 	OSStart();

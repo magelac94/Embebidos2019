@@ -15,7 +15,9 @@ void RTC_fijarFechaHora( struct tm* p_FechaHora );
 void RTC_fijarFechaHora( struct tm* p_FechaHora ){
 	unsigned long timestamp;
 	timestamp = mktime( p_FechaHora );
+	OSSchedLock();
 	write_rtc( timestamp );
+	OSSchedUnlock();
 }
 
 /*** BeginHeader RTC_leerFechaHora */
