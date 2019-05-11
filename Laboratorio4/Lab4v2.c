@@ -8,7 +8,7 @@
 #define OS_TIME_DLY_HMSM_EN		1		// Habilitar la funcion de delay para pasar fecha y hora
 #define STACK_CNT_256			2		// Led_Red + idle
 #define STACK_CNT_512			1		// main()
-#define STACK_CNT_4K			5		// 1 Tarea TCP
+#define STACK_CNT_2K			5		// 1 Tarea TCP
 
 /* TCP/IP configuration */
 #define TCPCONFIG 0
@@ -19,7 +19,7 @@
 
 #define MY_GATEWAY "10.10.0.1"
 #define TAMANIO_BUFFER_LE 512        // Este es el tamanio que le damos a nuestros buffers para leer y enviar al socket
-//#define TCP_MODE_ASCII 1
+
 /* Incluimos las librerias luego de los define para sobre escribir los macros deseados */
 #use IO.LIB
 #use LED.LIB
@@ -56,10 +56,6 @@ void interfaz_consola(void* pdata){
 	char aux[2];
 	char buffer[TAMANIO_BUFFER_LE];
 	int int_opcion_menu, int_id_evento, int_Analog_Value, i;
-
-//    // Defino Array de Eventos
-//    Event eventos[MAX_EVENTS];		// Lista de Eventos
-//    EVENTOS_Eventos_init(&eventos);   // Inicializo array de eventos para cada llamada a programa principal, son n instancias, son n arrays;
 
 	for ( i = 0; i < TAMANIO_BUFFER_LE; i++ ){
 			//buffer_recepcion[i] = ' ';
@@ -125,8 +121,6 @@ void interfaz_consola(void* pdata){
 				printf("\nOpcion DEFAULT: %d \n", int_opcion_menu);
 				printf("Vuelva a ingresar\n");
 			}
-
-		//OSTaskSuspend(OS_PRIO_SELF);
 		}
 }
 
@@ -141,8 +135,6 @@ void interfaz_tcp(void* pdata){
 	char buffer_recepcion[TAMANIO_BUFFER_LE], buffer_envio[TAMANIO_BUFFER_LE], aux[2];
 	static tcp_Socket un_tcp_socket;
 	auto int bytes_leidos, bytes_enviados, i, int_opcion_menu, int_id_evento, int_Analog_Value;
-
-	//un_tcp_socket = *(tcp_Socket*)pdata;
 
 	while(1) {
 		// Ponemos el socket en estado de escucha
@@ -238,13 +230,8 @@ void interfaz_tcp(void* pdata){
 					OSTimeDlyHMSM(0,0,0,500);
 			}
 			OSTimeDlyHMSM(0,0,0,500);
-
-
-
-
-
-
 		} while(tcp_tick(&un_tcp_socket));
+		
 #ifdef DEBUG
 		printf("\nDEBUG: Conexion finalizada....\n");
 #endif
@@ -281,16 +268,10 @@ main(){
 		OSSchedLock();
 
 	//Creacion de tareas
-	Error = OSTaskCreate(Led_Red, NULL, 4096, 5);
-
-	//for ( i = 6 ; i< OS_MAX_TASKS-1;i++)
-	Error = OSTaskCreate(interfaz_tcp, NULL, 4096, 6 );
-	//Error = OSTaskCreate(interfaz_tcp, NULL , 2048, 7 );
-
-	Error = OSTaskCreate(interfaz_consola,NULL, 4096, 8);
-
-
-
+	Error = OSTaskCreate(Led_Red, NULL, 2048, 5);
+	Error = OSTaskCreate(interfaz_tcp, NULL, 2048, 6 );
+	//Error = OSTaskCreate(interfaz_tcp, NULL, 2048, 7 ); // al meter otro TCP, conecta pero no muestra el menu.
+	Error = OSTaskCreate(interfaz_consola,NULL, 2048, 8);
 
 	// Re-habilitamos scheduling
 	OSSchedUnlock();
