@@ -8,7 +8,7 @@
 #define OS_TIME_DLY_HMSM_EN		1		// Habilitar la funcion de delay para pasar fecha y hora
 #define STACK_CNT_256			2		// Led_Red + idle
 #define STACK_CNT_512			1		// main()
-#define STACK_CNT_2K			3		// 1 Tarea TCP
+#define STACK_CNT_4K			5		// 1 Tarea TCP
 
 /* TCP/IP configuration */
 #define TCPCONFIG 0
@@ -16,7 +16,6 @@
 #define MY_IP_ADDRESS "10.10.0.10"
 #define MY_NETMASK "255.255.255.0"
 #define PORT 7
-//#define MAX_TCP_SOCKET_BUFFERS 10
 
 #define MY_GATEWAY "10.10.0.1"
 #define TAMANIO_BUFFER_LE 512        // Este es el tamanio que le damos a nuestros buffers para leer y enviar al socket
@@ -104,8 +103,8 @@ void interfaz_consola(void* pdata){
 				break;
 			case( OPCION_5 ):
 				// CONSULTAR EVENTO
-				MENU_consultarEventos( CONSOLA , NULL);
-				EVENTOS_listarEventos();
+				//MENU_consultarEventos( CONSOLA , NULL, buffer);
+				MENU_printEvento(CONSOLA, NULL, buffer);
 				break;
 
 			case( OPCION_6 ):
@@ -156,7 +155,7 @@ void interfaz_tcp(void* pdata){
 		}
 
       // Le damos un tiempo para que el socket quede pronto
-		OSTimeDlySec(5);
+		OSTimeDlyHMSM(0,0,0,500);
 #ifdef DEBUG
 		printf("\nDEBUG: Escuchando en puerto 7 por conexiones\n");
 #endif
@@ -165,7 +164,7 @@ void interfaz_tcp(void* pdata){
 			tcp_tick(NULL);
 			OSTimeDlyHMSM(0,0,0,500);
 		}
-
+	//	sock_mode(&un_tcp_socket, TCP_MODE_ASCII);
 		// Un delay para que se establezca la conexion
 		OSTimeDlyHMSM(0,0,0,500);
 #ifdef DEBUG
@@ -201,19 +200,19 @@ void interfaz_tcp(void* pdata){
 					// AGREGAR EVENTO
 					MENU_pedirDatosEvento( &unEvento, &FechaHora, TCP, &un_tcp_socket, buffer_recepcion);
 					EVENTOS_agregarEvento( &unEvento ); // ver el tema del array de eventos, lo agregue en el mail lo saque del Eventos para poder manejar diferentes array , 1 por instancia, a no ser que sea todo el emis
-					OSTimeDlyHMSM(0,0,0,500);
+				//	OSTimeDlyHMSM(0,0,0,500);
 					break;
 				case ( OPCION_4 ):
 					// ELIMINAR EVENTO SEGUN EL NUMERO DE EVENTO (ES DE 1 EN adelante segun posicion en el array))
 					int_id_evento = MENU_eliminarEvento( TCP, &un_tcp_socket, buffer_recepcion );
 					printf("%d\n", int_id_evento);
 					EVENTOS_eliminarEvento( int_id_evento );  // revisar despues de agregarEvento
-					OSTimeDlyHMSM(0,0,0,500);
+					//OSTimeDlyHMSM(0,0,0,500);
 					break;
 				case( OPCION_5 ):
 					// CONSULTAR EVENTO
-					MENU_consultarEventos( TCP, &un_tcp_socket );
-					EVENTOS_listarEventos();
+					MENU_consultarEventos( TCP, &un_tcp_socket, buffer_recepcion );
+					MENU_printEvento(CONSOLA, &un_tcp_socket , buffer_recepcion);
 					OSTimeDlyHMSM(0,0,0,500);
 					break;
 
@@ -282,13 +281,13 @@ main(){
 		OSSchedLock();
 
 	//Creacion de tareas
-	Error = OSTaskCreate(Led_Red, NULL, 256, 5);
+	Error = OSTaskCreate(Led_Red, NULL, 4096, 5);
 
 	//for ( i = 6 ; i< OS_MAX_TASKS-1;i++)
-	Error = OSTaskCreate(interfaz_tcp, NULL, 2048, 6 );
+	Error = OSTaskCreate(interfaz_tcp, NULL, 4096, 6 );
 	//Error = OSTaskCreate(interfaz_tcp, NULL , 2048, 7 );
 
-	Error = OSTaskCreate(interfaz_consola,NULL, 2048, 8);
+	Error = OSTaskCreate(interfaz_consola,NULL, 4096, 8);
 
 
 

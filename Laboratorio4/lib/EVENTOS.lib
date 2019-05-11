@@ -47,14 +47,16 @@ void EVENTOS_Eventos_init();
 /*** EndHeader */
 void EVENTOS_Eventos_init(){
 	int i;
-			OSSchedLock();
 
+	OSSchedLock();
 	for (i=0;i<MAX_EVENTS;i++){
 		eventos[i].command = 0xFF;
       eventos[i].param = 0xFF;
 	}
 	OSSchedUnlock();
-	printf("\nEventos iniciados correctamente");
+#ifdef DEBUG
+	printf("\nDEBUG: Eventos iniciados correctamente");
+#endif
 }
 
 
@@ -65,11 +67,15 @@ void EVENTOS_agregarEvento( Event *p_tempevento);
 void EVENTOS_agregarEvento( Event *p_tempevento)
 {
 	int posicion;
+	char buffer[TAMANIO_BUFFER_LE];
+
 	//Event evento;
 	posicionLibre( &posicion );
 	//printf("\nDEBUG: Posicion libre encontrada: %d", posicion );
 	if (posicion == -1){
-		printf("\nERROR: No se puede ingresar evento, calendario lleno.");
+#ifdef DEBUG		
+		printf( "\nERROR: No se puede ingresar evento, calendario lleno.");
+#endif
 	}
 	else{
 		//evento = eventos[posicion];
@@ -78,19 +84,25 @@ void EVENTOS_agregarEvento( Event *p_tempevento)
 		eventos[posicion].param = p_tempevento->param;
 		eventos[posicion].time = p_tempevento->time;
 		OSSchedUnlock();
-		printf("\nINFO: Evento AGREGADO correctamente");
+#ifdef DEBUG
+		printf("\nDEBUG: Evento AGREGADO correctamente");
+#endif
 	}
+
 }
 
 /*** BeginHeader EVENTOS_eliminarEvento */
 void EVENTOS_eliminarEvento( int posicionEvento );
 /*** EndHeader */
 void EVENTOS_eliminarEvento( int posicionEvento ){
+
 	OSSchedLock();
 	eventos[posicionEvento].command = 0xFF;
 	eventos[posicionEvento].param = 0xFF;
-		OSSchedUnlock();
+	OSSchedUnlock();
+#ifdef DEBUG	
 	printf("\nINFO: Evento %d eliminado correctamente.", posicionEvento);
+#endif
 }
 
 /*** BeginHeader EVENTOS_listarEventos */
@@ -106,9 +118,9 @@ void EVENTOS_listarEventos(){
 			//sprintf( bufferText,"\n----------------------------------------:\nNUMERO DE EVENTO: %d\n", i + 1" );
 			//UT_printEvento( &eventos[i] );
 			printf("Numero de Evento: %d\n",i+1 );
-			printf("Command: %d\n",eventos[i].command );
-			printf("Command: %d\n",eventos[i].param );
-			printf("Command: %d\n",eventos[i].time ); // ver para immprimir lindo
+			printf("Command: %c\n",eventos[i].command );
+			printf("Param: %c\n",eventos[i].param );
+			printf("Time: %c\n",eventos[i].time ); // ver para immprimir lindo
 		}
 
 	}

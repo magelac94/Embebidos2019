@@ -79,7 +79,7 @@ void obtener_de_ui( enum tipoUI interfazAUsar, char* buffer_recepcion, tcp_Socke
 			/* Esta funcion lee del buffer del socket tcp hasta el lago de
 			buffer_recepcion - 1 y lo guarda en buffer_recepcion. Si no lo puede llenar
 			lee lo que hay y retorna */
-			while(tcp_tick(&un_tcp_socket)){
+			while(tcp_tick(un_tcp_socket)){
 
 
 				bytes_leidos=sock_fastread( un_tcp_socket, buffer_recepcion, 521);
@@ -436,17 +436,16 @@ int MENU_eliminarEvento( enum tipoUI interfazAUsar, tcp_Socket* echo_socket, cha
 
 
 /*** BeginHeader MENU_consultarEventos */
-void MENU_consultarEventos( enum tipoUI interfazAUsar,tcp_Socket *echo_socket );
+void MENU_consultarEventos( enum tipoUI interfazAUsar, tcp_Socket* echo_socket, char * buffer );
 /*** EndHeader */
-void MENU_consultarEventos( enum tipoUI interfazAUsar,tcp_Socket *echo_socket ){
+void MENU_consultarEventos( enum tipoUI interfazAUsar, tcp_Socket* echo_socket, char * buffer ){
 	char aux[5];
-	char bufferText[512];
 	//ClearScreen( interfazAUsar );
 
 	// Metemos en el buffer el texto formateado
-	sprintf( bufferText, "\n\n-------- LISTAR EVENTOS -------\n" );
+	sprintf( buffer, "\n\n-------- LISTAR EVENTOS -------\n" );
 	// Mandamos el buffer a la interfaz a usar
-	enviar_a_ui( interfazAUsar, bufferText, echo_socket );
+	enviar_a_ui( interfazAUsar, buffer, echo_socket );
 	if (interfazAUsar == CONSOLA){
 		gets(aux);
 	}
@@ -492,4 +491,29 @@ void MENU_mostrarEntradaAnalogica( enum tipoUI interfazAUsar, int *temp, tcp_Soc
 	if (interfazAUsar == CONSOLA){
 		gets(aux);
 	}
+}
+
+/*** BeginHeader MENU_printEvento */
+void MENU_printEvento ( enum tipoUI interfazAUsar, tcp_Socket* un_tcp_socket, char* buffer_envio );
+/*** EndHeader */
+void MENU_printEvento ( enum tipoUI interfazAUsar, tcp_Socket* un_tcp_socket, char* buffer_envio ){
+	struct tm FechaHora;
+   int i;
+
+	OSSchedLock();
+	for ( i=0; i<MAX_EVENTS; i++ ){
+		if ( eventos[i].command != 0xFF ){
+			printf("\n------------------------------\n");
+			sprintf( buffer_envio, "Num Evento: %c \nCommand: %c\nParam: %c\nTime: ", i, eventos[i].command, eventos[i].param)   ;
+			enviar_a_ui( interfazAUsar, buffer_envio, un_tcp_socket );
+			mktm( &FechaHora, eventos[i].time );
+			MENU_printFechaHora( &FechaHora, interfazAUsar, un_tcp_socket, buffer_envio );
+
+		}
+
+	}
+	OSSchedUnlock();
+
+
+
 }
