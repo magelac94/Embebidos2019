@@ -3,12 +3,12 @@
 //#define NOANDA        //Activo si quiero probar el caso que no anda
 
 /* uCOS configuration */
-#define OS_MAX_TASKS			4  		// Maximum number of tasks system can create (less stat and idle tasks)
+#define OS_MAX_TASKS			5  		// Maximum number of tasks system can create (less stat and idle tasks)
 #define OS_TASK_SUSPEND_EN		1		// Habilitar suspender y resumir tareas
 #define OS_TIME_DLY_HMSM_EN		1		// Habilitar la funcion de delay para pasar fecha y hora
 #define STACK_CNT_256			2		// Led_Red + idle
 #define STACK_CNT_512			1		// main()
-#define STACK_CNT_2K			2		// 1 Tarea TCP
+#define STACK_CNT_2K			3		// 1 Tarea TCP
 
 /* TCP/IP configuration */
 #define TCPCONFIG 0
@@ -16,6 +16,8 @@
 #define MY_IP_ADDRESS "10.10.0.10"
 #define MY_NETMASK "255.255.255.0"
 #define PORT 7
+//#define MAX_TCP_SOCKET_BUFFERS 10
+
 #define MY_GATEWAY "10.10.0.1"
 #define TAMANIO_BUFFER_LE 512        // Este es el tamanio que le damos a nuestros buffers para leer y enviar al socket
 //#define TCP_MODE_ASCII 1
@@ -78,7 +80,7 @@ void interfaz_consola(void* pdata){
 				// CONFIGURAR FECHA HORA
 				MENU_pedirFechaHora( &FechaHora, CONSOLA, NULL, buffer );
 				RTC_fijarFechaHora( &FechaHora );
-				MENU_printFechaHora( &FechaHora, CONSOLA );		// Imprimo la Fecha y hora modificadoS
+				MENU_printFechaHora( &FechaHora, CONSOLA, NULL, buffer );		// Imprimo la Fecha y hora modificadoS
 
 				break;
 
@@ -86,7 +88,7 @@ void interfaz_consola(void* pdata){
 				// CONSULTAR FECHA HORA ACTUAL
 				MENU_consultarHora( CONSOLA, NULL );
 				RTC_leerFechaHora( &FechaHora );	// Leo el RTC
-				MENU_printFechaHora( &FechaHora, CONSOLA ); // Imprimo la Fecha y hora
+				MENU_printFechaHora( &FechaHora, CONSOLA, NULL, buffer ); // Imprimo la Fecha y hora
 				break;
 
 			case( OPCION_3 ):
@@ -141,10 +143,11 @@ void interfaz_tcp(void* pdata){
 	static tcp_Socket un_tcp_socket;
 	auto int bytes_leidos, bytes_enviados, i, int_opcion_menu, int_id_evento, int_Analog_Value;
 
+	//un_tcp_socket = *(tcp_Socket*)pdata;
 
 	while(1) {
 		// Ponemos el socket en estado de escucha
-		tcp_listen(&un_tcp_socket, 7, 0, 0, NULL, 0);	// Ponemos a escuchar el puerto
+		tcp_listen(&un_tcp_socket, PORT, 0, 0, NULL, 0);	// Ponemos a escuchar el puerto
 
 		// Inicializamos los buffers para sacar la basura
 		for ( i = 0; i < TAMANIO_BUFFER_LE; i++ ){
@@ -191,7 +194,7 @@ void interfaz_tcp(void* pdata){
 					// CONSULTAR FECHA HORA ACTUAL
 					MENU_consultarHora( TCP, &un_tcp_socket );
 					RTC_leerFechaHora( &FechaHora );	// Leo el RTC
-					MENU_printFechaHora( &FechaHora, TCP); // Imprimo la Fecha y hora
+					MENU_printFechaHora( &FechaHora, TCP, &un_tcp_socket, buffer_recepcion); // Imprimo la Fecha y hora
 					OSTimeDlyHMSM(0,0,0,500);
 					break;
 				case( OPCION_3 ):
@@ -274,13 +277,18 @@ main(){
 	tcp_reserveport(7);
 
 	EVENTOS_Eventos_init();
+
 	// Deshabilitamos el scheduling mientras se crean las tareas
 		OSSchedLock();
 
 	//Creacion de tareas
 	Error = OSTaskCreate(Led_Red, NULL, 256, 5);
+
+	//for ( i = 6 ; i< OS_MAX_TASKS-1;i++)
 	Error = OSTaskCreate(interfaz_tcp, NULL, 2048, 6 );
-	Error = OSTaskCreate(interfaz_consola,NULL, 2048, 7);
+	//Error = OSTaskCreate(interfaz_tcp, NULL , 2048, 7 );
+
+	Error = OSTaskCreate(interfaz_consola,NULL, 2048, 8);
 
 
 

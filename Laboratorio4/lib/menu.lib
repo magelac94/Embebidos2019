@@ -81,7 +81,7 @@ void obtener_de_ui( enum tipoUI interfazAUsar, char* buffer_recepcion, tcp_Socke
 			lee lo que hay y retorna */
 			while(tcp_tick(&un_tcp_socket)){
 
-			 
+
 				bytes_leidos=sock_fastread( un_tcp_socket, buffer_recepcion, 521);
 				if(bytes_leidos>0) {
 					buffer_recepcion[bytes_leidos]=0; // Terminamos la cadena del string
@@ -150,7 +150,7 @@ void MENU_pedirFechaHora( struct tm* p_FechaHora, enum tipoUI interfazAUsar, tcp
 
 	enviar_a_ui( interfazAUsar, buffer_envio, un_tcp_socket);
 
-	
+
 	// Obtenemos la opcion de la UI deseada
 	obtener_de_ui( interfazAUsar, aux, un_tcp_socket );
 	// Convertimos a int y guardamos el dato
@@ -222,10 +222,10 @@ void MENU_pedirFechaHora( struct tm* p_FechaHora, enum tipoUI interfazAUsar, tcp
 
 
 /*** BeginHeader MENU_printFechaHora */
-void MENU_printFechaHora ( struct tm* p_FechaHora, enum tipoUI interfazAUsar );
+void MENU_printFechaHora ( struct tm* p_FechaHora, enum tipoUI interfazAUsar, tcp_Socket* un_tcp_socket, char* buffer_envio );
 /*** EndHeader */
 // Imprime la fecha y la hora de una estructura tm
-void MENU_printFechaHora ( struct tm* p_FechaHora, enum tipoUI interfazAUsar ){
+void MENU_printFechaHora ( struct tm* p_FechaHora, enum tipoUI interfazAUsar, tcp_Socket* un_tcp_socket, char* buffer_envio ){
 	int dia, mes, anio, hora, minuto;
 	char aux[2];
 
@@ -240,29 +240,29 @@ void MENU_printFechaHora ( struct tm* p_FechaHora, enum tipoUI interfazAUsar ){
 		if ( dia < 10){
 			if ( hora < 10 ){
 				if ( minuto < 10 ){
-					printf("\nFecha: 0%u/0%u/%u\nHora: 0%u:0%u", dia, mes, anio, hora, minuto);
+					sprintf( buffer_envio,"\nFecha: 0%u/0%u/%u\nHora: 0%u:0%u", dia, mes, anio, hora, minuto);
 				} else {
-					printf("\nFecha: 0%u/0%u/%u\nHora: 0%u:%u", dia, mes, anio, hora, minuto);
+					sprintf( buffer_envio,"\nFecha: 0%u/0%u/%u\nHora: 0%u:%u", dia, mes, anio, hora, minuto);
 				}
 			} else {
 				if ( minuto < 10 ){
-					printf("\nFecha: 0%u/0%u/%u\nHora: %u:0%u", dia, mes, anio, hora, minuto);
+					sprintf( buffer_envio,"\nFecha: 0%u/0%u/%u\nHora: %u:0%u", dia, mes, anio, hora, minuto);
 				} else {
-					printf("\nFecha: 0%u/0%u/%u\nHora: %u:%u", dia, mes, anio, hora, minuto);
+					sprintf( buffer_envio,"\nFecha: 0%u/0%u/%u\nHora: %u:%u", dia, mes, anio, hora, minuto);
 				}
 			}
 		} else {
 			if ( hora < 10 ){
 				if ( minuto < 10 ){
-					printf("\nFecha: %u/0%u/%u\nHora: 0%u:0%u", dia, mes, anio, hora, minuto);
+					sprintf( buffer_envio,"\nFecha: %u/0%u/%u\nHora: 0%u:0%u", dia, mes, anio, hora, minuto);
 				} else {
-					printf("\nFecha: %u/0%u/%u\nHora: 0%u:%u", dia, mes, anio, hora, minuto);
+					sprintf( buffer_envio,"\nFecha: %u/0%u/%u\nHora: 0%u:%u", dia, mes, anio, hora, minuto);
 				}
 			} else {
 				if ( minuto < 10 ){
-					printf("\nFecha: %u/0%u/%u\nHora: %u:0%u", dia, mes, anio, hora, minuto);
+					sprintf( buffer_envio,"\nFecha: %u/0%u/%u\nHora: %u:0%u", dia, mes, anio, hora, minuto);
 				} else {
-					printf("\nFecha: %u/0%u/%u\nHora: %u:%u", dia, mes, anio, hora, minuto);
+					sprintf( buffer_envio,"\nFecha: %u/0%u/%u\nHora: %u:%u", dia, mes, anio, hora, minuto);
 				}
 			}
 		}
@@ -270,35 +270,37 @@ void MENU_printFechaHora ( struct tm* p_FechaHora, enum tipoUI interfazAUsar ){
 		if ( dia < 10){
 			if ( hora < 10 ){
 				if ( minuto < 10 ){
-					printf("\nFecha: 0%u/%u/%u\nHora: 0%u:0%u", dia, mes, anio, hora, minuto);
+					sprintf( buffer_envio,"\nFecha: 0%u/%u/%u\nHora: 0%u:0%u", dia, mes, anio, hora, minuto);
 				} else {
-					printf("\nFecha: 0%u/%u/%u\nHora: 0%u:%u", dia, mes, anio, hora, minuto);
+					sprintf( buffer_envio,"\nFecha: 0%u/%u/%u\nHora: 0%u:%u", dia, mes, anio, hora, minuto);
 				}
 			} else {
 				if ( minuto < 10 ){
-					printf("\nFecha: 0%u/%u/%u\nHora: %u:0%u", dia, mes, anio, hora, minuto);
+					sprintf( buffer_envio,"\nFecha: 0%u/%u/%u\nHora: %u:0%u", dia, mes, anio, hora, minuto);
 				} else {
-					printf("\nFecha: 0%u/%u/%u\nHora: %u:%u", dia, mes, anio, hora, minuto);
+					sprintf( buffer_envio,"\nFecha: 0%u/%u/%u\nHora: %u:%u", dia, mes, anio, hora, minuto);
 				}
 			}
 		} else {
 			if ( hora < 10 ){
 				if ( minuto < 10 ){
-					printf("\nFecha: %u/%u/%u\nHora: 0%u:0%u", dia, mes, anio, hora, minuto);
+					sprintf( buffer_envio,"\nFecha: %u/%u/%u\nHora: 0%u:0%u", dia, mes, anio, hora, minuto);
 				} else {
-					printf("\nFecha: %u/%u/%u\nHora: 0%u:%u", dia, mes, anio, hora, minuto);
+					sprintf( buffer_envio,"\nFecha: %u/%u/%u\nHora: 0%u:%u", dia, mes, anio, hora, minuto);
 				}
 			} else {
 				if ( minuto < 10 ){
-					printf("\nFecha: %u/%u/%u\nHora: %u:0%u", dia, mes, anio, hora, minuto);
+					sprintf( buffer_envio,"\nFecha: %u/%u/%u\nHora: %u:0%u", dia, mes, anio, hora, minuto);
 				} else {
-					printf("\nFecha: %u/%u/%u\nHora: %u:%u", dia, mes, anio, hora, minuto);
+					sprintf( buffer_envio,"\nFecha: %u/%u/%u\nHora: %u:%u", dia, mes, anio, hora, minuto);
 				}
 			}
 		}
 	}
+	// Mandamos el buffer a la interfaz a usar
+	enviar_a_ui( interfazAUsar, buffer_envio, un_tcp_socket );
 	if (interfazAUsar == CONSOLA){
-		gets(aux);	
+		gets(aux);
 	}
 }
 
@@ -378,7 +380,7 @@ void MENU_pedirDatosEvento( Event *p_Evento, struct tm *p_FechaHora, enum tipoUI
 
 				// PIDO EL SIGUIENTE DATO. FECHA Y HORA
 				MENU_pedirFechaHora( p_FechaHora, interfazAUsar, echo_socket, buffer);
-				MENU_printFechaHora( p_FechaHora, interfazAUsar );
+				MENU_printFechaHora( p_FechaHora, interfazAUsar, echo_socket, buffer );
 				timestamp = mktime( p_FechaHora );
 				p_Evento->time = timestamp;
 				return;
@@ -417,14 +419,14 @@ int MENU_eliminarEvento( enum tipoUI interfazAUsar, tcp_Socket* echo_socket, cha
 				int_numEvento = int_numEvento - 1;
 				printf( "\nMENU_eliminarEvento int a devolver: %d", int_numEvento );
 				if (interfazAUsar == CONSOLA){
-					gets(aux);	
+					gets(aux);
 				}
 				return int_numEvento;
 			}
 			else{
 				printf("\nNumero de Evento Incorrecto");
 				if (interfazAUsar == CONSOLA){
-					gets(aux);	
+					gets(aux);
 				}
 			}
 		}
@@ -446,7 +448,7 @@ void MENU_consultarEventos( enum tipoUI interfazAUsar,tcp_Socket *echo_socket ){
 	// Mandamos el buffer a la interfaz a usar
 	enviar_a_ui( interfazAUsar, bufferText, echo_socket );
 	if (interfazAUsar == CONSOLA){
-		gets(aux);	
+		gets(aux);
 	}
 }
 
@@ -471,7 +473,7 @@ void MENU_pedirEntradaAnalogica( enum tipoUI interfazAUsar, char *temp, tcp_Sock
 		enviar_a_ui( interfazAUsar, buffer, echo_socket );
 	}
 	if (interfazAUsar == CONSOLA){
-		gets(aux);	
+		gets(aux);
 	}
 }
 
@@ -488,6 +490,6 @@ void MENU_mostrarEntradaAnalogica( enum tipoUI interfazAUsar, int *temp, tcp_Soc
 	// Mandamos el buffer a la interfaz a usar
 	enviar_a_ui( interfazAUsar, bufferText, echo_socket);
 	if (interfazAUsar == CONSOLA){
-		gets(aux);	
+		gets(aux);
 	}
 }
