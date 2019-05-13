@@ -63,3 +63,4 @@ dkms.conf
 *.bin
 *.DBG
 *.bak
+*.bmk

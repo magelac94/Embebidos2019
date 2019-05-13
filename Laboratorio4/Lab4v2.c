@@ -3,29 +3,25 @@
 //#define NOANDA        //Activo si quiero probar el caso que no anda
 
 /* uCOS configuration */
-#define OS_MAX_TASKS			7  		// Maximum number of tasks system can create (less stat and idle tasks)
+#define OS_MAX_TASKS			5  		// Maximum number of tasks system can create (less stat and idle tasks)
 #define OS_TASK_SUSPEND_EN		1		// Habilitar suspender y resumir tareas
 #define OS_TIME_DLY_HMSM_EN		1		// Habilitar la funcion de delay para pasar fecha y hora
 #define OS_SEM_EN				1		// Habilitar semaforos
-#define OS_SEM_QUERY_EN			1		// Enable semaphore querying
-#define OS_MAX_EVENTS			9		// MAX_TCP_SOCKET_BUFFERS + 2 + 2 (2 semaforos son usados)
+#define OS_MAX_EVENTS			6		// MAX_TCP_SOCKET_BUFFERS + 2 + 2 (2 semaforos son usados)
 #define STACK_CNT_256			2		// Led_Red + idle
 #define STACK_CNT_512			1		// main()
-#define STACK_CNT_2K			5		// 5 Tareas TCP
-#define STACK_CNT_4K			2		// 5 Tareas TCP
+#define STACK_CNT_4K			2		// 2 Tareas TCP
 
 /* TCP/IP configuration */
 #define TCPCONFIG 0
 #define USE_ETHERNET		1
 #define MY_IP_ADDRESS "10.10.0.10"
 #define MY_NETMASK "255.255.255.0"
-#define PORT 7
+#define LPORT 7
 #define MY_GATEWAY "10.10.0.1"
-#define MAX_TCP_SOCKET_BUFFERS	5					// Determina la cantidad maxima de sockets con buffer preasignado
-#define TCP_BUF_SIZE			1024				// Tamanio del buffer TCP
+#define MAX_TCP_SOCKET_BUFFERS	2					// Determina la cantidad maxima de sockets con buffer preasignado
+#define TCP_BUF_SIZE			1024				// Tamanio del buffer TCP (L + E)
 #define TAMANIO_BUFFER_LE 		512      			// Este es el tamanio que le damos a nuestros buffers para leer y enviar al socket
-#define PUERTO7					7
-#define PUERTO8					8
 
 /* Incluimos las librerias luego de los define para sobre escribir los macros deseados */
 #use IO.LIB
@@ -64,7 +60,7 @@ void interfaz_consola(void* pdata){
 	Event unEvento;
 	struct tm FechaHora;
 	char buffer[TAMANIO_BUFFER_LE];
-	int int_opcion_menu, int_id_evento, int_Analog_Value, i;
+	int i, int_opcion_menu, int_id_evento, int_Analog_Value;
 	auto INT8U Error;
 
 	// Inicializamos buffer para sacar la basura
@@ -155,15 +151,15 @@ void interfaz_tcp(void* pdata){
 	Event unEvento;
 	struct tm FechaHora;
 	char buffer[TAMANIO_BUFFER_LE];
-	static tcp_Socket un_tcp_socket;
-	auto int i, puerto, int_opcion_menu, int_id_evento, int_Analog_Value;
+	tcp_Socket* pun_tcp_socket;
+	auto int i, int_opcion_menu, int_id_evento, int_Analog_Value;
 	auto INT8U Error;
 
-	//puerto = *(int*)pdata;
+	pun_tcp_socket = (tcp_Socket*)pdata;
 
 	while(1) {
 		// Ponemos el socket en estado de escucha
-		if (!tcp_listen(&un_tcp_socket, puerto, 0, 0, NULL, 0)){
+		if (!tcp_listen(pun_tcp_socket, LPORT, 0, 0, NULL, 0)){
 #ifdef DEBUG
 		printf("\nDEBUG: Error al abrir el socket\n");
 #endif
@@ -176,26 +172,26 @@ void interfaz_tcp(void* pdata){
       // Le damos un tiempo para que el socket quede pronto
 		OSTimeDlyHMSM(0,0,0,500);
 #ifdef DEBUG
-		printf("\nDEBUG: Escuchando en puerto 7 por conexiones\n");
+		printf("\nDEBUG: Escuchando en puerto %u por conexiones\n", LPORT );
 #endif
 		// Esperamos por la conexion y si no esta establecida y pronta, suspende por 500ms.
-		while( !sock_established(&un_tcp_socket) ) { // && sock_bytesready(&un_tcp_socket)==-1
-			tcp_tick(&un_tcp_socket);
+		while( !sock_established(pun_tcp_socket) ) { // && sock_bytesready(pun_tcp_socket)==-1
+			tcp_tick(pun_tcp_socket);
 			OSTimeDlyHMSM(0,0,0,500);
 		}
 		// Un delay para que se establezca la conexion
 		OSTimeDlyHMSM(0,0,0,500);
 
-		if (sock_established(&un_tcp_socket)){
+		if (sock_established(pun_tcp_socket)){
 #ifdef DEBUG
 			printf("\nDEBUG: Conexion establecida\n");
 #endif
-			sock_mode(&un_tcp_socket, TCP_MODE_ASCII);
+			sock_mode(pun_tcp_socket, TCP_MODE_ASCII);
 			do {
 
 				// Se muestra menu y se espera opcion
-				MENU_mostrarMenuPrincipal( TCP, buffer, &un_tcp_socket );
-				MENU_obtenerOpcion( TCP, buffer, &un_tcp_socket );
+				MENU_mostrarMenuPrincipal( TCP, buffer, pun_tcp_socket );
+				MENU_obtenerOpcion( TCP, buffer, pun_tcp_socket );
 
 				// Nos aseguramos que tenemos el recurso para nosotros
 				OSSemPend(pSemaforoAtoI, 0, &Error);
@@ -210,39 +206,39 @@ void interfaz_tcp(void* pdata){
 					case( OPCION_1 ):
 						// CONFIGURAR FECHA HORA
 						printf("\nOPCION 1\n");
-						MENU_pedirFechaHora( TCP, &FechaHora, buffer, &un_tcp_socket );
+						MENU_pedirFechaHora( TCP, &FechaHora, buffer, pun_tcp_socket );
 						RTC_fijarFechaHora( &FechaHora );
 						break;
 
 					case( OPCION_2 ):
 						// CONSULTAR FECHA HORA ACTUAL
-						MENU_consultarHora( TCP, buffer, &un_tcp_socket );
+						MENU_consultarHora( TCP, buffer, pun_tcp_socket );
 						RTC_leerFechaHora( &FechaHora );	// Leo el RTC
-						MENU_printFechaHora( TCP, &FechaHora, buffer, &un_tcp_socket ); // Imprimo la Fecha y hora
+						MENU_printFechaHora( TCP, &FechaHora, buffer, pun_tcp_socket ); // Imprimo la Fecha y hora
 						break;
 
 					case( OPCION_3 ):
 						// AGREGAR EVENTO
-						MENU_pedirDatosEvento( TCP, &unEvento, &FechaHora, buffer, &un_tcp_socket );
+						MENU_pedirDatosEvento( TCP, &unEvento, &FechaHora, buffer, pun_tcp_socket );
 						EVENTOS_agregarEvento( &unEvento ); // ver el tema del array de eventos, lo agregue en el mail lo saque del Eventos para poder manejar diferentes array , 1 por instancia, a no ser que sea todo el emis
 						break;
 
 					case ( OPCION_4 ):
 						// ELIMINAR EVENTO SEGUN EL NUMERO DE EVENTO (ES DE 1 EN adelante segun posicion en el array))
-						int_id_evento = MENU_eliminarEvento( TCP, buffer, &un_tcp_socket );
+						int_id_evento = MENU_eliminarEvento( TCP, buffer, pun_tcp_socket );
 						printf("%d\n", int_id_evento);
 						EVENTOS_eliminarEvento( int_id_evento );  // revisar despues de agregarEvento
 						break;
 
 					case( OPCION_5 ):
 						// CONSULTAR EVENTO
-						MENU_consultarEventos( TCP, buffer, &un_tcp_socket );
-						MENU_printEvento( CONSOLA, buffer, &un_tcp_socket );
+						MENU_consultarEventos( TCP, buffer, pun_tcp_socket );
+						MENU_printEvento( CONSOLA, buffer, pun_tcp_socket );
 						break;
 
 					case( OPCION_6 ):
 						// CONSULTA ANALOGICA
-						MENU_pedirEntradaAnalogica( TCP, buffer, &un_tcp_socket );
+						MENU_pedirEntradaAnalogica( TCP, buffer, pun_tcp_socket );
 
 						// Nos aseguramos que tenemos el recurso para nosotros
 						OSSemPend(pSemaforoAtoI, 0, &Error);
@@ -251,7 +247,7 @@ void interfaz_tcp(void* pdata){
 						OSSemPost(pSemaforoAtoI);
 
 						int_Analog_Value = IO_getAnalogInput( int_opcion_menu ); //el valor que toma por parametro es un unsigned char
-						MENU_mostrarEntradaAnalogica( TCP, &int_Analog_Value, buffer, &un_tcp_socket );
+						MENU_mostrarEntradaAnalogica( TCP, &int_Analog_Value, buffer, pun_tcp_socket );
 						break;
 
 					case( OPCION_7 ):
@@ -266,7 +262,7 @@ void interfaz_tcp(void* pdata){
 						OSTimeDlyHMSM(0,0,0,500);
 				}
 				OSTimeDlyHMSM(0,0,0,500);
-			} while(tcp_tick(&un_tcp_socket));
+			} while(tcp_tick(pun_tcp_socket));
 		}
 #ifdef DEBUG
 		printf("\nDEBUG: Conexion finalizada....\n");
@@ -279,8 +275,7 @@ void interfaz_tcp(void* pdata){
 main(){
 
 	auto INT8U Error;
-   auto int puerto7;
-   puerto7 = 7;
+	static tcp_Socket un_tcp_socket[2];
 
 	// Inicializa el hardware de la placa
 	HW_init();
@@ -307,8 +302,8 @@ main(){
 
 	//Creacion de tareas
 	Error = OSTaskCreate(Led_Red, NULL, 256, 5);
-	Error = OSTaskCreate(interfaz_tcp, NULL, 4096, 6 );
-	//Error = OSTaskCreate(interfaz_tcp, NULL, 4096, 7 ); // al meter otro TCP, conecta pero no muestra el menu.
+	Error = OSTaskCreate(interfaz_tcp, &un_tcp_socket[0], 4096, 6 );
+	Error = OSTaskCreate(interfaz_tcp, &un_tcp_socket[1], 4096, 7 ); // al meter otro TCP, conecta pero no muestra el menu.
 	Error = OSTaskCreate(interfaz_consola,NULL, 2048, 8);
 
 	// Creacion del semaforo para proteger el acceso a RTC
