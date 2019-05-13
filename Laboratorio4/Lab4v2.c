@@ -9,8 +9,8 @@
 #define OS_SEM_EN				1		// Habilitar semaforos
 #define OS_MAX_EVENTS			6		// MAX_TCP_SOCKET_BUFFERS + 2 + 2 (2 semaforos son usados)
 #define STACK_CNT_256			2		// Led_Red + idle
-#define STACK_CNT_512			1		// main()
-#define STACK_CNT_4K			2		// 2 Tareas TCP
+#define STACK_CNT_512			2		// main() + Interfaz Consola
+#define STACK_CNT_2K			2		// 2 Tareas TCP
 
 /* TCP/IP configuration */
 #define TCPCONFIG 0
@@ -302,9 +302,9 @@ main(){
 
 	//Creacion de tareas
 	Error = OSTaskCreate(Led_Red, NULL, 256, 5);
-	Error = OSTaskCreate(interfaz_tcp, &un_tcp_socket[0], 4096, 6 );
-	Error = OSTaskCreate(interfaz_tcp, &un_tcp_socket[1], 4096, 7 ); // al meter otro TCP, conecta pero no muestra el menu.
-	Error = OSTaskCreate(interfaz_consola,NULL, 2048, 8);
+	Error = OSTaskCreate(interfaz_tcp, &un_tcp_socket[0], 2048, 6 );
+	Error = OSTaskCreate(interfaz_tcp, &un_tcp_socket[1], 2048, 7 ); // al meter otro TCP, conecta pero no muestra el menu.
+	Error = OSTaskCreate(interfaz_consola,NULL, 512, 8);
 
 	// Creacion del semaforo para proteger el acceso a RTC
 	pSemaforoRTC = OSSemCreate(1);
