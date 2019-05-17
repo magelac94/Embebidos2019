@@ -206,7 +206,7 @@ void MENU_pedirFechaHora( enum tipoUI interfazAUsar, struct tm* pFechaHora, char
 	pFechaHora->tm_min = (char)int_temp;
 
 
-	// Seteamos segundos en cero
+	////// Seteamos segundos en cero
 	pFechaHora->tm_sec = 0x00;
 }
 
@@ -219,6 +219,7 @@ void MENU_printFechaHora ( enum tipoUI interfazAUsar, struct tm* pFechaHora, cha
 void MENU_printFechaHora ( enum tipoUI interfazAUsar, struct tm* pFechaHora, char* pbuffer, tcp_Socket* pun_tcp_socket ){
 
 	int dia, mes, anio, hora, minuto;
+   char stop[2];
 
 	anio = (int)pFechaHora->tm_year;
 	anio = anio + 1900;
@@ -291,7 +292,7 @@ void MENU_printFechaHora ( enum tipoUI interfazAUsar, struct tm* pFechaHora, cha
 	// Mandamos el buffer a la interfaz a usar
 	enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
 	if (interfazAUsar == CONSOLA){
-		gets(pbuffer);
+		gets(stop);
 	}
 }
 
@@ -317,14 +318,13 @@ void MENU_pedirDatosEvento( enum tipoUI interfazAUsar, Event *p_Evento, struct t
 /*** EndHeader */
 void MENU_pedirDatosEvento( enum tipoUI interfazAUsar, Event *p_Evento, struct tm *pFechaHora, char* pbuffer, tcp_Socket* pun_tcp_socket ){
 
-	//char opcion[5];
 	int int_opcion;
 	unsigned long timestamp;
 
 	ClearScreen( interfazAUsar );
 
 	// Metemos en el pbuffer el texto formateado
-	sprintf( pbuffer, "\n\n-------- AGREGAR EVENTO --------------\n\n" );
+	sprintf( pbuffer, "\n\n-------- AGREGAR EVENTO --------------" );
 	// Mandamos el pbuffer a la interfaz a usar
 	enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
 
@@ -446,9 +446,6 @@ void MENU_consultarEventos( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket
 	sprintf( pbuffer, "\n\n-------- LISTAR EVENTOS -------\n" );
 	// Mandamos el pbuffer a la interfaz a usar
 	enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
-	if (interfazAUsar == CONSOLA){
-		gets(pbuffer);
-	}
 }
 
 
@@ -502,24 +499,25 @@ void MENU_mostrarEntradaAnalogica( enum tipoUI interfazAUsar, int *pint_Analog_V
 
 
 
-// Esta funcion hay que protegerla aun
-/*** BeginHeader MENU_printEvento */
-void MENU_printEvento ( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket );
+/*** BeginHeader MENU_printEventos */
+void MENU_printEventos ( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket );
 /*** EndHeader */
-void MENU_printEvento ( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket ){
+void MENU_printEventos ( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket ){
 
 	struct tm FechaHora;
-	int i;
+	auto int i;
+	auto INT8U Error;
 
-	OS_ENTER_CRITICAL();
-	for ( i=0; i<MAX_EVENTS; i++ ){
-		if ( eventos[i].command != 0xFF ){
-			printf("\n------------------------------\n");
-			sprintf( pbuffer, "Num Evento: %c \nCommand: %c\nParam: %c\nTime: ", i, eventos[i].command, eventos[i].param)   ;
-			enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
-			mktm( &FechaHora, eventos[i].time );
-			MENU_printFechaHora( interfazAUsar, &FechaHora, pbuffer, pun_tcp_socket );
+	// Nos aseguramos que tenemos el recurso para nosotros
+	OSSemPend(pSemaforoEventos, 0, &Error);
+		for ( i=0; i<MAX_EVENTS; i++ ){
+			if ( eventos[i].command != 0xFF ){
+				sprintf( pbuffer, "\n------------------------------\nNum Evento: %u \nCommand: %c\nParam: %c\nTime: ", i+1, eventos[i].command, eventos[i].param)   ;
+				enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
+				mktm( &FechaHora, eventos[i].time );
+				MENU_printFechaHora( interfazAUsar, &FechaHora, pbuffer, pun_tcp_socket );
+			}
 		}
-	}
-	OS_ENTER_CRITICAL();
+	// Devolvemos el recurso
+	OSSemPost(pSemaforoEventos);
 }

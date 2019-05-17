@@ -19,11 +19,9 @@ void RTC_fijarFechaHora( struct tm* p_FechaHora ){
 	
 	timestamp = mktime( p_FechaHora );
 	
-	//OS_ENTER_CRITICAL();
 	// Nos aseguramos que tenemos el recurso para nosotros
 	OSSemPend(pSemaforoRTC, 0, &Error);
 	write_rtc( timestamp );
-	//OS_EXIT_CRITICAL();
 	// Devolvemos el recurso
 	OSSemPost(pSemaforoRTC);
 }

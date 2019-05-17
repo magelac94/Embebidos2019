@@ -7,10 +7,10 @@
 #define OS_TASK_SUSPEND_EN		1		// Habilitar suspender y resumir tareas
 #define OS_TIME_DLY_HMSM_EN		1		// Habilitar la funcion de delay para pasar fecha y hora
 #define OS_SEM_EN				1		// Habilitar semaforos
-#define OS_MAX_EVENTS			6		// MAX_TCP_SOCKET_BUFFERS + 2 + 2 (2 semaforos son usados)
+#define OS_MAX_EVENTS			7		// MAX_TCP_SOCKET_BUFFERS + 2 + 3 (3 semaforos son usados)
 #define STACK_CNT_256			2		// Led_Red + idle
 #define STACK_CNT_512			2		// main() + Interfaz Consola
-#define STACK_CNT_2K			2		// 2 Tareas TCP
+#define STACK_CNT_2K			2		// 2 Tareas TCP (MAX_TCP_SOCKET_BUFFERS)
 
 /* TCP/IP configuration */
 #define TCPCONFIG 0
@@ -38,6 +38,8 @@
 /* Definimos punteros a los semaforos, colas y MBox que vayamos a usar*/
 OS_EVENT* pSemaforoRTC;
 OS_EVENT* pSemaforoAtoI;
+OS_EVENT* pSemaforoEventos;
+
 
 // Tarea 1 - Prende y apaga el led. Cuando espera se suspende.
 // Por eso le daremos una prioridad alta. Es nuestro test para ver que todo corre.
@@ -104,12 +106,12 @@ void interfaz_consola(void* pdata){
 				// ELIMINAR EVENTO SEGUN EL NUMERO DE EVENTO (ES DE 1 EN adelante segun posicion en el array))
 				int_id_evento = MENU_eliminarEvento( CONSOLA, buffer, NULL );
 				printf("%d\n", int_id_evento);
-			//	EVENTOS_eliminarEvento( int_id_evento );  // revisar despues de agregarEvento
+				//	EVENTOS_eliminarEvento( int_id_evento );  // revisar despues de agregarEvento
 				break;
 			case( OPCION_5 ):
 				// CONSULTAR EVENTO
-				//MENU_consultarEventos( CONSOLA , NULL, buffer);
-				MENU_printEvento( CONSOLA, buffer, NULL );
+				MENU_consultarEventos( CONSOLA, buffer, NULL );
+				MENU_printEventos( CONSOLA, buffer, NULL );
 				break;
 
 			case( OPCION_6 ):
@@ -220,7 +222,7 @@ void interfaz_tcp(void* pdata){
 					case( OPCION_3 ):
 						// AGREGAR EVENTO
 						MENU_pedirDatosEvento( TCP, &unEvento, &FechaHora, buffer, pun_tcp_socket );
-						EVENTOS_agregarEvento( &unEvento ); // ver el tema del array de eventos, lo agregue en el mail lo saque del Eventos para poder manejar diferentes array , 1 por instancia, a no ser que sea todo el emis
+						EVENTOS_agregarEvento( &unEvento );
 						break;
 
 					case ( OPCION_4 ):
@@ -233,7 +235,7 @@ void interfaz_tcp(void* pdata){
 					case( OPCION_5 ):
 						// CONSULTAR EVENTO
 						MENU_consultarEventos( TCP, buffer, pun_tcp_socket );
-						MENU_printEvento( CONSOLA, buffer, pun_tcp_socket );
+						MENU_printEventos( TCP, buffer, pun_tcp_socket );
 						break;
 
 					case( OPCION_6 ):
@@ -291,10 +293,7 @@ main(){
 #ifdef DEBUG
 	printf("\nDEBUG: Socket Iniciados\n");
 #endif
-
-	// Habilita encolado de SYN en puerto 7
-	//tcp_reserveport(7);
-
+	// Inicializamos el array de eventos
 	EVENTOS_Eventos_init();
 
 	// Deshabilitamos el scheduling mientras se crean las tareas
@@ -303,16 +302,17 @@ main(){
 	//Creacion de tareas
 	Error = OSTaskCreate(Led_Red, NULL, 256, 5);
 	Error = OSTaskCreate(interfaz_tcp, &un_tcp_socket[0], 2048, 6 );
-	Error = OSTaskCreate(interfaz_tcp, &un_tcp_socket[1], 2048, 7 ); // al meter otro TCP, conecta pero no muestra el menu.
+	Error = OSTaskCreate(interfaz_tcp, &un_tcp_socket[1], 2048, 7 );
 	Error = OSTaskCreate(interfaz_consola,NULL, 512, 8);
 
-	// Creacion del semaforo para proteger el acceso a RTC
+	// Creacion del semaforo para proteger el acceso a funciones no reentrantes y recursos compartidos
 	pSemaforoRTC = OSSemCreate(1);
 	pSemaforoAtoI = OSSemCreate(1);
+	pSemaforoEventos = OSSemCreate(1);
 
 	// Re-habilitamos scheduling
 	OSSchedUnlock();
 
-	// Iniciamos el sistema operativo comenzando por la tarea en estado "ready" de nayor prioridad
+	// Iniciamos el sistema operativo comenzando por la tarea en estado "ready" de mayor prioridad
 	OSStart();
 }
