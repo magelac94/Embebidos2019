@@ -291,9 +291,6 @@ void MENU_printFechaHora ( enum tipoUI interfazAUsar, struct tm* pFechaHora, cha
 	}
 	// Mandamos el buffer a la interfaz a usar
 	enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
-	if (interfazAUsar == CONSOLA){
-		gets(stop);
-	}
 }
 
 
@@ -319,6 +316,7 @@ void MENU_pedirDatosEvento( enum tipoUI interfazAUsar, Event *p_Evento, struct t
 void MENU_pedirDatosEvento( enum tipoUI interfazAUsar, Event *p_Evento, struct tm *pFechaHora, char* pbuffer, tcp_Socket* pun_tcp_socket ){
 
 	int int_opcion;
+	char stop[2];
 	unsigned long timestamp;
 
 	ClearScreen( interfazAUsar );
@@ -376,6 +374,9 @@ void MENU_pedirDatosEvento( enum tipoUI interfazAUsar, Event *p_Evento, struct t
 				MENU_printFechaHora( interfazAUsar, pFechaHora, pbuffer, pun_tcp_socket );
 				timestamp = mktime( pFechaHora );
 				p_Evento->time = timestamp;
+				if (interfazAUsar == CONSOLA){
+				  gets(stop);
+				}
 				return;
 			}
 		}
@@ -507,6 +508,7 @@ void MENU_printEventos ( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* p
 	struct tm FechaHora;
 	auto int i;
 	auto INT8U Error;
+	char stop[2];
 
 	// Nos aseguramos que tenemos el recurso para nosotros
 	OSSemPend(pSemaforoEventos, 0, &Error);
@@ -520,4 +522,8 @@ void MENU_printEventos ( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* p
 		}
 	// Devolvemos el recurso
 	OSSemPost(pSemaforoEventos);
+
+	if (interfazAUsar == CONSOLA){
+		gets(stop);
+	}
 }
