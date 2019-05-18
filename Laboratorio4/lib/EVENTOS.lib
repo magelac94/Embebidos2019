@@ -50,7 +50,7 @@ void posicionLibre( int *p_posicion ){  	// Devuelve primer posicion libre del a
 void EVENTOS_Eventos_init();
 /*** EndHeader */
 void EVENTOS_Eventos_init(){
-	
+
 	int i;
 	auto INT8U Error;
 
@@ -58,7 +58,7 @@ void EVENTOS_Eventos_init(){
 	OSSemPend(pSemaforoEventos, 0, &Error);
 		for (i=0;i<MAX_EVENTS;i++){
 			eventos[i].command = 0xFF;
-		  eventos[i].param = 0xFF;
+			eventos[i].param = 0xFF;
 		}
 	// Devolvemos el recurso
 	OSSemPost(pSemaforoEventos);

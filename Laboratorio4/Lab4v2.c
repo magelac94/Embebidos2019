@@ -277,7 +277,7 @@ void interfaz_tcp(void* pdata){
 main(){
 
 	auto INT8U Error;
-	static tcp_Socket un_tcp_socket[2];
+	static tcp_Socket un_tcp_socket[MAX_TCP_SOCKET_BUFFERS];
 
 	// Inicializa el hardware de la placa
 	HW_init();
@@ -293,8 +293,6 @@ main(){
 #ifdef DEBUG
 	printf("\nDEBUG: Socket Iniciados\n");
 #endif
-	// Inicializamos el array de eventos
-	EVENTOS_Eventos_init();
 
 	// Deshabilitamos el scheduling mientras se crean las tareas
 	OSSchedLock();
@@ -309,6 +307,9 @@ main(){
 	pSemaforoRTC = OSSemCreate(1);
 	pSemaforoAtoI = OSSemCreate(1);
 	pSemaforoEventos = OSSemCreate(1);
+
+   // Inicializamos el array de eventos
+	EVENTOS_Eventos_init();
 
 	// Re-habilitamos scheduling
 	OSSchedUnlock();
