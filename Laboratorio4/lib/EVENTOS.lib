@@ -70,9 +70,9 @@ void EVENTOS_Eventos_init(){
 
 
 /*** BeginHeader EVENTOS_agregarEvento */
-void EVENTOS_agregarEvento( Event *p_tempevento);
+void EVENTOS_agregarEvento( Event *p_tempevento );
 /*** EndHeader */
-void EVENTOS_agregarEvento( Event *p_tempevento)
+void EVENTOS_agregarEvento( Event *p_tempevento )
 {
 	auto int posicion;
 	auto INT8U Error;
@@ -107,6 +107,7 @@ void EVENTOS_eliminarEvento( int posicionEvento );
 void EVENTOS_eliminarEvento( int posicionEvento ){
 
 	auto INT8U Error;
+	char stop[2];
 
 	// Nos aseguramos que tenemos el recurso para nosotros
 	OSSemPend(pSemaforoEventos, 0, &Error);
@@ -119,70 +120,63 @@ void EVENTOS_eliminarEvento( int posicionEvento ){
 #endif
 }
 
-
-/* Esta funcionalidad fue movida a menu para poder acceder facilmente a mandar datos a la UI*/
-/*** BeginHeader EVENTOS_listarEventos */
-void EVENTOS_listarEventos(void* data);
-/*** EndHeader */
-void EVENTOS_listarEventos(void* data){
-
-	int i;
-	auto INT8U Error;
-
-	// Nos aseguramos que tenemos el recurso para nosotros
-	OSSemPend(pSemaforoEventos, 0, &Error);
-		for ( i=0; i<MAX_EVENTS; i++ ){
-			printf("\n------------------------------\n");
-			if ( eventos[i].command != 0xFF ){
-				// Metemos en el buffer el texto formateado
-				//sprintf( bufferText,"\n----------------------------------------:\nNUMERO DE EVENTO: %d\n", i + 1" );
-				//UT_printEvento( &eventos[i] );
-				printf("Numero de Evento: %d\n",i+1 );
-				printf("Command: %c\n",eventos[i].command );
-				printf("Param: %c\n",eventos[i].param );
-				printf("Time: %c\n",eventos[i].time ); // ver para immprimir lindo
-			}
-
-		}
-	// Devolvemos el recurso
-	OSSemPost(pSemaforoEventos);
-}
-
 /*** BeginHeader EVENTOS_ejecutarEventos */
 void EVENTOS_ejecutarEventos();
 /*** EndHeader */
 void EVENTOS_ejecutarEventos(){
 
 	int i, comando;
+   auto INT8U Error;
+	unsigned long horaactual;
 
+	horaactual = RTC_leerTimestamp();
 	for ( i=0; i<MAX_EVENTS; i++ ){
-		if (eventos[i].command != 0xFF){
-
-			// verifico hora del evento comparando con el timestamp de la hora actual
-			if ( eventos[i].time < RTC_leerTimestamp() )  {
-
+		// Nos aseguramos que tenemos el recurso para nosotros
+		OSSemPend(pSemaforoEventos, 0, &Error);
+		
+		// verifico hora del evento comparando con el timestamp de la hora actual
+		if (eventos[i].command != 0xFF && eventos[i].time < horaactual){
 				// Verifico el tipo de evento
 				comando = eventos[i].command  - '0';
-#ifdef DEBUG
-	printf("\nDEBUG: El comando es %u", comando);
-#endif
-				switch( comando ){
-					case( OPCION_1 ):
-#ifdef DEBUG
-	printf("\nDEBUG: Evento PRENDER LED");
-#endif
-						LED_SET( eventos[i].param );
-						break;
+			#ifdef DEBUG
+				printf("\nDEBUG: El comando es %u", comando);
+			#endif
+			switch( comando ){
+				case( OPCION_1 ):
+					#ifdef DEBUG
+						printf("\nDEBUG: Evento PRENDER LED");
+					#endif
+					LED_SET( eventos[i].param );
+					// Devolvemos el recurso
+					OSSemPost(pSemaforoEventos);
+					EVENTOS_eliminarEvento(i); // Borro el elemento
+					break;
+					
+					
 
-					case( OPCION_2 ):
-#ifdef DEBUG
-	printf("\nDEBUG: Evento APAGAR LED");
-#endif
-						LED_RESET( eventos[i].param );
-						break;
-				}
-				EVENTOS_eliminarEvento(i); // Borro el elemento
+				case( OPCION_2 ):
+					#ifdef DEBUG
+						printf("\nDEBUG: Evento APAGAR LED");
+					#endif
+					LED_RESET( eventos[i].param );
+					// Devolvemos el recurso
+					OSSemPost(pSemaforoEventos);
+					EVENTOS_eliminarEvento(i); // Borro el elemento
+					break;
+					
+				default:
+					#ifdef DEBUG
+						printf("\nDEBUG: Existen eventos con tipo de evento no reconocido. Vea funcion EVENTOS_ejecutarEventos");
+					#endif
+					// Devolvemos el recurso
+					OSSemPost(pSemaforoEventos);
+					break;
 			}
+		} else {
+			// Devolvemos el recurso por que al no entrar en el if, queda retenido
+			// y lo volvemos a pedir en el proximo bucle. DEADLOCK
+			OSSemPost(pSemaforoEventos);
 		}
+		
 	}
 }
