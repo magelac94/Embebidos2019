@@ -1,4 +1,4 @@
-#define OS_MAX_TASKS			5  		// Maximum number of tasks system can create (less stat and idle tasks)
+#define OS_MAX_TASKS			15  		// Maximum number of tasks system can create (less stat and idle tasks)
 #define OS_TASK_SUSPEND_EN		1		// Habilitar suspender y resumir tareas
 #define OS_TASK_DEL_EN 			1
 #define OS_TIME_DLY_HMSM_EN		1		// Habilitar la funcion de delay para pasar fecha y hora
@@ -20,6 +20,13 @@ main(){
 	Error = OSTaskCreate(GPS_init, NULL, 256, 5);
 	Error = OSTaskCreate(GPS_gets, p_str, 256, 5);
 	printf("%s\n",*p_str );
+
+
+	gps_get_utc( struct_tm* p_dateTime, char* p_str)
+
+
+
+
 
 	OSStart();
 }
