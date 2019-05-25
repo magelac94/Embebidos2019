@@ -3,12 +3,12 @@
 //#define NOANDA        //Activo si quiero probar el caso que no anda
 
 /* uCOS configuration */
-#define OS_MAX_TASKS			7  		// Maximum number of tasks system can create (less stat and idle tasks)
+#define OS_MAX_TASKS			5  		// Maximum number of tasks system can create (less stat and idle tasks)
 #define OS_TASK_SUSPEND_EN		1		// Habilitar suspender y resumir tareas
 #define OS_TIME_DLY_HMSM_EN		1		// Habilitar la funcion de delay para pasar fecha y hora
 #define OS_SEM_EN				1		// Habilitar semaforos
 #define OS_MAX_EVENTS			7		// MAX_TCP_SOCKET_BUFFERS + 2 + 3 (3 semaforos son usados)
-#define STACK_CNT_256			2		// Led_Red + idle
+#define STACK_CNT_256			2		// tarea_Led_Red + idle
 #define STACK_CNT_512			2		// main() + Interfaz Consola + ejecutar eventos
 #define STACK_CNT_2K			3		// 2 Tareas TCP (MAX_TCP_SOCKET_BUFFERS)
 
@@ -277,8 +277,11 @@ void tarea_interfaz_tcp(void* pdata){
 
 // Tarea 4 - Ejecutar eventos
 void tarea_ejecutar_eventos( void* pdata){
-	EVENTOS_ejecutarEventos();
-	OSTimeDlyHMSM(0, 0, 5, 0);
+	while(1){
+      	EVENTOS_ejecutarEventos();
+			OSTimeDlyHMSM(0, 0, 5, 0);
+   }
+
 }
 
 main(){
@@ -311,7 +314,7 @@ pSemaforoEventos = OSSemCreate(1);
 
 	//Creacion de tareas
 	Error = OSTaskCreate(tarea_led_red, NULL, 256, 5);
-	//Error = OSTaskCreate(tarea_ejecutar_eventos, NULL, 2048, 6);
+	Error = OSTaskCreate(tarea_ejecutar_eventos, NULL, 2048, 6);
 	Error = OSTaskCreate(tarea_interfaz_tcp, &un_tcp_socket[0], 2048, 7 );
 	Error = OSTaskCreate(tarea_interfaz_tcp, &un_tcp_socket[1], 2048, 8 );
 	Error = OSTaskCreate(tarea_interfaz_consola,NULL, 512, 9);
