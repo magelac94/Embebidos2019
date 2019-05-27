@@ -130,15 +130,12 @@ void interfaz_consola(void* pdata){
 				int_Analog_Value = IO_getAnalogInput( int_opcion_menu ); //el valor que toma por parametro es un unsigned char
 				MENU_mostrarEntradaAnalogica( CONSOLA, &int_Analog_Value, buffer, NULL );
 				break;
-	/*		case( OPCION_7 ):
-				// CONFIGURAR RELOJ desde GPS
-				gps_get_utc(p_dateTime,p_str);
+			case( OPCION_7 ):
+				// LOCALIZACION GPS
+				gps_get_position( GPSPosition* p_pos, char* p_str);S
 
-				MENU_pedirFechaHora( CONSOLA, &FechaHora, buffer, NULL ); //ya no pide mas al usuario la configura desde el gps
-				RTC_fijarFechaHora( &FechaHora );
-				MENU_printFechaHora( CONSOLA, &FechaHora, buffer, NULL );		// Imprimo la Fecha y hora modificadoS
+				//  http://maps.google.com/?q=lat,lon 
 				break;
-				break;*/
 			case( OPCION_7 ):
 				// SALIR
 				printf("Salir");
