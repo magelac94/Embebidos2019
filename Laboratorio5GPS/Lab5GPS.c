@@ -1,14 +1,15 @@
 //#class auto 			// Change default storage class for local variables: on the stack
-#define DEBUG			// activo para imprimir estado de conexion TCP
+//#define DEBUG			// activo para imprimir estado de conexion TCP
 //#define NOANDA        //Activo si quiero probar el caso que no anda
 
 /* uCOS configuration */
-#define OS_MAX_TASKS			5  		// Maximum number of tasks system can create (less stat and idle tasks)
+#define OS_MAX_TASKS			15  		// Maximum number of tasks system can create (less stat and idle tasks)
 #define OS_TASK_SUSPEND_EN		1		// Habilitar suspender y resumir tareas
+#define OS_TASK_DEL_EN 			1
 #define OS_TIME_DLY_HMSM_EN		1		// Habilitar la funcion de delay para pasar fecha y hora
 #define OS_SEM_EN				1		// Habilitar semaforos
 #define OS_MAX_EVENTS			7		// MAX_TCP_SOCKET_BUFFERS + 2 + 3 (3 semaforos son usados)
-#define STACK_CNT_256			2		// tarea_Led_Red + idle
+#define STACK_CNT_256			5		// tarea_Led_Red + idle
 #define STACK_CNT_512			2		// main() + Interfaz Consola + ejecutar eventos
 #define STACK_CNT_2K			3		// 2 Tareas TCP (MAX_TCP_SOCKET_BUFFERS)
 
@@ -24,6 +25,7 @@
 #define TAMANIO_BUFFER_LE 		512      			// Este es el tamanio que le damos a nuestros buffers para leer y enviar al socket
 
 /* Incluimos las librerias luego de los define para sobre escribir los macros deseados */
+#use GPS_Custom.lib
 #use IO.LIB
 #use LED.LIB
 #use EVENTOS.LIB
@@ -129,9 +131,19 @@ void tarea_interfaz_consola(void* pdata){
 				MENU_mostrarEntradaAnalogica( CONSOLA, &int_Analog_Value, buffer, NULL );
 				break;
 			case( OPCION_7 ):
+				// LOCALIZACION GPS
+				// devuelve la posicion
+
+				printf("Posicion\n");
+			//	gps_get_position( GPSPosition* p_pos, char* p_str);S
+
+				//  http://maps.google.com/?q=lat,lon 
+				break;
+			case( OPCION_8 ):
 				// SALIR
 				printf("Salir");
 				break;
+
 
 
 			default:
@@ -284,10 +296,38 @@ void tarea_ejecutar_eventos( void* pdata){
 
 }
 
+void GPS_configRTC(void* pdata){
+	struct tm FechaHora;
+	struct tm p_dateTime;
+	unsigned long timestampGPS;
+	unsigned long timestampRabbit;
+
+	char* p_str;
+
+	while(true){
+		// Obtengo Fecha del GPS
+		gps_get_utc( &p_dateTime, p_str);
+
+		timestampGPS = mktime( &p_dateTime );
+
+		// Obtengo Fecha Placa
+		timestampRabbit = RTC_leerTimestamp();
+
+		// Evaluo si la fecha obtenida es igual a la que ya esta configurada
+		if (timestampGPS != timestampRabbit){
+			RTC_fijarFechaHora( &p_dateTime );
+		}
+
+
+	}
+
+}
+
 main(){
 
 	auto INT8U Error;
 	static tcp_Socket un_tcp_socket[MAX_TCP_SOCKET_BUFFERS];
+	char* p_str;
 
 	// Inicializa el hardware de la placa
 	HW_init();
@@ -318,6 +358,10 @@ pSemaforoEventos = OSSemCreate(1);
 	Error = OSTaskCreate(tarea_interfaz_tcp, &un_tcp_socket[0], 2048, 7 );
 	Error = OSTaskCreate(tarea_interfaz_tcp, &un_tcp_socket[1], 2048, 8 );
 	Error = OSTaskCreate(tarea_interfaz_consola,NULL, 512, 9);
+
+	Error = OSTaskCreate(GPS_init, NULL, 256, 10);  // Inicializa Hardware GPS - Ejecuta 1 vez
+	Error = OSTaskCreate(GPS_gets, p_str, 256, 11); // Se obtiene datos gps
+	Error = OSTaskCreate(GPS_configRTC, NULL, 256, 12); // Configura el Reloj Periodicamente
 
    // Inicializamos el array de eventos
 	EVENTOS_Eventos_init();
