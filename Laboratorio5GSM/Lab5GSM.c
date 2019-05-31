@@ -1,31 +1,83 @@
+//Estos define los tenemos que mover a la lib IO
 #define GPRS_BAUD_RATE	9600
 #define GPRS_MSG_LENGTH 120
-#define DINBUFSIZE 				127
-#define DOUTBUFSIZE 			127
+#define DINBUFSIZE 		127
+#define DOUTBUFSIZE 	127
+#define TIMEOUT_10		10
 
+#use IO.lib
 #use Utilities.lib
-brubelm@gmail.com
+
+
 void main(){
-	cont static char s1[] = "A"
-	cont static char s1[] = "AT\r"
 	
+	int status;
+	char dataRx[GPRS_MSG_LENGTH];
+	
+	// Configuramos STATUS asi despues podemos leer el pin
+	BitWrPortI(PEDDR, &PEDDRShadow, INPUT_DIR, BIT_1); 
+	
+	// Configuramos puerto serial D
 	serDopen(GPRS_BAUD_RATE);
 	serDrdFlush();
 	serDwrFlush();
+	/*
+	Prener el modem. Esto lo hacemos
+	configurando el pin que conecta el KEY como salida, esperamos y
+	luego lo configuramos como entrada y esperamos nuevamente.
+	*/
+	status = IO_getInput(PORT_E, BIT_1);
 
-	serDputs(s1);
+	while(!status){
+		BitWrPortI(PEDDR, &PEDDRShadow, OUTPUT_DIR, BIT_4);
+		IO_setOutput(PORT_E,0,BIT_4);
+		UT_delay(2000);
+		BitWrPortI(PEDDR, &PEDDRShadow, INPUT_DIR, BIT_4);
+		UT_delay(2000);
+		status = IO_getInput(PORT_E, BIT_1);
+	}
+	
+	serDputs("A");
 	UT_delay(6000);
-	serDputs(s2);
-	UT_delay(1000);	
+	serDputs("AT\r");
+	UT_delay(1000);
+	
+	do {
+		UT_delay(100)
+	}while(!serDrdUsed());
+
+   serDread(dataRx, sizeof(dataRx), TIMEOUT_10);
+   printf("Respuesta del modem: %s", dataRx);
+   //printf(dataRx); si sale basura del printf de arriba, ver con este a ver si es el tipo de dato %s el problema
+   
+   /* 
+	Dicen que tenemos que chequear siempre antes de operar que el modem no este muerto.
+	No se si aca antes de intentar ver si estamos registrados, en este caso de prueba vale la pena.
+	*/
+	serDputs("AT+CPIN?\r");
+	UT_delay(1000);
+	serDread(dataRx, sizeof(dataRx), TIMEOUT_10);
+	printf("Respuesta del modem: %s", dataRx);
+	
 }
 
-el modem puede morir en cualquier momento asi que tengo que ir chequeando constantemente
-antes de cada envio y recepcion si el status es OK.
 
-Para registro en la red preguntarle AT+CPIN?\r y vamos a recibir dos tipos de respuesta, una va a ser READY (no necesito pin)o puede responder SIMPIN (si necesita el pin). Si todo esto sale bien recibimos un OK.
-
-Luego tenemos que ver si con eso es suficiente para registrarnos en la red. PAra logarlo AT+CREG?\r. Si estamos registrados en la red recibimos AT+CREG:0,1. Ver que son estos codigos 0,1 por que es posible que necesite un tiempito para terminar de regsitrarse. Si no estamos registrados tenemos que setearle la operadora AT+COPS=coddeantel\r
-
-Luego de estar registrados, mandar sms. SEtear el modem en modo texto. AT+COMANDOMODOTEXTO y luego mandar AT+MSG\r ALT+0026 (es el ctrl+z)
-
-Encapsular para que quede prolijo. En base a la respuesta hacer el caso correcto. No avanzar si no recibimos las respuestas correctas. Robusto para que si el modem se apaga vuelva a encenderse.
+/* Funcion para prender el modem. De esta forma nos aseguramos
+	que antes de usarlo, este encendido. Capaz que puede llamarse diferente.
+	O podriamos tener una funcion que se llame checkStatus que mire si esta vivo, y
+	si esta apagado, llama a esta de modemON
+	*/
+int modemON(){	
+	int status;
+	
+	status = IO_getInput(PORT_E, BIT_1);
+	while(!status){
+		BitWrPortI(PEDDR, &PEDDRShadow, OUTPUT_DIR, BIT_4);
+		IO_setOutput(PORT_E,0,BIT_4);
+		UT_delay(2000);
+		BitWrPortI(PEDDR, &PEDDRShadow, INPUT_DIR, BIT_4);
+		UT_delay(2000);
+		status = IO_getInput(PORT_E, BIT_1);
+	}
+	return status;
+}
