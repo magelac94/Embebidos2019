@@ -10,4 +10,16 @@
 #define LED_RED_SET()	IO_setOutput( PORT_E, BIT_5, LED_ON)
 #define LED_RED_RESET()	IO_setOutput( PORT_E, BIT_5, LED_OFF)
 
+// Tarea 1 - Prende y apaga el led. Cuando espera se suspende.
+// Por eso le daremos una prioridad alta. Es nuestro test para ver que todo corre.
+// Le asignaremos un stack de 256.
+void tarea_led_red(void* pdata){
+
+	while(1){
+		LED_RED_SET();
+		OSTimeDlySec(1);
+		LED_RED_RESET();
+		OSTimeDlySec(1);
+	}
+}
 /*** EndHeader */
