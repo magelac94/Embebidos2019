@@ -1,0 +1,27 @@
+Informe tecnico
+como funciona
+que tareas tiene porque
+librerias que hacen
+que hacen las fucniones
+
+aclaraciones del codigo- como falla - bug conocidos
+
+A nivel usuario:
+manual de usuario - orientado al atleta o el organizador del evento
+
+entrega 5/7  
+defensa 8/7 en adelante
+
+defensa demora 1 hora
+
+
+-- configurar el numero de telefono (configurar desde ethernet)
+-- parametrizar los 10 minutos de keep a live
+
+
+- verificar si gps no tiene señal - no puedo enviar el mensaje sin posicion, debo enviar la ultima posicion elegida si la actual no la puedo obtener,\..
+
+user block
+
+
+- chequeo de integridad - checksum/hash  - 

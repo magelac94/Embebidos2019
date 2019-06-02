@@ -10,9 +10,8 @@
 
 #use RTC.lib
 #use GPS_Custom.lib
-#use IO.LIB
+//#use IO.LIB
 #use ucos2.lib
-#use MENU.LIB
 
 void GPS_configRTC(void* pdata){
 	struct tm FechaHora;
@@ -27,7 +26,7 @@ void GPS_configRTC(void* pdata){
 		// Obtengo Fecha del GPS
 		gps_get_utc( &p_dateTime, p_str);
 
-		printFechaHora(0,p_dateTime,buffer, NULL)
+ //		printFechaHora(0,p_dateTime,buffer, NULL)
 
 	/*	timestampGPS = mktime( &p_dateTime );
 
@@ -49,16 +48,15 @@ main() {
 
 	char* p_str;
 
-	HW_init();
+	//HW_init();
 
 	OSInit();
 
 	OSTaskCreate(GPS_init, NULL, 256, 2);  // Inicializa Hardware GPS - Ejecuta 1 vez
 	OSTaskCreate(GPS_gets, p_str, 256, 3); // Se obtiene datos gps
 
-	printf("%s", p_str);
-  	OSTaskCreate(GPS_configRTC, NULL, 256, 11); // Configura el Reloj Periodicamente
-
+	printf("%s", p_str); // imprimo trama
+  //	OSTaskCreate(GPS_configRTC, NULL, 256, 11); // Configura el Reloj Periodicamente
 	OSStart();
 
 }
