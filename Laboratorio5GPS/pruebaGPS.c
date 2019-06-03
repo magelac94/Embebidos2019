@@ -31,10 +31,10 @@ void imprimirPoscion(GPSPosition *pos){
 
 	latgrados = pos->lat_degrees;
 	longrados = pos->lon_degrees;
-	
+
 	printf("%d\n", latgrados );
 	printf("%d\n", longrados );
-	
+
 }
 
 void GPS_configRTC(void* pdata){
@@ -91,7 +91,7 @@ main() {
 	OSTaskCreate(GPS_gets, p_str, 256, 4); // Se obtiene datos gps
 
  //	printf("%s", p_str); // imprimo trama
-  	OSTaskCreate(GPS_configRTC, p_str, 256, 11); // Configura el Reloj Periodicamente
+  	OSTaskCreate(GPS_configRTC, p_str, 256, 5); // Configura el Reloj Periodicamente
 
   //	gps_get_utc( &p_dateTime, p_str);
 
