@@ -55,11 +55,12 @@ main(){
 
 	//Creacion de tareas
 	Error = OSTaskCreate(tarea_led_red, NULL, 256, 5);
-//	Error = OSTaskCreate(tarea_modem, NULL, OJO, 6);
-//	Error = OSTaskCreate(tarea_gps, NULL, OJO, 7 );
-//	Error = OSTaskCreate(tarea_interfaz_tcp, &un_tcp_socket[0], 2048, 8 );
-//	Error = OSTaskCreate(tarea_botones,NULL, OJO, 9);
-//	Error = OSTaskCreate(tarea_salud,NULL, OJO, 10);	
+//	Error = OSTaskCreate(tarea_modem, NULL, OJO, 6);	//IÑAKI
+//	Error = OSTaskCreate(tarea_gps, NULL, OJO, 7 );		// MAGELA
+//	Error = OSTaskCreate(tarea_interfaz_tcp, &un_tcp_socket[0], 2048, 8 ); //IÑAKI
+//	Error = OSTaskCreate(tarea_botones,NULL, OJO, 9);	// MARIO
+//	Error = OSTaskCreate(tarea_salud,NULL, OJO, 10);	//MARIO
+// 	Error = OSTaskCreate(tarea_config_Reloj,NULL, OJO, 11)  // MAGELA
 	
 	// Re-habilitamos scheduling
 	OSSchedUnlock();
