@@ -4,17 +4,18 @@
 /*** EndHeader */
 
 /*** BeginHeader tarea_salud */
-void tarea_salud(void* pdata);
+void tarea_salud(int* pdata);
 /*** EndHeader */
-void tarea_salud(void* pdata){
+void tarea_salud(int* pdata){
 	int ritmo_cardiaco;
+
 
 	while(1){
 		ritmo_cardiaco = IO_getAnalogInput(*pdata);
 		if(ritmo_cardiaco < RIT_MIN || ritmo_cardiaco > RIT_MAX)
 		{
 			//enviar_msj("El votija esta palmando");
-			return 1;
+			return;
 		}
 	}
 }
