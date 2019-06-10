@@ -24,13 +24,14 @@
 /* Incluimos las librerias luego de los define para sobre escribir los macros deseados */
 #use IO.LIB
 #use LED.LIB
+#use TSalud.lib
 
 #memmap xmem
 #use "ucos2.lib"
 #use "dcrtcp.lib"
 
 main(){
-	
+
 	// Variables
 	auto INT8U Error;
 	static tcp_Socket un_tcp_socket[MAX_TCP_SOCKET_BUFFERS];
@@ -40,7 +41,7 @@ main(){
 
 	// Inicializa la estructura de datos interna del sistema operativo uC/OS-II
 	OSInit();
-	
+
 	// Iniciamos el stack TCP/IP
 #ifdef DEBUG
 	printf("\nDEBUG: Iniciando Sockets\n");
@@ -59,9 +60,9 @@ main(){
 //	Error = OSTaskCreate(tarea_gps, NULL, OJO, 7 );		// MAGELA
 //	Error = OSTaskCreate(tarea_interfaz_tcp, &un_tcp_socket[0], 2048, 8 ); //IÑAKI
 //	Error = OSTaskCreate(tarea_botones,NULL, OJO, 9);	// MARIO
-//	Error = OSTaskCreate(tarea_salud,NULL, OJO, 10);	//MARIO
+	Error = OSTaskCreate(tarea_salud,NULL, 256, 0);	//MARIO
 // 	Error = OSTaskCreate(tarea_config_Reloj,NULL, OJO, 11)  // MAGELA
-	
+
 	// Re-habilitamos scheduling
 	OSSchedUnlock();
 

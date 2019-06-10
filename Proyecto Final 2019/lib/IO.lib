@@ -63,6 +63,8 @@ void HW_init( void )
 
 	// Puerto Serie PIC
 	serCopen(PIC_PROTOCOL_BAUDRATE);
+	//serCrdFlush();
+	//serCwrFlush();
 }
 
 /*** BeginHeader IO_getInput */
