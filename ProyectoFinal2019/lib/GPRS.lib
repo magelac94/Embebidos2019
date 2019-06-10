@@ -1,0 +1,116 @@
+#define NOANDA
+
+/*
+En la funcion GPRS_tarea_modem uso UT_delay que es bloqueante.
+Esto podría estar mal. Hay que evaluarlo. Si usamos delays no bloqueantes podria
+ejecutarse alguna otra tarea que quiere comunicarse con el modem y aun no estaba pronto.
+Si preguntamos antes de usarlo, podria estar bien.
+*/
+/*** BeginHeader GPRS_tarea_encender_modem*/
+void GPRS_tarea_encender_modem(void* pdata);
+/*** EndHeader */
+void GPRS_tarea_encender_modem(void* pdata){
+	char status;
+	char dataRx[GPRS_MSG_LENGTH]; //Definido en IO.lib
+
+	while(1){
+		//Atenicion funciones de serial no reentrantes
+		serDrdFlush();
+		serDwrFlush();
+
+		/*
+		Prener el modem. Esto lo hacemos
+		configurando el pin que conecta el KEY como salida, esperamos y
+		luego lo configuramos como entrada y esperamos nuevamente.
+		*/
+		status = IO_getInput(PORT_E, BIT_1);
+		while(!status){
+			BitWrPortI(PEDDR, &PEDDRShadow, OUTPUT_DIR, BIT_4);
+			UT_delay(2000);
+			BitWrPortI(PEDDR, &PEDDRShadow, INPUT_DIR, BIT_4);
+			UT_delay(2000);
+			status = IO_getInput(PORT_E, BIT_1);
+		}// Prendido
+
+		// Autoconfiguracion de BAUDRATE
+		//Atenicion funciones de serial no reentrantes
+		serDputs("A");
+		UT_delay(6000);
+		serDputs("AT\r");
+		do {
+			UT_delay(100);
+		}while(!serDrdUsed());// Esperamos datos en el buffer de respuesta
+
+		memset(dataRx, 0, sizeof(dataRx)); // Borramos el contenido de nuestro buffer con CEROS.
+		serDread(dataRx, sizeof(dataRx), GPRS_COM_TIMEOUT);//Atenicion funciones de serial no reentrantes
+		if ( dataRx ){
+		#ifdef DEBUG
+			printf("Respuesta del modem: %s\n", dataRx);
+			printf("Estamos prontos para enviar y recibir comandos...\n");
+		#endif
+			// Aca podriamos usar el valor de status para prender algun led y
+			// asi saber que esta prendido, o configurar un delay mas corto de
+			// de la tarea_led_red usando el MBOX para intercambiar valores.
+			// LED_SET(prender una led con el status.);
+			
+			// Comando AT para consultar el estado del pin
+			serDputs("AT+CPIN?\r"); //Atenicion funciones de serial no reentrantes
+//			UT_delay(1000);
+			// Respuesta
+			do {
+				UT_delay(100);
+			}while(!serDrdUsed());// Esperamos datos en el buffer de respuesta
+			memset(dataRx, 0, sizeof(dataRx)); // Borramos el contenido de nuestro buffer con CEROS.
+			serDread(dataRx, sizeof(dataRx), GPRS_COM_TIMEOUT);
+			if ( dataRx ){
+			#ifdef DEBUG
+				printf("Respuesta del modem: %s\n", dataRx);
+			#endif				
+			}
+			OSTaskSuspend(OS_PRIO_SELF);
+		} else {
+		#ifdef DEBUG
+			printf("Modem no iniciado correctamente. Reintentando inicializarlo nuevamente.\n");
+		#endif
+		}
+	}
+
+}
+
+/*** BeginHeader GPRS_modem_status*/
+char GPRS_modem_status();
+/*** EndHeader */
+char GPRS_modem_status(){
+	char status;
+	
+	// Aca podriamos tirar algun comando AT para ver si responde bien.
+	// Asi como esta solo dice si esta prendido.
+	status = IO_getInput(PORT_E, BIT_1);
+	return status;
+}
+
+#ifndef NOANDA
+// No esta terminada
+int GPRS_modem_pinsim(char* pin ){
+	char dataRx[GPRS_MSG_LENGTH];
+
+	//Atenicion funciones de serial no reentrantes
+	serDrdFlush();
+	serDwrFlush();
+	
+	// Comando AT para consultar el estado del pin
+	serDputs("AT+CPIN?\r"); //Atenicion funciones de serial no reentrantes
+	// Respuesta
+	do {
+		UT_delay(100);
+	}while(!serDrdUsed());// Esperamos datos en el buffer de respuesta
+	memset(dataRx, 0, sizeof(dataRx)); // Borramos el contenido de nuestro buffer con CEROS.
+	serDread(dataRx, sizeof(dataRx), GPRS_COM_TIMEOUT);
+
+	if ( dataRx == "SIM PIN" ){		// RESPUESTA ES SIM PIN Poner
+		serDputs("AT+CPIN=1234\R");
+		UT_delay(1000);
+	}
+	return 0;
+}
+#endif
