@@ -1,6 +1,4 @@
 /*** BeginHeader */
-#use IO.LIB
-
 #define RIT_MAX		5000
 #define	RIT_MIN		2000
 /*** EndHeader */
@@ -9,9 +7,9 @@
 void tarea_salud(void* pdata);
 /*** EndHeader */
 void tarea_salud(void* pdata){
+	int ritmo_cardiaco;
 
 	while(1){
-		int ritmo_cardiaco;
 		ritmo_cardiaco = IO_getAnalogInput(*pdata);
 		if(ritmo_cardiaco < RIT_MIN || ritmo_cardiaco > RIT_MAX)
 		{
