@@ -6,7 +6,7 @@
 #define OS_TIME_DLY_HMSM_EN		1		// Habilitar la funcion de delay para pasar fecha y hora
 #define OS_SEM_EN				1		// Habilitar semaforos
 #define OS_MAX_EVENTS			1		// MAX_TCP_SOCKET_BUFFERS + 0 Mbox + 0 Queue + 0 Semaforos
-#define STACK_CNT_256			2		// tarea_Led_Red + idle
+#define STACK_CNT_256			3		// tarea_Led_Red + idle
 #define STACK_CNT_512			1		// main()
 #define STACK_CNT_2K			1		// 1 Tareas TCP (MAX_TCP_SOCKET_BUFFERS)
 
@@ -30,7 +30,7 @@
 #use "dcrtcp.lib"
 
 main(){
-	
+
 	// Variables
 	auto INT8U Error;
 	static tcp_Socket un_tcp_socket[MAX_TCP_SOCKET_BUFFERS];
@@ -40,7 +40,7 @@ main(){
 
 	// Inicializa la estructura de datos interna del sistema operativo uC/OS-II
 	OSInit();
-	
+
 	// Iniciamos el stack TCP/IP
 #ifdef DEBUG
 	printf("\nDEBUG: Iniciando Sockets\n");
@@ -56,12 +56,12 @@ main(){
 	//Creacion de tareas
 	Error = OSTaskCreate(tarea_led_red, NULL, 256, 5);
 //	Error = OSTaskCreate(tarea_modem, NULL, OJO, 6);	//IÑAKI
-//	Error = OSTaskCreate(tarea_gps, NULL, OJO, 7 );		// MAGELA
+	Error = OSTaskCreate(tarea_gps, NULL, 256 , 7 );		// MAGELA
 //	Error = OSTaskCreate(tarea_interfaz_tcp, &un_tcp_socket[0], 2048, 8 ); //IÑAKI
 //	Error = OSTaskCreate(tarea_botones,NULL, OJO, 9);	// MARIO
 //	Error = OSTaskCreate(tarea_salud,NULL, OJO, 10);	//MARIO
 // 	Error = OSTaskCreate(tarea_config_Reloj,NULL, OJO, 11)  // MAGELA
-	
+
 	// Re-habilitamos scheduling
 	OSSchedUnlock();
 
