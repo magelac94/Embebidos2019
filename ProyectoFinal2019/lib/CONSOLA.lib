@@ -19,6 +19,7 @@ void CONSOLA_tarea_comandos_a_mano(void* pdata){
 		serDwrFlush();
       // Comando AT
 		serDputs(comando);
+		//mandar el control+z
       // Respuesta
 		do {
 			UT_delay(100);
