@@ -1,0 +1,96 @@
+// Libreria GPS
+
+
+/*** BeginHeader tarea_config_Reloj */
+void tarea_config_Reloj(void* tramaGPS);
+/*** EndHeader */
+void tarea_config_Reloj(void* tramaGPS){
+	struct tm* fechaHora;
+	struct tm* p_dateTime;
+	unsigned long timestampGPS;
+	unsigned long timestampRabbit;
+	auto INT8U Error;
+
+	char* p_str;
+	char buffer[500];
+	memset(p_str, 0, sizeof(p_str)); // limpio valones en memoria
+	memset(buffer, 0, sizeof(buffer)); // limpio valones en memoria
+
+
+	while(1){  // Configurar reloj cada 1 minuto o mas0
+
+		memset(p_str, 0, sizeof(p_str)); // limpio valones en memoria
+		memset(buffer, 0, sizeof(buffer)); // limpio valones en memoria
+
+		//Imprimo Trama Completa
+		printf("\n TRAMA: %s ", tramaGPS);
+		// Obtengo Fecha del GPS
+		Error = gps_get_utc( p_dateTime, tramaGPS);		// ver si esta hora es de donde estoy ubicado 
+		if (Error = 0){	// Si el resultado es correcto  sigo 
+			// Convierto la fecha en timestamp
+			timestampGPS = mktime( p_dateTime );
+
+			// Obtendo Fecha Placa
+			timestampRabbit = RTC_leerTimestamp();
+			RTC_leerFechaHora(fechaHora);
+
+			// Imprimir Fecha Placa
+			printf("\nHoy es: %02d/%02d/%d\n", fechaHora->tm_mday, fechaHora->tm_mon, 1900+fechaHora->tm_year);
+
+			// Evaluo si la fecha obtenida es igual a la que ya esta configurada
+			if (timestampGPS != timestampRabbit){
+
+				// Si no es igual la configuro con la fecha del GPS
+				RTC_fijarFechaHora(p_dateTime );
+			}
+		}else{
+			OSTimeDlyHMSM(0,0,1,0);
+		}
+	}
+}
+
+/*** BeginHeader obtenerPosicion */
+void obtenerPosicion();
+/*** EndHeader */
+void obtenerPosicion(){
+	GPSPosition *posicion;
+	int latgrados,longrados;
+	auto INT8U Error;
+
+	Error = gps_get_position(posicion, TRAMA_GPS);
+	if (Error == 0){	// Resultado correcto
+		imprimirPoscion(posicion);
+		printf()
+	}else{	// Trama o resultado incorrecto
+		OSTimeDlyHMSM(0,0,1,0);
+	}
+	
+}
+
+
+/*** BeginHeader imprimirPoscion */
+void imprimirPoscion(GPSPosition *pos);
+/*** EndHeader */
+void imprimirPoscion(GPSPosition *pos){
+
+	int latgrados,longrados;
+
+	latgrados = pos->lat_degrees;
+	longrados = pos->lon_degrees;
+
+	printf("%d\n", latgrados );
+	printf("%d\n", longrados );
+}
+
+/*** BeginHeader stringPosicion */
+void stringPosicion(GPSPosition *pos, char* stringpos);
+/*** EndHeader */
+void stringPosicion(GPSPosition *pos, char* stringpos){
+
+	int latgrados,longrados;
+
+	latgrados = pos->lat_degrees;
+	longrados = pos->lon_degrees;
+
+	stringpos = latgrados + "-" + longrados
+}
