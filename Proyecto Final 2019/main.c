@@ -1,14 +1,15 @@
-#define DEBUG			// activo para imprimir mensajes de DEBUG
+//#define DEBUG			// activo para imprimir mensajes de DEBUG
 
 /* uCOS configuration */
-#define OS_MAX_TASKS			1  		// Cantidad maxima de tareas que se pueden crear, sin contar STAT e IDLE
+#define OS_MAX_TASKS			5  		// Cantidad maxima de tareas que se pueden crear, sin contar STAT e IDLE
 #define OS_TASK_SUSPEND_EN		1		// Habilitar suspender y resumir tareas
+#define OS_TASK_DEL_EN 			1
 #define OS_TIME_DLY_HMSM_EN		1		// Habilitar la funcion de delay para pasar fecha y hora
 #define OS_SEM_EN				1		// Habilitar semaforos
 #define OS_MAX_EVENTS			1		// MAX_TCP_SOCKET_BUFFERS + 0 Mbox + 0 Queue + 0 Semaforos
 #define STACK_CNT_256			3		// tarea_Led_Red + idle
-#define STACK_CNT_512			1		// main()
-#define STACK_CNT_2K			1		// 1 Tareas TCP (MAX_TCP_SOCKET_BUFFERS)
+#define STACK_CNT_512			3		// main()
+#define STACK_CNT_2K			2		// 1 Tareas TCP (MAX_TCP_SOCKET_BUFFERS)
 
 /* TCP/IP configuration */
 #define TCPCONFIG 0
@@ -22,18 +23,29 @@
 #define TAMANIO_BUFFER_LE 		512      			// Este es el tamanio que le damos a nuestros buffers para leer y enviar al socket
 
 /* Incluimos las librerias luego de los define para sobre escribir los macros deseados */
+
+#use RTC.lib
+#use GPS_Custom.lib
+#use GPS_funciones.LIB
 #use IO.LIB
 #use LED.LIB
+
 
 #memmap xmem
 #use "ucos2.lib"
 #use "dcrtcp.lib"
+
+// trama de GPS
+char* TRAMA_GPS;	// la hago global para poder acceder en cualquier momento a la trama de posicion
 
 main(){
 
 	// Variables
 	auto INT8U Error;
 	static tcp_Socket un_tcp_socket[MAX_TCP_SOCKET_BUFFERS];
+	
+
+
 
 	// Inicializa el hardware de la placa
 	HW_init();
@@ -56,7 +68,10 @@ main(){
 	//Creacion de tareas
 	Error = OSTaskCreate(tarea_led_red, NULL, 256, 5);
 //	Error = OSTaskCreate(tarea_modem, NULL, OJO, 6);	//IÑAKI
-	Error = OSTaskCreate(tarea_gps, NULL, 256 , 7 );		// MAGELA
+	Error = OSTaskCreate(GPS_init, NULL, 256, 3);  // Inicializa Hardware GPS - Ejecuta 1 vez
+	Error = OSTaskCreate(GPS_gets, TRAMA_GPS, 256, 4); // Se obtiene datos gps
+	Error = OSTaskCreate(tarea_config_Reloj, TRAMA_GPS, 2048 , 6 );
+
 //	Error = OSTaskCreate(tarea_interfaz_tcp, &un_tcp_socket[0], 2048, 8 ); //IÑAKI
 //	Error = OSTaskCreate(tarea_botones,NULL, OJO, 9);	// MARIO
 //	Error = OSTaskCreate(tarea_salud,NULL, OJO, 10);	//MARIO
