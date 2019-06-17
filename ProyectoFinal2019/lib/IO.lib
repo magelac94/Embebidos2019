@@ -5,6 +5,8 @@
 // Config
 #define STX 					0x02
 #define ETX 					0x03
+#define LOW						0
+#define HIGH					1
 // Puerto Serial C - Tamanios de buffer PIC
 #define CINBUFSIZE 				127
 #define COUTBUFSIZE 			127
