@@ -1,5 +1,6 @@
 #define PINSIM		"1234"
-#define CODPROV	"74801"
+#define CODPROV		"74801"
+#define CELNUM		"099948442"
 
 /*
 En la funcion GPRS_tarea_modem uso UT_delay que es bloqueante.
@@ -34,27 +35,18 @@ void GPRS_tarea_encender_modem(void* pdata){
 		status = GPRS_modem_pinsim();
 
         // Registrarnos en la red
+		//Atenicion funciones de serial no reentrantes
 		status = GPRS_modem_netreg();
 
 		// Poner el modem en modo texto
+		//Atenicion funciones de serial no reentrantes
 		status = GPRS_modem_modesms();
-
-		if (status != 0){
-         // Comando AT configurar destino del mensaje de texto
-         serDputs("AT+CMGS=\"099948442\"");
-		 serDputc(0x0D);
-         UT_delay(2000);
-         // Respuesta
-         do {
-				UT_delay(100);
-			}while(!serDrdUsed());// Esperamos datos en el buffer de respuesta
-			memset(dataRx, 0, sizeof(dataRx)); // Borramos el contenido de nuestro buffer con CEROS.
-			serDread(dataRx, sizeof(dataRx), GPRS_COM_TIMEOUT);
-			if ( 1 ){
-			#ifdef DEBUG
-				printf("Respuesta del modem asetear celuar de envio: %s\n", dataRx);
-			#endif
-			}
+		
+		// Setear el nro de telefono al cual mandar el mensaje.
+		//Atenicion funciones de serial no reentrantes
+		status = GPRS_modem_setdest();
+		
+		if (status != 0){         
 
 			// Comando AT mandar mensaje de texto
 			serDputs("Esta es una prueba de mensaje de texto desde el rabbit"); // mensaje guardado en un array
@@ -275,7 +267,7 @@ int GPRS_modem_modesms();
 int GPRS_modem_modesms(){
 
 	int status;
-   char dataRx[GPRS_MSG_LENGTH];
+	char dataRx[GPRS_MSG_LENGTH];
 
 	status = 0;
 
@@ -299,4 +291,47 @@ int GPRS_modem_modesms(){
 		printf("%s\n", dataRx);
 	#endif
 	}
+	return status;
+}
+
+// Configurar el numero al cual se envian los mensajes
+/*
+ Para poder escribir el mensaje, el cursor tiene que estar esperando el texto.
+ Aparece el char ">". Se supone que si chequeamos el paso anterior con status 0,
+ estamos prontos para mandar pero no se si no deberíamos revisarlo aca antes de
+ mandar el mensaje.
+*/
+/*** BeginHeader GPRS_modem_setdest*/
+int GPRS_modem_setdest();
+/*** EndHeader */
+int GPRS_modem_setdest(){
+	
+	int status;
+	char dataRx[GPRS_MSG_LENGTH];
+
+	status = 0;
+
+	//Atenicion funciones de serial no reentrantes
+	serDrdFlush();
+	serDwrFlush();
+	
+	// Comando AT configurar destino del mensaje de texto
+	serDputs("AT+CMGS=");
+	serDputs("\"099948442\"");	// Poner aca el MACRO para el CELNUM
+	serDputc(0x0D); // Mandar \r
+	// Respuesta
+	do {
+		UT_delay(100);
+	}while(!serDrdUsed());// Esperamos datos en el buffer de respuesta
+	
+	memset(dataRx, 0, sizeof(dataRx)); // Borramos el contenido de nuestro buffer con CEROS.
+	serDread(dataRx, sizeof(dataRx), GPRS_COM_TIMEOUT);
+	
+	if ( dataRx != "OK" ){
+	#ifdef DEBUG
+		printf("Respuesta del modem asetear celuar de envio: %s\n", dataRx);
+	#endif
+	}
+	
+	return status;
 }
