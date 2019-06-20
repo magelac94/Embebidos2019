@@ -5,6 +5,11 @@
 #define OS_TASK_SUSPEND_EN		1		// Habilitar suspender y resumir tareas
 #define OS_TIME_DLY_HMSM_EN		1		// Habilitar la funcion de delay para pasar fecha y hora
 #define OS_SEM_EN				1		// Habilitar semaforos
+#define OS_Q_EN					1		// Habilitar colas (queues)
+#define OS_Q_ACCEPT_EN			1		// Enable accepting messages from queue
+#define OS_Q_POST_EN			1		// Enable posting messages to queue
+#define OS_Q_POST_FRONT_EN		1		// Enable posting messages to front of queue
+#define OS_Q_QUERY_EN			1		// Enable queue querying
 #define OS_MAX_EVENTS			1		// MAX_TCP_SOCKET_BUFFERS + 0 Mbox + 0 Queue + 0 Semaforos
 #define STACK_CNT_256			2		// tarea_Led_Red + idle
 #define STACK_CNT_512			3		// main() + GPRS_tarea_encender_modem + CONSOLA_tarea_comandos_a_mano
@@ -32,6 +37,10 @@
 #use "ucos2.lib"
 #use "dcrtcp.lib"
 
+/* Definicion de semaforos, mbox y queues. GLOBALES*/
+OS_EVENT *SmsQ;
+void* SmsQStorage[5]; // La queue tiene para guardar 5 mensajes pendientes.
+
 main(){
 
 	// Variables
@@ -55,10 +64,13 @@ main(){
 
 // Deshabilitamos el scheduling mientras se crean las tareas
 	OSSchedLock();
+	
+	//Creacion de semaforos, mbox y queues
+	SmsQ = OSQCreate(&SmsQStorage[0], 5); // Crear una cola donde poner los mensajes a enviar
 
 	//Creacion de tareas
 	Error = OSTaskCreate(LED_tarea_led_red, NULL, 256, 5);
-	Error = OSTaskCreate(GPRS_tarea_encender_modem, NULL, 512, 6);	//INAKI
+	Error = OSTaskCreate(GPRS_tarea_modem, NULL, 512, 6);	//INAKI
 	Error = OSTaskCreate(CONSOLA_tarea_comandos_a_mano, NULL, 512,7);
 //	Error = OSTaskCreate(tarea_gps, NULL, OJO, 8 );		// MAGELA
 //	Error = OSTaskCreate(TCP1_tarea_interfaz_tcp, &un_tcp_socket[0], 2048, 9 ); //INAKI
