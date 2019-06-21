@@ -2,51 +2,84 @@
 
 
 /*** BeginHeader tarea_config_Reloj */
-void tarea_config_Reloj(void* tramaGPS);
+void tarea_config_Reloj(void* pdata);
 /*** EndHeader */
-void tarea_config_Reloj(void* tramaGPS){
-	struct tm* fechaHora;
-	struct tm* p_dateTime;
+void tarea_config_Reloj(void* pdata){
+	struct tm* fechaHoraGPS;
+	struct tm* fechaHoraRTC;
 	unsigned long timestampGPS;
 	unsigned long timestampRabbit;
 	auto INT8U Error;
 
 	char* p_str;
+	char* tramaGPS;
 	char buffer[500];
-	memset(p_str, 0, sizeof(p_str)); // limpio valones en memoria
-	memset(buffer, 0, sizeof(buffer)); // limpio valones en memoria
+	int resultado;
+//	memset(tramaGPS, 0, sizeof(tramaGPS)); // limpio valones en memoria
+	//memset(buffer, 0, sizeof(buffer)); // limpio valones en memoria
+
+while(1){
+	printf("TRAMA: %s\n", pdata);
+	Error = gps_get_utc( fechaHoraGPS, pdata);
+
+	RTC_leerFechaHora(fechaHoraRTC);
+	printf("\nHoy es: %02d/%02d/%d\n", fechaHoraRTC->tm_mday, fechaHoraRTC->tm_mon, 1900+fechaHoraRTC->tm_year);
 
 
-	while(1){  // Configurar reloj cada 1 minuto o mas0
+	if (Error == 0){
+		timestampGPS = mktime( fechaHoraGPS );	
 
-		memset(p_str, 0, sizeof(p_str)); // limpio valones en memoria
-		memset(buffer, 0, sizeof(buffer)); // limpio valones en memoria
+		timestampRabbit = RTC_leerTimestamp();
+		
+		if (timestampGPS != timestampRabbit){
+
+				// Si no es igual la configuro con la fecha del GPS
+				RTC_fijarFechaHora(fechaHoraGPS );
+			}
+
+
+	}
+
+}
+
+
+/*	while(1){  // Configurar reloj cada 1 minuto o mas0
+
+		//memset(tramaGPS, 0, sizeof(p_str)); // limpio valones en memoria
+	//	memset(tramaGPS, 0, sizeof(tramaGPS)); // limpio valones en memoria
+
+		//resultado = GPS_gets(tramaGPS);
+		printf("resultado gets gps trama: %s\n", resultado );
 
 		//Imprimo Trama Completa
-		printf("\n TRAMA: %s ", tramaGPS);
-		// Obtengo Fecha del GPS
-		Error = gps_get_utc( p_dateTime, tramaGPS);		// ver si esta hora es de donde estoy ubicado 
-		if (Error = 0){	// Si el resultado es correcto  sigo 
-			// Convierto la fecha en timestamp
-			timestampGPS = mktime( p_dateTime );
+		printf("\n TRAMA1: %s ", tramaGPS);
 
-			// Obtendo Fecha Placa
+
+		// Obtengo Fecha del GPS
+		Error = gps_get_utc( fechaHoraGPS, tramaGPS);		// ver si esta hora es de donde estoy ubicado
+		
+		if (Error = 0){	// Si el resultado es correcto  sigo
+			// Convierto la fecha en timestamp
+			timestampGPS = mktime( fechaHoraGPS );
+
+			// Obtengo Fecha Placa
 			timestampRabbit = RTC_leerTimestamp();
-			RTC_leerFechaHora(fechaHora);
+			RTC_leerFechaHora(fechaHoraRTC);
 
 			// Imprimir Fecha Placa
-			printf("\nHoy es: %02d/%02d/%d\n", fechaHora->tm_mday, fechaHora->tm_mon, 1900+fechaHora->tm_year);
+			printf("\nHoy es: %02d/%02d/%d\n", fechaHoraRTC->tm_mday, fechaHoraRTC->tm_mon, 1900+fechaHoraRTC->tm_year);
 
 			// Evaluo si la fecha obtenida es igual a la que ya esta configurada
 			if (timestampGPS != timestampRabbit){
 
 				// Si no es igual la configuro con la fecha del GPS
-				RTC_fijarFechaHora(p_dateTime );
+				RTC_fijarFechaHora(fechaHoraGPS );
 			}
 		}else{
-			OSTimeDlyHMSM(0,0,1,0);
+			printf("ERROR al leer get utc\n");
+			OSTimeDlyHMSM(0,0,1,100);
 		}
-	}
+	}*/
 }
 
 /*** BeginHeader obtenerPosicion */
@@ -64,7 +97,7 @@ void obtenerPosicion(){
 	}else{	// Trama o resultado incorrecto
 		OSTimeDlyHMSM(0,0,1,0);
 	}
-	
+
 }
 
 

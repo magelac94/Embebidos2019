@@ -9,7 +9,7 @@
 #define OS_MAX_EVENTS			1		// MAX_TCP_SOCKET_BUFFERS + 0 Mbox + 0 Queue + 0 Semaforos
 #define STACK_CNT_256			3		// tarea_Led_Red + idle
 #define STACK_CNT_512			3		// main()
-#define STACK_CNT_2K			2		// 1 Tareas TCP (MAX_TCP_SOCKET_BUFFERS)
+#define STACK_CNT_2K			3		// 1 Tareas TCP (MAX_TCP_SOCKET_BUFFERS)
 
 /* TCP/IP configuration */
 #define TCPCONFIG 0
@@ -43,9 +43,9 @@ main(){
 	// Variables
 	auto INT8U Error;
 	static tcp_Socket un_tcp_socket[MAX_TCP_SOCKET_BUFFERS];
-	
+	char* tramachar;
 
-
+  //	memset(tramachar, 0, sizeof(tramachar));
 
 	// Inicializa el hardware de la placa
 	HW_init();
@@ -66,11 +66,11 @@ main(){
 	OSSchedLock();
 
 	//Creacion de tareas
-	Error = OSTaskCreate(tarea_led_red, NULL, 256, 5);
+	Error = OSTaskCreate(tarea_led_red, NULL, 256, 2);
 //	Error = OSTaskCreate(tarea_modem, NULL, OJO, 6);	//IÑAKI
-	Error = OSTaskCreate(GPS_init, NULL, 256, 3);  // Inicializa Hardware GPS - Ejecuta 1 vez
-	Error = OSTaskCreate(GPS_gets, TRAMA_GPS, 256, 4); // Se obtiene datos gps
-	Error = OSTaskCreate(tarea_config_Reloj, TRAMA_GPS, 2048 , 6 );
+	Error = OSTaskCreate(GPS_init, NULL, 512, 3);  // Inicializa Hardware GPS - Ejecuta 1 vez
+	Error = OSTaskCreate(GPS_gets, tramachar,2048 , 4); // Se obtiene datos gps
+	Error = OSTaskCreate(tarea_config_Reloj, tramachar, 2048 , 5 );
 
 //	Error = OSTaskCreate(tarea_interfaz_tcp, &un_tcp_socket[0], 2048, 8 ); //IÑAKI
 //	Error = OSTaskCreate(tarea_botones,NULL, OJO, 9);	// MARIO
