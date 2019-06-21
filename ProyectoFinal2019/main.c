@@ -49,7 +49,7 @@ main(){
 
 	// Inicializa el hardware de la placa
 	HW_init();
-
+   
 	// Inicializa la estructura de datos interna del sistema operativo uC/OS-II
 	OSInit();
 
@@ -64,7 +64,7 @@ main(){
 
 // Deshabilitamos el scheduling mientras se crean las tareas
 	OSSchedLock();
-	
+
 	//Creacion de semaforos, mbox y queues
 	SmsQ = OSQCreate(&SmsQStorage[0], 5); // Crear una cola donde poner los mensajes a enviar
 
