@@ -1,8 +1,9 @@
 #define DEBUG			// activo para imprimir mensajes de DEBUG
 
 /* uCOS configuration */
-#define OS_MAX_TASKS			3  		// Cantidad maxima de tareas que se pueden crear, sin contar STAT e IDLE
+#define OS_MAX_TASKS			10		// Cantidad maxima de tareas que se pueden crear, sin contar STAT e IDLE
 #define OS_TASK_SUSPEND_EN		1		// Habilitar suspender y resumir tareas
+#define OS_TASK_DEL_EN
 #define OS_TIME_DLY_HMSM_EN		1		// Habilitar la funcion de delay para pasar fecha y hora
 #define OS_Q_EN					1		// Habilitar colas (queues)
 #define OS_Q_POST_EN			1		// Enable posting messages to queue
@@ -23,6 +24,9 @@
 #define TAMANIO_BUFFER_LE 		512      			// Este es el tamanio que le damos a nuestros buffers para leer y enviar al socket
 
 /* Incluimos las librerias luego de los define para sobre escribir los macros deseados */
+#use RTC.lib
+#use GPS_Custom.lib
+#use GPS_funciones.LIB
 #use IO.lib
 #use LED.lib
 #use GPRS.lib
@@ -42,7 +46,7 @@ main(){
 	// Variables
 	auto INT8U Error;
 	static tcp_Socket un_tcp_socket[MAX_TCP_SOCKET_BUFFERS];
-
+	char* tramaGPS;
 	// Inicializa el hardware de la placa
 	HW_init();
 
@@ -68,11 +72,14 @@ main(){
 	Error = OSTaskCreate(LED_tarea_led_red, NULL, 256, 5);
 	Error = OSTaskCreate(GPRS_tarea_modem, NULL, 512, 6);	//INAKI
 	Error = OSTaskCreate(CONSOLA_tarea_comandos_a_mano, NULL, 512,7);
-//	Error = OSTaskCreate(tarea_gps, NULL, OJO, 8 );		// MAGELA
 //	Error = OSTaskCreate(TCP1_tarea_interfaz_tcp, &un_tcp_socket[0], 2048, 9 ); //INAKI
-//	Error = OSTaskCreate(tarea_botones,NULL, OJO, 10);	// MARIO
-//	Error = OSTaskCreate(tarea_salud,NULL, OJO, 11);	//MARIO
-// 	Error = OSTaskCreate(tarea_config_Reloj,NULL, OJO, 12)  // MAGELA
+
+//	Error = OSTaskCreate(GPS_init, NULL, 512, 3);  // Inicializa Hardware GPS - Ejecuta 1 vez
+//	Error = OSTaskCreate(GPS_gets, tramachar,2048 , 4); // Se obtiene datos gps
+//	Error = OSTaskCreate(tarea_config_Reloj, tramachar, 2048 , 5 );
+//	Error = OSTaskCreate(tarea_salud,NULL, OJO, 11);
+
+//	Error = OSTaskCreate(tarea_botones,NULL, OJO, 10);
 
 // Re-habilitamos scheduling
 	OSSchedUnlock();
