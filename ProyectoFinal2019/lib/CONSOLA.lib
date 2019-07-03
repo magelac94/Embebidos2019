@@ -5,13 +5,20 @@ void CONSOLA_tarea_comandos_a_mano(void* pdata){
 
 	char comando[GPRS_MSG_LENGTH];
 	char dataRx[GPRS_MSG_LENGTH]; //Definido en IO.lib
-	char status;
+	int status;
 
 	printf("Enviar comandos al modem que ya esta prendido.\n");
 	while(1){
-		OSTimeDlyHMSM(0,0,0,500);
-		status = (char)GPRS_modem_status;
+		//OSTimeDlyHMSM(0,0,0,500);
+		status = GPRS_modem_pwrstatus();
 		printf("Modem Status: %c\n", status);
+		GPRS_listSmssToDelete();
+		OSTimeDlyHMSM(0,0,0,500);
+		GPRS_DeleteAllSmss();
+		OSTimeDlyHMSM(0,0,0,500);
+		GPRS_listSmssToDelete();
+		//GPRS_sendsms(PRUEBA);
+		//GPRS_sendsms(MENSAJE1);
 		printf("Comando: ");
 		gets(comando);
 		//Atenicion funciones de serial no reentrantes
