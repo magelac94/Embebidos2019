@@ -1,7 +1,7 @@
 #define DEBUG			// activo para imprimir mensajes de DEBUG
 
 /* uCOS configuration */
-#define OS_MAX_TASKS			3		// Cantidad maxima de tareas que se pueden crear, sin contar STAT e IDLE
+#define OS_MAX_TASKS			12		// Cantidad maxima de tareas que se pueden crear, sin contar STAT e IDLE
 #define OS_TASK_SUSPEND_EN		1		// Habilitar suspender y resumir tareas
 #define OS_TASK_DEL_EN	1
 #define OS_TIME_DLY_HMSM_EN		1		// Habilitar la funcion de delay para pasar fecha y hora
@@ -9,7 +9,7 @@
 #define OS_Q_POST_EN			1		// Enable posting messages to queue
 #define OS_MAX_EVENTS			2		// MAX_TCP_SOCKET_BUFFERS + 0 Mbox + 1 Queue + 0 Semaforos
 #define STACK_CNT_256			2		// tarea_Led_Red + idle
-#define STACK_CNT_512			4		// main() + GPRS_tarea_encender_modem + CONSOLA_tarea_comandos_a_mano
+#define STACK_CNT_512			5		// main() + GPRS_tarea_encender_modem + CONSOLA_tarea_comandos_a_mano
 #define STACK_CNT_2K			2		// 1 Tareas TCP (MAX_TCP_SOCKET_BUFFERS)
 
 /* TCP/IP configuration */
@@ -79,7 +79,7 @@ main(){
 	Error = OSTaskCreate(tarea_config_Reloj, tramaGPS, 2048 , 10 );
 	Error = OSTaskCreate(tarea_salud,NULL, 512, 11);
 
-//	Error = OSTaskCreate(tarea_botones,NULL, OJO, 10);
+	Error = OSTaskCreate(tarea_botones,NULL, 512, 12);
 
 // Re-habilitamos scheduling
 	OSSchedUnlock();
