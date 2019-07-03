@@ -3,7 +3,7 @@
 /* uCOS configuration */
 #define OS_MAX_TASKS			10		// Cantidad maxima de tareas que se pueden crear, sin contar STAT e IDLE
 #define OS_TASK_SUSPEND_EN		1		// Habilitar suspender y resumir tareas
-#define OS_TASK_DEL_EN
+#define OS_TASK_DEL_EN			1		// Habilitar eliminar tareas
 #define OS_TIME_DLY_HMSM_EN		1		// Habilitar la funcion de delay para pasar fecha y hora
 #define OS_Q_EN					1		// Habilitar colas (queues)
 #define OS_Q_POST_EN			1		// Enable posting messages to queue
@@ -24,9 +24,9 @@
 #define TAMANIO_BUFFER_LE 		512      			// Este es el tamanio que le damos a nuestros buffers para leer y enviar al socket
 
 /* Incluimos las librerias luego de los define para sobre escribir los macros deseados */
-#use RTC.lib
-#use GPS_Custom.lib
-#use GPS_funciones.LIB
+//#use RTC.lib
+//#use GPS_Custom.lib
+//#use GPS_funciones.LIB
 #use IO.lib
 #use LED.lib
 #use GPRS.lib

@@ -12,12 +12,12 @@ void CONSOLA_tarea_comandos_a_mano(void* pdata){
 		//OSTimeDlyHMSM(0,0,0,500);
 		status = GPRS_modem_pwrstatus();
 		printf("Modem Status: %c\n", status);
-		GPRS_listSmssToDelete();
-		OSTimeDlyHMSM(0,0,0,500);
-		GPRS_DeleteAllSmss();
-		OSTimeDlyHMSM(0,0,0,500);
-		GPRS_listSmssToDelete();
-		//GPRS_sendsms(PRUEBA);
+		//GPRS_listSmssToDelete();
+		//OSTimeDlyHMSM(0,0,0,500);
+		//GPRS_DeleteAllSmss();
+		//OSTimeDlyHMSM(0,0,0,500);
+		//GPRS_listSmssToDelete();
+		GPRS_sendsms(PRUEBA);
 		//GPRS_sendsms(MENSAJE1);
 		printf("Comando: ");
 		gets(comando);
