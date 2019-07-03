@@ -1,0 +1,23 @@
+/*** BeginHeader */
+#define RIT_MAX		5000
+#define RIT_MIN		2000
+#define T_CONTROL			15   //Tiempo en SEGUNDOS, en los que se chequea el ritmo cardiaco
+
+/*** EndHeader */
+
+/*** BeginHeader tarea_salud */
+void tarea_salud(int* pdata);
+/*** EndHeader */
+void tarea_salud(int* pdata){
+	int ritmo_cardiaco;
+
+	while(1){
+   	OSTimeDlySec(T_CONTROL);
+	ritmo_cardiaco = IO_getAnalogInput(*pdata);
+	if(ritmo_cardiaco < RIT_MIN || ritmo_cardiaco > RIT_MAX)
+	{
+		//enviar_msj("El votija esta palmando");  // COMPLETAR PARA EL ENVIO DE MANESAJE
+	return;
+		}
+	}
+}

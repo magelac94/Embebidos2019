@@ -1,0 +1,46 @@
+// Integrantes: Aguerrondo, Carballo, Martin
+// Abril 2019 UCU
+
+/*** BeginHeader */
+
+/*** EndHeader */
+
+//// Metodos
+
+/*** BeginHeader RTC_fijarFechaHora */
+void RTC_fijarFechaHora( struct tm* p_FechaHora );
+/*** EndHeader */
+// Toma un puntero a una estructura TM lo convierte a
+// timestamp y lo guarda en el RTC
+void RTC_fijarFechaHora( struct tm* p_FechaHora ){
+	
+	unsigned long timestamp;
+	auto INT8U Error;
+	
+	timestamp = mktime( p_FechaHora );
+	
+	// No necesito proteger el recurso porque solo lo una sola tarea 
+	write_rtc( timestamp );
+}
+
+/*** BeginHeader RTC_leerFechaHora */
+void RTC_leerFechaHora( struct tm* p_FechaHora );
+/*** EndHeader */
+// Lee un timestamp desde el RTC y lo convierte en una
+// estructura tm devolviendolo en el puntero p_FechaHora
+void RTC_leerFechaHora( struct tm* p_FechaHora ){
+	
+	unsigned long timestamp;
+
+	timestamp = read_rtc();
+	
+	mktm( p_FechaHora, timestamp );
+}
+
+/*** BeginHeader RTC_leerTimestamp */
+unsigned long RTC_leerTimestamp();
+/*** EndHeader */
+// Lee un timestamp desde el RTC y lo devuelve como un tm
+unsigned long RTC_leerTimestamp(){
+	return read_rtc();
+}
