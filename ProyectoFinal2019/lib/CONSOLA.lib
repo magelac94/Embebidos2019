@@ -1,0 +1,39 @@
+/*** BeginHeader CONSOLA_tarea_comandos_a_mano*/
+void CONSOLA_tarea_comandos_a_mano(void* pdata);
+/*** EndHeader */
+void CONSOLA_tarea_comandos_a_mano(void* pdata){
+
+	char comando[GPRS_MSG_LENGTH];
+	char dataRx[GPRS_MSG_LENGTH]; //Definido en IO.lib
+	int status;
+
+	printf("Enviar comandos al modem que ya esta prendido.\n");
+	while(1){
+		//OSTimeDlyHMSM(0,0,0,500);
+		status = GPRS_modem_pwrstatus();
+		printf("Modem Status: %c\n", status);
+		GPRS_listSmssToDelete();
+		OSTimeDlyHMSM(0,0,0,500);
+		GPRS_DeleteAllSmss();
+		OSTimeDlyHMSM(0,0,0,500);
+		GPRS_listSmssToDelete();
+		//GPRS_sendsms(PRUEBA);
+		//GPRS_sendsms(MENSAJE1);
+		printf("Comando: ");
+		gets(comando);
+		//Atenicion funciones de serial no reentrantes
+		serDrdFlush();
+		serDwrFlush();
+      // Comando AT
+		serDputs(comando);
+		//mandar el control+z
+      // Respuesta
+		do {
+			UT_delay(100);
+		}while(!serDrdUsed());// Esperamos datos en el buffer de respuesta
+
+		memset(dataRx, 0, sizeof(dataRx)); // Borramos el contenido de nuestro buffer con CEROS.
+		serDread(dataRx, sizeof(dataRx), GPRS_COM_TIMEOUT);//Atenicion funciones de serial no reentrantes
+		printf("Respuesta: %s\n", dataRx);
+	}
+}

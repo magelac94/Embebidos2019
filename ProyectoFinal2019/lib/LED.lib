@@ -14,10 +14,10 @@
 // Tarea 1 - Prende y apaga el led. Cuando espera se suspende.
 // Por eso le daremos una prioridad alta. Es nuestro test para ver que todo corre.
 // Le asignaremos un stack de 256.
-/*** BeginHeader tarea_led_red */
-void tarea_led_red(void* pdata);
+/*** BeginHeader LED_tarea_led_red */
+void LED_tarea_led_red(void* pdata);
 /*** EndHeader */
-void tarea_led_red(void* pdata){
+void LED_tarea_led_red(void* pdata){
 
 	while(1){
 		LED_RED_SET();

@@ -1,0 +1,599 @@
+/*** BeginHeader */
+#define PINSIM		"1234"
+#define CODPROV		"74801"
+#define CELNUM		"\"099948442\""
+
+enum CodMsg {
+	PRUEBA = 0,
+	MENSAJE1
+};
+
+const static char mensajes[][] = { "Mensaje de texto 0",
+							"Mensaje de texto 1"};
+/*** EndHeader */
+
+/*
+En la funcion GPRS_tarea_modem uso UT_delay que es bloqueante.
+Esto podría estar mal. Hay que evaluarlo.
+*/
+/*** BeginHeader GPRS_tarea_modem*/
+void GPRS_tarea_modem(void* pdata);
+/*** EndHeader */
+void GPRS_tarea_modem(void* pdata){
+
+	int status;
+	char* mensaje;
+	void* msg;
+	INT8U ERROR;
+
+	while(1){
+
+		/*
+			Todas estas funciones retornan un int status para que sepamos como resulto
+			y que acciones se deberian tomar (1-OK, 0-ERROR).
+		*/
+
+      status = GPRS_modem_pwrstatus();
+
+		// Encender modem
+		status = GPRS_modem_on();
+
+		// Autoconfiguracion de BAUDRATE
+		//Atenicion funciones de serial no reentrantes
+		status = GPRS_modem_baudrate();
+
+		// Comando AT para consultar el estado del pin de la sim
+		//Atenicion funciones de serial no reentrantes
+		status = GPRS_modem_pinsim();
+
+        // Registrarnos en la red
+		//Atenicion funciones de serial no reentrantes
+		status = GPRS_modem_netreg();
+
+/*
+	Aca estamos listos para mandar mensajes.
+	Consultar si hay mensajes en la cola de pendientes y enviarlos
+*/
+		while (GPRS_modem_pwrstatus()){
+
+			msg = OSQPend(SmsQ, 0, &ERROR);
+			if ( msg != (void*)0 ){
+				//mensaje = (char*)pmsg;
+				// Poner el modem en modo texto
+				//Atenicion funciones de serial no reentrantes
+				status = GPRS_modem_modesms();
+
+				// Setear el nro de telefono al cual mandar el mensaje.
+				//Atenicion funciones de serial no reentrantes
+				status = GPRS_modem_setdest();
+
+				// Mandar mensaje de texto
+				status = GPRS_modem_sendsms( (char*)msg );
+			}
+			// Aca tengo que crear una funcion que revise si seguimos registrados a la red y guardarlo en STATUS
+		}
+	}
+
+}
+
+/*** BeginHeader GPRS_modem_pwrstatus*/
+char GPRS_modem_pwrstatus();
+/*** EndHeader */
+char GPRS_modem_pwrstatus(){
+
+	char status;
+
+	// Aca podriamos tirar algun comando AT para ver si responde bien.
+	// Asi como esta solo dice si esta prendido.
+	status = IO_getInput(PORT_E, BIT_1);
+
+	return status;
+}
+
+// Prende el modem
+// Devuelve el status
+// Para sumarle robustez deberiamos ponerle un timeout para que no quede trancado en el while.
+/*** BeginHeader GPRS_modem_on*/
+int GPRS_modem_on();
+/*** EndHeader */
+int GPRS_modem_on(){
+
+	int status;
+
+	//Atenicion funciones de serial no reentrantes
+	serDrdFlush();
+	serDwrFlush();
+	/*
+	Prener el modem. Esto lo hacemos
+	configurando el pin que conecta el KEY como salida, esperamos y
+	luego lo configuramos como entrada y esperamos nuevamente.
+	*/
+	status = IO_getInput(PORT_E, BIT_1);
+	while(!status){
+		BitWrPortI(PEDDR, &PEDDRShadow, OUTPUT_DIR, BIT_4); // Config como salida
+		BitWrPortI(PEDR, &PEDRShadow, LOW, BIT_4); // Ponemos LOW para que el pulldown deje el pin del GPRS en 0
+		UT_delay(2000);
+		BitWrPortI(PEDDR, &PEDDRShadow, INPUT_DIR, BIT_4); // Config como entrada pullup deja el pin del GPRS en 1
+		UT_delay(2000);
+		status = IO_getInput(PORT_E, BIT_1);
+	}
+   // Prendido
+	return status;
+}
+
+// Apaga el modem
+// Devuelve el status
+// Para sumarle robustez deberiamos ponerle un timeout para que no quede trancado en el while.
+/*** BeginHeader GPRS_modem_off*/
+int GPRS_modem_off();
+/*** EndHeader */
+int GPRS_modem_off(){
+
+   int status;
+	char dataRx[GPRS_MSG_LENGTH];
+
+	// Flush de buffers serial D
+	serDrdFlush();
+	serDwrFlush();
+
+	status = 0;
+	serDputs("AT+CPOWD=1");
+	do {
+		UT_delay(100);
+	}while(!serDrdUsed());// Esperamos datos en el buffer de respuesta
+	memset(dataRx, 0, sizeof(dataRx)); // Borramos el contenido de nuestro buffer con CEROS.
+	serDread(dataRx, sizeof(dataRx), GPRS_COM_TIMEOUT);// Leemos el buffer serial D
+
+	if ( dataRx != "" ){
+		status = 1;
+	#ifdef DEBUG
+		printf("Respuesta del modem al intento de apagarse: APAGANDO...\n");
+		printf("dataRx:\n%s\n", dataRx);
+   #endif
+   } else {
+	#ifdef DEBUG
+		printf("Respuesta del modem al intento de apagarse: NO SE PUDO APAGAR\n");
+		printf("dataRx:\n%s\n", dataRx);
+   #endif
+   }
+
+   return status;
+}
+
+
+// Setetea el baudrate para comunicarse con el modem.
+/*** BeginHeader GPRS_modem_baudrate*/
+int GPRS_modem_baudrate();
+/*** EndHeader */
+// Configurar BAUDRATE
+int GPRS_modem_baudrate(){
+
+	int status;
+	char dataRx[GPRS_MSG_LENGTH];
+
+	// Flush de buffers serial D
+	serDrdFlush();
+	serDwrFlush();
+
+	status = 0;
+	serDputs("A");
+	UT_delay(6000);
+	serDputs("AT\r");
+	do {
+		UT_delay(100);
+	}while(!serDrdUsed());// Esperamos datos en el buffer de respuesta
+	memset(dataRx, 0, sizeof(dataRx)); // Borramos el contenido de nuestro buffer con CEROS.
+	serDread(dataRx, sizeof(dataRx), GPRS_COM_TIMEOUT);// Leemos el buffer serial D
+
+	if ( dataRx != "" ){
+		status = 1;
+	#ifdef DEBUG
+		printf("Respuesta del modem:\n");
+		printf("dataRx:\n%s\n", dataRx);
+		printf("Estamos prontos para enviar y recibir comandos...\n");
+	#endif
+		// asi saber que esta prendido, o configurar un delay mas corto de
+		// de la tarea_led_red usando el MBOX para intercambiar valores.
+		// LED_SET(prender una led con el status.);
+		// Aca podriamos usar el valor de status para prender algun led y
+	}
+
+	return status;
+}
+
+// Configuracion del PIN de la SIM
+// Definir el pin como macro PINSIM (por omision 1234).
+/*** BeginHeader GPRS_modem_pinsim*/
+int GPRS_modem_pinsim();
+/*** EndHeader */
+int GPRS_modem_pinsim(){
+
+	int status;
+	char dataRx[GPRS_MSG_LENGTH];
+
+	status = 0;
+
+	// Flush de buffers serial D
+	serDrdFlush();
+	serDwrFlush();
+
+	// Comando AT para consultar el estado del pin
+	serDputs("AT+CPIN?\r"); //Atenicion funciones de serial no reentrantes
+
+	// Respuesta
+    do {
+		UT_delay(100);
+	}while(!serDrdUsed());// Esperamos datos en el buffer de respuesta
+	memset(dataRx, 0, sizeof(dataRx)); // Borramos el contenido de nuestro buffer con CEROS.
+	serDread(dataRx, sizeof(dataRx), GPRS_COM_TIMEOUT); // Leemos el buffer serial D
+
+	if ( strstr(dataRx, "OK") == (void*)0 ){
+   #ifdef DEBUG
+		printf("Estado del pin de la sim: Ingrese PIN\n");
+		printf("Respuesta:\n%s\n", dataRx);
+	#endif
+
+		// Comando AT para ingresar el PIN
+		serDputs("AT+CPIN=");
+		serDputs(PINSIM);
+		serDputs("\r");
+
+		// Respuesta
+		do {
+			UT_delay(100);
+		}while(!serDrdUsed());// Esperamos datos en el buffer de respuesta
+		memset(dataRx, 0, sizeof(dataRx)); // Borramos el contenido de nuestro buffer con CEROS.
+		serDread(dataRx, sizeof(dataRx), GPRS_COM_TIMEOUT);
+
+		// Si la respuesta no es OK entonces retornamos 1 para indicarlo.
+		if (strstr(dataRx, "OK") != (void*)0){
+			status = 1;
+   	#ifdef DEBUG
+			printf("Estado del pin de la sim: PIN ingresado correctamente\n");
+			printf("Respuesta:\n%s\n", dataRx);
+		#endif
+		}
+	} else {
+   // El sim no tiene pin
+   	status = 1;
+   #ifdef DEBUG
+		printf("Estado del pin de la sim: SIM sin PIN\n");
+		printf("Respuesta:\n%s\n", dataRx);
+	#endif
+   }
+
+	return status;
+}
+
+// Registro del modem en la red
+// Definir el codigo de proveedor como macro CODPROV (  ANTEL por omision. 74801)
+/*** BeginHeader GPRS_modem_netreg*/
+int GPRS_modem_netreg();
+/*** EndHeader */
+int GPRS_modem_netreg(){
+
+	int status;
+	char dataRx[GPRS_MSG_LENGTH];
+
+	//Atenicion funciones de serial no reentrantes
+	serDrdFlush();
+	serDwrFlush();
+
+	status = 0;
+	// Comando AT preguntar el estado del registro
+	serDputs("AT+CREG?\r"); //Atenicion funciones de serial no reentrante
+
+	// Respuesta
+	do {
+		UT_delay(100);
+	}while(!serDrdUsed());// Esperamos datos en el buffer de respuesta
+	memset(dataRx, 0, sizeof(dataRx)); // Borramos el contenido de nuestro buffer con CEROS.
+	serDread(dataRx, sizeof(dataRx), GPRS_COM_TIMEOUT);
+
+	if ( strstr(dataRx, "OK") == (void*)0 ){
+	#ifdef DEBUG
+		printf("Estado del registro en la red: No registrado\n");
+		printf("Respuesta:\n%s\n", dataRx);
+	#endif
+
+		// Comando AT para registrarse en la red de ANTEL
+		serDputs("AT+COPS=1,2,\""); //Atenicion funciones de serial no reentrantes
+		serDputs(CODPROV);
+		serDputs("\"\r");
+
+		// Respuesta
+        do {
+			UT_delay(100);
+		}while(!serDrdUsed());// Esperamos datos en el buffer de respuesta
+		memset(dataRx, 0, sizeof(dataRx)); // Borramos el contenido de nuestro buffer con CEROS.
+		serDread(dataRx, sizeof(dataRx), GPRS_COM_TIMEOUT);
+
+		// Si salio bien el registro, poner el status en 1
+		if ( strstr(dataRx, "OK") != (void*)0 ){
+			status = 1;
+		#ifdef DEBUG
+			printf("Estado del registro en la red: Registrado OK\n");
+			printf("Respuesta:\n%s\n", dataRx);
+		#endif
+		} else {
+      #ifdef DEBUG
+			printf("Estado del registro en la red: ERROR de registro\n");
+			printf("Respuesta:\n%s\n", dataRx);
+		#endif
+      }
+	} else {
+   	// Ya estabamos registrados
+   	status = 1;
+   #ifdef DEBUG
+		printf("Estado del registro en la red: Ya estabamos registrados\n");
+		printf("Respuesta:\n%s\n", dataRx);
+	#endif
+   }
+
+	return status;
+}
+
+// Colocar el modem en modo texto para enviar SMSs
+/*** BeginHeader GPRS_modem_modesms*/
+int GPRS_modem_modesms();
+/*** EndHeader */
+int GPRS_modem_modesms(){
+
+	int status;
+	char dataRx[GPRS_MSG_LENGTH];
+
+	status = 0;
+
+	//Atenicion funciones de serial no reentrantes
+	serDrdFlush();
+	serDwrFlush();
+
+	// Comando AT poner en modo texto
+	serDputs("AT+CMGF=1\r");
+	// Respuesta
+	do {
+		UT_delay(100);
+	}while(!serDrdUsed());// Esperamos datos en el buffer de respuesta
+	memset(dataRx, 0, sizeof(dataRx)); // Borramos el contenido de nuestro buffer con CEROS.
+	serDread(dataRx, sizeof(dataRx), GPRS_COM_TIMEOUT);
+
+	if ( strstr(dataRx, "OK") != (void*)0 ){
+		status = 1;
+	#ifdef DEBUG
+		printf("Estado de modem modo texto: Seteo OK\n");
+		printf("dataRx:\n%s\n", dataRx);
+	#endif
+	} else {
+	#ifdef DEBUG
+		printf("Estado de modem modo texto: Ocurrio un ERROR\n");
+		printf("dataRx:\n%s\n", dataRx);
+	#endif
+   }
+
+	return status;
+}
+
+// Configurar el numero al cual se envian los mensajes
+/*** BeginHeader GPRS_modem_setdest*/
+int GPRS_modem_setdest();
+/*** EndHeader */
+int GPRS_modem_setdest(){
+
+	int status;
+	char dataRx[GPRS_MSG_LENGTH];
+
+	status = 0;
+
+	//Atenicion funciones de serial no reentrantes
+	serDrdFlush();
+	serDwrFlush();
+
+	// Comando AT configurar destino del mensaje de texto
+	serDputs("AT+CMGS=");
+	serDputs(CELNUM);	// Poner aca el MACRO para el CELNUM
+	serDputc(0x0D); // Mandar \r (carriage return <CR>)
+	// Respuesta
+	do {
+		UT_delay(100);
+	}while(!serDrdUsed());// Esperamos datos en el buffer de respuesta
+	memset(dataRx, 0, sizeof(dataRx)); // Borramos el contenido de nuestro buffer con CEROS.
+	serDread(dataRx, sizeof(dataRx), GPRS_COM_TIMEOUT);
+
+	if ( strstr(dataRx, ">") != (void*)0 ){
+		status = 1;
+	#ifdef DEBUG
+		printf("Respuesta del modem asetear celuar de envio: Estamos prontos \">\"\n");
+		printf("dataRx:\n%s\n", dataRx);
+	#endif
+	} else {
+	#ifdef DEBUG
+		printf("Respuesta del modem asetear celuar de envio: No devolvio un \">\"\n");
+		printf("dataRx:\n%s\n", dataRx);
+	#endif
+	}
+
+	return status;
+}
+
+// Enviar mensaje de texto. Ya debemos estar en modo texto y con el
+// numero de telefono configurado (GPRS_modem_modesms y GPRS_modem_setdest)
+/*
+ Para poder escribir el mensaje, el cursor tiene que estar esperando el texto.
+ Aparece el char ">". Se supone que si chequeamos el paso anterior con status 0,
+ estamos prontos para mandar pero no se si no deberíamos revisarlo aca antes de
+ mandar el mensaje.
+*/
+/*** BeginHeader GPRS_modem_sendsms*/
+int GPRS_modem_sendsms(char mensaje[]);
+/*** EndHeader */
+int GPRS_modem_sendsms(char mensaje[]){
+
+	int status;
+	char dataRx[GPRS_MSG_LENGTH];
+
+	status = 0;
+
+	//Atenicion funciones de serial no reentrantes
+	serDrdFlush();
+	serDwrFlush();
+
+	// Comando AT mandar mensaje de texto
+	serDputs(mensaje); // mensaje guardado en un array
+	serDputc(0x1A); // Ctrl+Z
+	// Respuesta
+	do {
+		UT_delay(100);
+	}while(!serDrdUsed());// Esperamos datos en el buffer de respuesta
+	memset(dataRx, 0, sizeof(dataRx)); // Borramos el contenido de nuestro buffer con CEROS.
+	serDread(dataRx, sizeof(dataRx), GPRS_COM_TIMEOUT);
+
+	/*
+	La respuesta es +CMGS:<numero de mensaje en memoria>\n\nOK .
+	Por ejemplo: +CMGS:35\n\nOK.
+	*/
+	if ( strstr(dataRx, "OK") != (void*)0 ){
+		status = 1;
+	#ifdef DEBUG
+		printf("Respuesta del modem luego de mandar mensaje: Mensaje enviado\n");
+		printf("dataRx:\n%s\n", dataRx);
+	#endif
+	} else {
+	#ifdef DEBUG
+		printf("Respuesta del modem luego de mandar mensaje: El mensaje no fue enviado\n");
+		printf("dataRx:\n%s\n", dataRx);
+	#endif
+	}
+	return status;
+}
+
+// Funcion a ser utilizada por otros componentes del sistema para poder enviar mensajes
+// En este momento la funcion es un prototipo que retorna siempre 1
+/*
+PARAMETROS:
+	id_mensaje - Un enum que indica cual de los mensajes precargados se desea enviar
+RETORNA:
+	0 - Error
+	1 - Mensaje encolado
+*/
+/*** BeginHeader GPRS_sendsms*/
+int GPRS_sendsms(enum CodMsg id_mensaje);
+/*** EndHeader */
+int GPRS_sendsms(enum CodMsg id_mensaje){
+
+	int status;
+	INT8U ERROR;
+
+	status = 0;
+
+	ERROR = OSQPost(SmsQ, (void *)&mensajes[id_mensaje]);
+	if ( ERROR == OS_NO_ERR){
+		status = 1;
+	#ifdef DEBUG
+		printf("DEBUG: GPRS_sendsms: El mensaje fue encolado\n");
+	#endif
+	} else {
+	#ifdef DEBUG
+		printf("DEBUG: GPRS_sendsms: ERROR: El mensaje no fue encolado\n");
+	#endif
+	}
+
+	return status;
+}
+
+// Funcion utilizada para consultar la lista de SMSs almacenados en la memoria
+// del modulo SIM900
+/*
+PARAMETROS:
+
+RETORNA:
+	0 - Error
+	1 - OK
+*/
+/*** BeginHeader GPRS_listSmssToDelete*/
+int GPRS_listSmssToDelete();
+/*** EndHeader */
+int GPRS_listSmssToDelete(){
+
+	int status;
+	char dataRx[GPRS_MSG_LENGTH];
+
+	status = 0;
+
+	//Atenicion funciones de serial no reentrantes
+	serDrdFlush();
+	serDwrFlush();
+
+	// Comando AT preguntar lista de mensajes a borrar
+	serDputs("AT+CMGD=?");
+	serDputc(0x0D); // Mandar \r (carriage return <CR>)
+	// Respuesta
+	do {
+		UT_delay(100);
+	}while(!serDrdUsed());// Esperamos datos en el buffer de respuesta
+	memset(dataRx, 0, sizeof(dataRx)); // Borramos el contenido de nuestro buffer con CEROS.
+	serDread(dataRx, sizeof(dataRx), GPRS_COM_TIMEOUT);
+
+	if ( strstr(dataRx, "OK") != (void*)0 ){
+		status = 1;
+	#ifdef DEBUG
+		printf("DEBUG: GPRS_listSmssToDelete: listar SMS para borrar:\n");
+		printf("dataRx:\n%s\n", dataRx);
+	#endif
+	} else {
+	#ifdef DEBUG
+		printf("DEBUG: GPRS_listSmssToDelete: ERROR al listar\n");
+		printf("dataRx:\n%s\n", dataRx);
+	#endif
+	}
+
+	return status;
+}
+
+// Funcion utilizada para eliminar todos los SMSs almacenados en la memoria
+// del modulo SIM900
+/*
+PARAMETROS:
+
+RETORNA:
+	0 - Error
+	1 - OK
+*/
+/*** BeginHeader GPRS_DeleteAllSmss*/
+int GPRS_DeleteAllSmss();
+/*** EndHeader */
+int GPRS_DeleteAllSmss(){
+
+	int status;
+	char dataRx[GPRS_MSG_LENGTH];
+
+	status = 0;
+
+	//Atenicion funciones de serial no reentrantes
+	serDrdFlush();
+	serDwrFlush();
+
+	// Comando AT preguntar lista de mensajes a borrar
+	serDputs("AT+CMGD=1,4");
+	serDputc(0x0D); // Mandar \r (carriage return <CR>)
+	// Respuesta
+	do {
+		UT_delay(100);
+	}while(!serDrdUsed());// Esperamos datos en el buffer de respuesta
+	memset(dataRx, 0, sizeof(dataRx)); // Borramos el contenido de nuestro buffer con CEROS.
+	serDread(dataRx, sizeof(dataRx), GPRS_COM_TIMEOUT);
+
+	if ( strstr(dataRx, "OK") != (void*)0 ){
+		status = 1;
+	#ifdef DEBUG
+		printf("DEBUG: GPRS_DeleteAllSmss: Todos eliminados:\n");
+		printf("dataRx:\n%s\n", dataRx);
+	#endif
+	} else {
+	#ifdef DEBUG
+		printf("DEBUG: GPRS_DeleteAllSmss: ERROR\n");
+		printf("dataRx:\n%s\n", dataRx);
+	#endif
+	}
+
+	return status;
+}
