@@ -1,0 +1,54 @@
+// Libreria Lectura de Botones
+
+/*** BeginHeader */
+
+#use IO.LIB
+
+#define BTN_GET(x)			IO_getInput( (x>3)?PORT_F:PORT_B, (x>3)?x:(x+2) )
+#define BTN_IsPRESSED(x)	((BTN_GET(x)==0)?1:0)
+
+/*** EndHeader */
+
+/*** BeginHeader tarea_botones */
+void tarea_botones(void* pdata);
+/*** EndHeader */
+void tarea_botones(void* pdata){
+	while(1)
+	{
+		for( i=0; i<8; i++ )
+		{
+			if( BTN_IsPRESSED(i) )
+			{
+				switch( i ){
+					case( 1 ):
+						port = PADR;
+						break;
+					case( 2 ):
+						port = PBDR;
+						break;
+					case( 3 ):
+						port = PCDR;
+						break;
+					case( 4 ):
+						port = PDDR;
+						break;
+					case( 5 ):
+						port = PEDR;
+						break;
+					case( 6 ):
+						port = PFDR;
+						break;
+	}
+				
+			}
+
+				LED_SET(i);
+			}
+			else
+			{
+				LED_RESET(i);
+			}
+		}
+	}
+}
+
