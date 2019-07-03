@@ -9,6 +9,23 @@
 
 /*** EndHeader */
 
+botonesPosicion(){
+	if(verificarPosicion()){
+		enviarMensaje();
+		indicadorLed();	 // 				LED_SET(i);
+	}
+}
+
+botonKeepAlive(){
+	obtenerPosicion();
+	enviarMensaje();
+}
+
+botonAyuda(){
+	obtenerPosicion();
+	enviarMensaje();
+}
+
 /*** BeginHeader tarea_botones */
 void tarea_botones(void* pdata);
 /*** EndHeader */
@@ -21,32 +38,30 @@ void tarea_botones(void* pdata){
 			{
 				switch( i ){
 					case( 1 ):
-						port = PADR;
+						botonesPosicion();
 						break;
 					case( 2 ):
-						port = PBDR;
+						botonesPosicion();
 						break;
 					case( 3 ):
-						port = PCDR;
+						botonesPosicion();
 						break;
 					case( 4 ):
-						port = PDDR;
+						botonesPosicion();
 						break;
 					case( 5 ):
-						port = PEDR;
+						botonesPosicion();
 						break;
 					case( 6 ):
-						port = PFDR;
+						botonesPosicion();
 						break;
-	}
-				
-			}
-
-				LED_SET(i);
-			}
-			else
-			{
-				LED_RESET(i);
+					case( 7 ):
+						botonKeepAlive();
+						break;
+					case( 8 ):
+						botonAyuda();
+						break;
+				}	
 			}
 		}
 	}
