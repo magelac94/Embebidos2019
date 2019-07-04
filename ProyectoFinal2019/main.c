@@ -24,6 +24,7 @@
 #define TAMANIO_BUFFER_LE 		512      			// Este es el tamanio que le damos a nuestros buffers para leer y enviar al socket
 
 /* Incluimos las librerias luego de los define para sobre escribir los macros deseados */
+#use controlBotones.lib
 #use TSalud.lib
 #use RTC.lib
 #use GPS_Custom.lib
@@ -79,7 +80,7 @@ main(){
 	Error = OSTaskCreate(tarea_config_Reloj, tramaGPS, 2048 , 10 );
 	Error = OSTaskCreate(tarea_salud,NULL, 512, 11);
 
-	Error = OSTaskCreate(tarea_botones,NULL, 512, 12);
+	Error = OSTaskCreate(tarea_botones,tramaGPS, 512, 12);
 
 // Re-habilitamos scheduling
 	OSSchedUnlock();

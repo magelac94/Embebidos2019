@@ -2,34 +2,68 @@
 
 /*** BeginHeader */
 
-#use IO.LIB
-
 #define BTN_GET(x)			IO_getInput( (x>3)?PORT_F:PORT_B, (x>3)?x:(x+2) )
 #define BTN_IsPRESSED(x)	((BTN_GET(x)==0)?1:0)
 
 /*** EndHeader */
 
-botonesPosicion(){
-	if(verificarPosicion()){
+/*** BeginHeader enviarMensaje */
+void enviarMensaje();
+/*** EndHeader */
+void enviarMensaje(){
+	printf("Mensaje Enviado");
+}
+
+/*** BeginHeader indicadorLed */
+void indicadorLed();
+/*** EndHeader */
+void indicadorLed(){
+	printf("Mensaje Enviado");
+}
+
+
+/*** BeginHeader botonesPosicion */
+void botonesPosicion(char* tramaGPS);
+/*** EndHeader */
+void botonesPosicion(char* tramaGPS){
+	int verificarPos;
+	verificarPos = verificarPosicion(tramaGPS);
+	if(verificarPos == 1){
 		enviarMensaje();
 		indicadorLed();	 // 				LED_SET(i);
 	}
 }
 
-botonKeepAlive(){
-	obtenerPosicion();
+/*** BeginHeader botonKeepAlive */
+void botonKeepAlive(char* tramaGPS);
+/*** EndHeader */
+void botonKeepAlive(char* tramaGPS){
+	obtenerPosicion(tramaGPS);
 	enviarMensaje();
 }
 
-botonAyuda(){
-	obtenerPosicion();
+/*** BeginHeader botonAyuda */
+void botonAyuda(char* tramaGPS);
+/*** EndHeader */
+void botonAyuda(char* tramaGPS){
+	obtenerPosicion(tramaGPS);
 	enviarMensaje();
+}
+
+/*** BeginHeader verificarPosicion */
+int verificarPosicion(char* tramaGPS);
+/*** EndHeader */
+int verificarPosicion(char* tramaGPS){
+	printf("verificar posicion");
+   return 0;
 }
 
 /*** BeginHeader tarea_botones */
-void tarea_botones(void* pdata);
+void tarea_botones(void* trama);
 /*** EndHeader */
-void tarea_botones(void* pdata){
+void tarea_botones(void* trama){
+	int i;
+	i = 0;
 	while(1)
 	{
 		for( i=0; i<8; i++ )
@@ -38,30 +72,30 @@ void tarea_botones(void* pdata){
 			{
 				switch( i ){
 					case( 1 ):
-						botonesPosicion();
+						botonesPosicion(trama);
 						break;
 					case( 2 ):
-						botonesPosicion();
+						botonesPosicion(trama);
 						break;
 					case( 3 ):
-						botonesPosicion();
+						botonesPosicion(trama);
 						break;
 					case( 4 ):
-						botonesPosicion();
+						botonesPosicion(trama);
 						break;
 					case( 5 ):
-						botonesPosicion();
+						botonesPosicion(trama);
 						break;
 					case( 6 ):
-						botonesPosicion();
+						botonesPosicion(trama);
 						break;
 					case( 7 ):
-						botonKeepAlive();
+						botonKeepAlive(trama);
 						break;
 					case( 8 ):
-						botonAyuda();
+						botonAyuda(trama);
 						break;
-				}	
+				}
 			}
 		}
 	}

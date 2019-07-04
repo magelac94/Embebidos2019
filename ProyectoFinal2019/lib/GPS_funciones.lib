@@ -27,10 +27,10 @@ while(1){
 
 
 	if (Error == 0){
-		timestampGPS = mktime( fechaHoraGPS );	
+		timestampGPS = mktime( fechaHoraGPS );
 
 		timestampRabbit = RTC_leerTimestamp();
-		
+
 		if (timestampGPS != timestampRabbit){
 
 				// Si no es igual la configuro con la fecha del GPS
@@ -57,7 +57,7 @@ while(1){
 
 		// Obtengo Fecha del GPS
 		Error = gps_get_utc( fechaHoraGPS, tramaGPS);		// ver si esta hora es de donde estoy ubicado
-		
+
 		if (Error = 0){	// Si el resultado es correcto  sigo
 			// Convierto la fecha en timestamp
 			timestampGPS = mktime( fechaHoraGPS );
@@ -83,17 +83,16 @@ while(1){
 }
 
 /*** BeginHeader obtenerPosicion */
-void obtenerPosicion();
+void obtenerPosicion(char* tramaGPS);
 /*** EndHeader */
-void obtenerPosicion(){
+void obtenerPosicion(char* tramaGPS){
 	GPSPosition *posicion;
 	int latgrados,longrados;
 	auto INT8U Error;
 
-	Error = gps_get_position(posicion, TRAMA_GPS);
+	Error = gps_get_position(posicion,tramaGPS);
 	if (Error == 0){	// Resultado correcto
 		imprimirPoscion(posicion);
-		printf()
 	}else{	// Trama o resultado incorrecto
 		OSTimeDlyHMSM(0,0,1,0);
 	}
