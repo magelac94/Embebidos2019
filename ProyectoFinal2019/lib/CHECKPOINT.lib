@@ -1,0 +1,41 @@
+/*** BeginHeader */
+// Definicion de macros
+#define MAX_CHECKPOINTS 9
+
+// Definicion de estructuras
+typedef struct {		// Struct de eventos
+	int id;
+	long lat;
+	long lon;
+	long alt;
+} CHECKPOINT;
+
+// Definicion de variables
+CHECKPOINT checkpoints[MAX_CHECKPOINTS];		// Lista de checkpoints GLOBAL
+
+/*** EndHeader */
+
+/*** BeginHeader CHECKPOINT_agregarCheckpoint*/
+CHECKPOINT_agregarCheckpoint();
+/*** EndHeader */
+CHECKPOINT_agregarCheckpoint(){
+	
+}
+
+
+
+/*** BeginHeader CHECKPOINT_eliminarCheckpoint*/
+CHECKPOINT_eliminarCheckpoint();
+/*** EndHeader */
+CHECKPOINT_eliminarCheckpoint(){
+	
+}
+
+
+
+/*** BeginHeader CHECKPOINT_configurarDistancia*/
+CHECKPOINT_configurarDistancia();
+/*** EndHeader */
+CHECKPOINT_configurarDistancia(){
+	
+}

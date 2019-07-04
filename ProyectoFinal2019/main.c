@@ -42,6 +42,9 @@
 OS_EVENT *SmsQ;
 void* SmsQStorage[5]; // La queue tiene para guardar 5 mensajes pendientes.
 
+/* Definicion de otras variables. GLOBALES*/
+char id_participante[32];
+
 main(){
 
 	// Variables
@@ -70,16 +73,15 @@ main(){
 
 	//Creacion de tareas
 	Error = OSTaskCreate(LED_tarea_led_red, NULL, 256, 5);
-	Error = OSTaskCreate(GPRS_tarea_modem, NULL, 512, 6);	//INAKI
-	Error = OSTaskCreate(CONSOLA_tarea_comandos_a_mano, NULL, 512,7);
-//	Error = OSTaskCreate(TCP1_tarea_interfaz_tcp, &un_tcp_socket[0], 2048, 9 ); //INAKI
+	Error = OSTaskCreate(GPRS_tarea_modem, NULL, 512, 6);
+	//Error = OSTaskCreate(CONSOLA_tarea_comandos_a_mano, NULL, 512,7);
+	Error = OSTaskCreate(TCP1_tarea_interfaz_tcp, &un_tcp_socket[0], 2048, 9 );
 
-	Error = OSTaskCreate(GPS_init, NULL, 512, 8);  // Inicializa Hardware GPS - Ejecuta 1 vez
-	Error = OSTaskCreate(GPS_gets, tramaGPS,2048 , 9); // Se obtiene datos gps
-	Error = OSTaskCreate(tarea_config_Reloj, tramaGPS, 2048 , 10 );
-	Error = OSTaskCreate(tarea_salud,NULL, 512, 11);
-
-//	Error = OSTaskCreate(tarea_botones,NULL, OJO, 10);
+	//Error = OSTaskCreate(GPS_init, NULL, 512, 8);  // Inicializa Hardware GPS - Ejecuta 1 vez
+	//Error = OSTaskCreate(GPS_gets, tramaGPS,2048 , 9); // Se obtiene datos gps
+	//Error = OSTaskCreate(tarea_config_Reloj, tramaGPS, 2048 , 10 );
+	//Error = OSTaskCreate(tarea_salud,NULL, 512, 11);
+	//Error = OSTaskCreate(tarea_botones,NULL, OJO, 10);
 
 // Re-habilitamos scheduling
 	OSSchedUnlock();
