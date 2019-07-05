@@ -38,7 +38,8 @@ void botonesPosicion(char* tramaGPS){
 void botonKeepAlive(char* tramaGPS);
 /*** EndHeader */
 void botonKeepAlive(char* tramaGPS){
-	obtenerPosicion(tramaGPS);
+	GPSPosition *posicion;
+	obtenerPosicion(tramaGPS,pos);
 	enviarMensaje();
 }
 
@@ -46,7 +47,8 @@ void botonKeepAlive(char* tramaGPS){
 void botonAyuda(char* tramaGPS);
 /*** EndHeader */
 void botonAyuda(char* tramaGPS){
-	obtenerPosicion(tramaGPS);
+	GPSPosition *posicion;
+	obtenerPosicion(tramaGPS, pos);
 	enviarMensaje();
 }
 

@@ -13,34 +13,33 @@ void tarea_config_Reloj(void* pdata){
 
 	char* p_str;
 	char* tramaGPS;
-	char buffer[500];
 	int resultado;
-//	memset(tramaGPS, 0, sizeof(tramaGPS)); // limpio valones en memoria
-	//memset(buffer, 0, sizeof(buffer)); // limpio valones en memoria
 
-while(1){
-	printf("TRAMA: %s\n", pdata);
-	Error = gps_get_utc( fechaHoraGPS, pdata);
+	while(1){
+		printf("TRAMA: %s\n", pdata);
+		Error = gps_get_utc( fechaHoraGPS, pdata);
 
-	RTC_leerFechaHora(fechaHoraRTC);
-	printf("\nHoy es: %02d/%02d/%d\n", fechaHoraRTC->tm_mday, fechaHoraRTC->tm_mon, 1900+fechaHoraRTC->tm_year);
+		RTC_leerFechaHora(fechaHoraRTC);
+		printf("\nHoy es: %02d/%02d/%d\n", fechaHoraRTC->tm_mday, fechaHoraRTC->tm_mon, 1900+fechaHoraRTC->tm_year);
 
 
-	if (Error == 0){
-		timestampGPS = mktime( fechaHoraGPS );
+		if (Error == 0){
+			timestampGPS = mktime( fechaHoraGPS );
 
-		timestampRabbit = RTC_leerTimestamp();
+			timestampRabbit = RTC_leerTimestamp();
 
-		if (timestampGPS != timestampRabbit){
+			if (timestampGPS != timestampRabbit){
 
 				// Si no es igual la configuro con la fecha del GPS
 				RTC_fijarFechaHora(fechaHoraGPS );
 			}
-
+		}
+		OSTimeDlyHMSM(0,0,0,10);
 
 	}
-
 }
+
+
 
 
 /*	while(1){  // Configurar reloj cada 1 minuto o mas0
@@ -80,12 +79,12 @@ while(1){
 			OSTimeDlyHMSM(0,0,1,100);
 		}
 	}*/
-}
+
 
 /*** BeginHeader obtenerPosicion */
-void obtenerPosicion(char* tramaGPS);
+void obtenerPosicion(char* tramaGPS, GPSPosition *posicion);
 /*** EndHeader */
-void obtenerPosicion(char* tramaGPS){
+void obtenerPosicion(char* tramaGPS, GPSPosition *posicion){
 	GPSPosition *posicion;
 	int latgrados,longrados;
 	auto INT8U Error;
