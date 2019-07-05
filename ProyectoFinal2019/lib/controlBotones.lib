@@ -1,15 +1,13 @@
 // Libreria Lectura de Botones
 
 /*** BeginHeader */
-
 #define BTN_GET(x)			IO_getInput( (x>3)?PORT_F:PORT_B, (x>3)?x:(x+2) )
 #define BTN_IsPRESSED(x)	((BTN_GET(x)==0)?1:0)
+
 #define M_KEEPALIVE 	10		// Son los minutos de keepalive que la persona debe presionar algun bonton.
 #define S_KEEPALIVE (T_KEEPALIVE*60)  // Son los segundos de keepalive que la persona debe presionar algun boton.
 unsigned long ULTIMO_KEEPALIVE; // Contiene el ultimo timestamp donde se presiono algun boton.
-
 /*** EndHeader */
-
 
 /*  Tarea que verifica en todo momento si algun boton es presionado.
 	Si alguno se presiona se realizan las acciones correspondientes
@@ -48,8 +46,7 @@ void tarea_botones(void* trama){
 					case( 6 ):
 						botonKeepAlive();
 						break;
-					case( 7 ):
-						
+					case( 7 ):						
 						botonAyuda();
 						break;
 				}
@@ -60,8 +57,8 @@ void tarea_botones(void* trama){
 	}
 }
 
-/* Cuando un boton es presionado y la accion es correcta, 
-el led correspondiente. */ 
+/* 	Cuando un boton es presionado y la accion es correcta, 
+	el led correspondiente. */ 
 /*** BeginHeader indicadorLed */
 void indicadorLed();
 /*** EndHeader */
