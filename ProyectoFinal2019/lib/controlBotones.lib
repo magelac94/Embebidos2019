@@ -7,57 +7,37 @@
 
 /*** EndHeader */
 
-/*** BeginHeader enviarMensaje */
-void enviarMensaje();
-/*** EndHeader */
-void enviarMensaje(){
-	printf("Mensaje Enviado");
-}
-
 /*** BeginHeader indicadorLed */
 void indicadorLed();
 /*** EndHeader */
-void indicadorLed(){
-	printf("Mensaje Enviado");
+void indicadorLed(int i){
+	LED_SET(i);
 }
 
 
 /*** BeginHeader botonesPosicion */
-void botonesPosicion(char* tramaGPS);
+void botonesPosicion(char* tramaGPS, int i);
 /*** EndHeader */
-void botonesPosicion(char* tramaGPS){
+void botonesPosicion(char* tramaGPS, int i){
 	int verificarPos;
 	verificarPos = verificarPosicion(tramaGPS);
 	if(verificarPos == 1){
-		enviarMensaje();
-		indicadorLed();	 // 				LED_SET(i);
+		indicadorLed(i);
+		GPRS_sendsms(CHECKPOINT);
 	}
 }
 
 /*** BeginHeader botonKeepAlive */
-void botonKeepAlive(char* tramaGPS);
+void botonKeepAlive();
 /*** EndHeader */
-void botonKeepAlive(char* tramaGPS){
-	GPSPosition *posicion;
-	obtenerPosicion(tramaGPS,pos);
-	enviarMensaje();
+void botonKeepAlive(){
+	GPRS_sendsms(KEEPALIVE);
 }
-
 /*** BeginHeader botonAyuda */
-void botonAyuda(char* tramaGPS);
+void botonAyuda();
 /*** EndHeader */
-void botonAyuda(char* tramaGPS){
-	GPSPosition *posicion;
-	obtenerPosicion(tramaGPS, pos);
-	enviarMensaje();
-}
-
-/*** BeginHeader verificarPosicion */
-int verificarPosicion(char* tramaGPS);
-/*** EndHeader */
-int verificarPosicion(char* tramaGPS){
-	printf("verificar posicion");
-   return 0;
+void botonAyuda(){
+	GPRS_sendsms(HELP);
 }
 
 /*** BeginHeader tarea_botones */
@@ -69,35 +49,37 @@ void tarea_botones(void* trama){
 	while(1)
 	{
 		for( i=0; i<8; i++ )
-		{
+		{ 
 			if( BTN_IsPRESSED(i) )
 			{
 				switch( i ){
+					case( 0 ):
+						botonesPosicion(trama, i);
+						break;
 					case( 1 ):
-						botonesPosicion(trama);
+						botonesPosicion(trama, i);
 						break;
 					case( 2 ):
-						botonesPosicion(trama);
+						botonesPosicion(trama, i);
 						break;
 					case( 3 ):
-						botonesPosicion(trama);
+						botonesPosicion(trama, i);
 						break;
 					case( 4 ):
-						botonesPosicion(trama);
+						botonesPosicion(trama, i);
 						break;
 					case( 5 ):
-						botonesPosicion(trama);
+						botonesPosicion(trama, i);
 						break;
 					case( 6 ):
-						botonesPosicion(trama);
+						botonKeepAlive();
 						break;
 					case( 7 ):
-						botonKeepAlive(trama);
-						break;
-					case( 8 ):
-						botonAyuda(trama);
+						
+						botonAyuda();
 						break;
 				}
+				OSTimeDlyHMSM(0,0,0,500);
 			}
 		}
 	}

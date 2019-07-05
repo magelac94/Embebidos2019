@@ -83,7 +83,7 @@ main(){
 //	Error = OSTaskCreate(tarea_config_Reloj, tramaGPS, 2048 , 10 );
 	Error = OSTaskCreate(tarea_salud,NULL, 2048, 11);
 
-//	Error = OSTaskCreate(tarea_botones,tramaGPS, 2048, 12);
+	Error = OSTaskCreate(tarea_botones,tramaGPS, 2048, 12);
 
  // Re-habilitamos scheduling
 	OSSchedUnlock();

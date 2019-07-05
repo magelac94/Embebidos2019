@@ -85,7 +85,7 @@ void tarea_config_Reloj(void* pdata){
 void obtenerPosicion(char* tramaGPS, GPSPosition *posicion);
 /*** EndHeader */
 void obtenerPosicion(char* tramaGPS, GPSPosition *posicion){
-	GPSPosition *posicion;
+  //	GPSPosition *posicion;
 	int latgrados,longrados;
 	auto INT8U Error;
 
@@ -97,6 +97,23 @@ void obtenerPosicion(char* tramaGPS, GPSPosition *posicion){
 	}
 
 }
+
+
+/*** BeginHeader verificarPosicion */
+int verificarPosicion(char* tramaGPS);
+/*** EndHeader */
+int verificarPosicion(char* tramaGPS ){
+	GPSPosition* posicion;
+	CHECKPOINT * chp;
+	float distancia;
+	distancia = gps_ground_distance( posicion, chp );
+	if (distancia <= RADIO){
+		return 1
+	}else{
+		return 0;
+	}
+}
+
 
 
 /*** BeginHeader imprimirPoscion */

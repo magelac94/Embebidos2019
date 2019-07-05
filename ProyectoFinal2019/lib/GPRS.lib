@@ -443,7 +443,7 @@ int GPRS_modem_sendsms(char mensaje[]){
 
 	status = 0;
 
-	//Atenicion funciones de serial no reentrantes
+	// Funciones de serial no reentrantes
 	serDrdFlush();
 	serDwrFlush();
 
@@ -504,13 +504,15 @@ int GPRS_sendsms(enum CodMsg id_mensaje){
 	lon = "longitud";
 	id = "24D";
 
-	sprintf(mensaje, "ID:%s - %s - %s%s,-%s", id, mensajes[id_mensaje],google,lat,lon);
-//	mensaje = "ID:%s - %s - %s%s,-%s", id, mensajes[id_mensaje],google,lat,lon  ;
-	printf(mensaje)  ;
+	memset(mensaje, 0, sizeof(mensaje));  // limpio mensaje
+
+	sprintf(mensaje, "ID:%s - %s - %s%s,-%s", id, mensajes[id_mensaje],google,lat,lon); // formato mensaje a enviar
+	#ifdef DEBUG
+		printf(mensaje);
+	#endif
 
 	ERROR = OSQPost(SmsQ, (void *)&mensaje);
 
-//	ERROR = OSQPost(SmsQ, (void *)&mensajes[id_mensaje]);
 	if ( ERROR == OS_NO_ERR){
 		status = 1;
 	#ifdef DEBUG
