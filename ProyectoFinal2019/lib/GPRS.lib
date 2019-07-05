@@ -1,17 +1,28 @@
 /*** BeginHeader */
 #define PINSIM		"1234"
 #define CODPROV		"74801"
-#define CELNUM		"\"099948442\""
+#define CELNUM		"\"095465669\""
+//#define CELNUM		"\"099948442\""
 
 enum CodMsg {
 	PRUEBA = 0,
-	MENSAJE1,
-	RITMO
+	CHECKPOINT,
+	RITMOCARDIACO,
+	KEEPALIVE,
+	NO_KEEPALIVE,
+	HELP
+
 };
 
-const static char mensajes[][] = { "Mensaje de texto 0",
-							"Mensaje de texto 1"
-							};
+const static char mensajes[][] = { 	"Mensaje de texto 0",
+                           			"CHECK POINT",
+                           			"RITMO CARDIACO",
+                           			"KEEPALIVE",
+                           			"NO KEEPALIVE",
+                           			"HELP"
+								};
+const static char google[] = { "https://www.google.com.uy/maps/?q=-"};
+
 /*** EndHeader */
 
 /*
@@ -435,7 +446,7 @@ int GPRS_modem_sendsms(char mensaje[]){
 
 	status = 0;
 
-	//Atenicion funciones de serial no reentrantes
+	// Funciones de serial no reentrantes
 	serDrdFlush();
 	serDwrFlush();
 
@@ -483,11 +494,28 @@ int GPRS_sendsms(enum CodMsg id_mensaje);
 int GPRS_sendsms(enum CodMsg id_mensaje){
 
 	int status;
+
+	char *lat;
+	char *lon;
+	char *id;
+   char mensaje[100];
+
+
 	INT8U ERROR;
-
 	status = 0;
+	lat = "latitud";
+	lon = "longitud";
+	id = "24D";
 
-	ERROR = OSQPost(SmsQ, (void *)&mensajes[id_mensaje]);
+	memset(mensaje, 0, sizeof(mensaje));  // limpio mensaje
+
+	sprintf(mensaje, "ID:%s - %s - %s%s,-%s", id, mensajes[id_mensaje],google,lat,lon); // formato mensaje a enviar
+	#ifdef DEBUG
+		printf(mensaje);
+	#endif
+
+	ERROR = OSQPost(SmsQ, (void *)&mensaje);
+
 	if ( ERROR == OS_NO_ERR){
 		status = 1;
 	#ifdef DEBUG

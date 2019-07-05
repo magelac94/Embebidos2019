@@ -1,7 +1,7 @@
 /*** BeginHeader */
-#define RIT_MAX		5000
-#define RIT_MIN		2000
-#define T_CONTROL			15   //Tiempo en SEGUNDOS, en los que se chequea el ritmo cardiaco
+#define RIT_MAX		3000
+#define RIT_MIN		1000
+#define T_CONTROL	300	   	//Tiempo en SEGUNDOS, en los que se chequea el ritmo cardiaco
 
 /*** EndHeader */
 
@@ -10,14 +10,17 @@ void tarea_salud(int* pdata);
 /*** EndHeader */
 void tarea_salud(int* pdata){
 	int ritmo_cardiaco;
+	char* mensaje;
 
 	while(1){
+   	ritmo_cardiaco = 3000;
    	OSTimeDlySec(T_CONTROL);
-	ritmo_cardiaco = IO_getAnalogInput(*pdata);
-	if(ritmo_cardiaco < RIT_MIN || ritmo_cardiaco > RIT_MAX)
-	{
-		//enviar_msj("El votija esta palmando");  // COMPLETAR PARA EL ENVIO DE MANESAJE
-	return;
+		ritmo_cardiaco = IO_getAnalogInput(1);
+		if(ritmo_cardiaco < RIT_MIN || ritmo_cardiaco > RIT_MAX)
+		{
+	 		GPRS_sendsms(RITMOCARDIACO);
+		}else{
+			printf("OK %u\n",ritmo_cardiaco );
 		}
 	}
 }

@@ -2,14 +2,14 @@
 #use GPS.lib
 
 #define BINBUFSIZE 		      	255
-#define BOUTBUFSIZE 		  	255
+#define BOUTBUFSIZE 		     	255
 #define SERB_USEPORTD
 #define GPS_MAX_BUF_SIZE	  	100
 #define GPS_CHKSUM_SIZE	    	2
 #define GPS_CONFIG_DELAY 	  	10
 #define GPS_VALID_DATA_IDX		18
 #define GPS_VALID_DATA		  	'A'
-#define GPS_VOID_DATA		    'V'
+#define GPS_VOID_DATA		      'V'
 
 GPSPosition gpsPosition;
 /*** EndHeader */
@@ -17,8 +17,7 @@ GPSPosition gpsPosition;
 /*** BeginHeader GPS_init */
 void GPS_init( void );
 /*** EndHeader */
-void GPS_init( void )
-{
+void GPS_init( void ){
   BitWrPortI( PDDDR, &PDDDRShadow, 0, 5 ); //Bit 5 como entrada (ARXB)
   BitWrPortI( PDFR, &PDFRShadow, 1, 4 );	 //Bit 4 con funcion alternativa (ATXB)
   serBdatabits( PARAM_8BIT );		           //8 bits de datos
@@ -48,15 +47,13 @@ void GPS_init( void )
 /*** BeginHeader GPS_gets */
 int GPS_gets( char* p_str );
 /*** EndHeader */
-int GPS_gets( char* p_str )
-{
+int GPS_gets( char* p_str ){
 
   char data[GPS_MAX_BUF_SIZE];
   char* start;
   char* end;
-  
+while(1){
   serBrdFlush();
-
   OSTimeDlyHMSM(0,0,1,500); // Espero a recibir por lo menos una trama
 
   if (serBrdUsed() == 0)
@@ -88,5 +85,7 @@ int GPS_gets( char* p_str )
   {
     return 0;
   }
+
+}
 
 }
