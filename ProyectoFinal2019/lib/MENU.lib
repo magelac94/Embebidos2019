@@ -13,7 +13,8 @@ enum opcionMenu {
 	OPCION_5,
 	OPCION_6,
 	OPCION_7,
-	OPCION_8
+	OPCION_8,
+	OPCION_9
 };
 
 enum tipoUI {
@@ -41,7 +42,8 @@ void enviar_a_ui(enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_s
 
 		case ( TCP ):
 			// Control antes de usar funciones bloqueantes. Si no esta el buffer con espacio, espero.
-			while( sock_tbleft(pun_tcp_socket) < TAMANIO_BUFFER_LE ){
+			while( sock_tbleft(pun_tcp_socket) < strlen(pbuffer) ){
+         	tcp_tick(pun_tcp_socket);
 				OSTimeDlyHMSM(0, 0, 0, 100);
 			}
 			bytes_enviados=sock_puts( pun_tcp_socket, pbuffer);
@@ -108,12 +110,14 @@ void MENU_mostrarMenuPrincipal( enum tipoUI interfazAUsar, char* pbuffer, tcp_So
 "\n   Bienvenido al sistema de monitoreo y alertas\n\
 ----------------------------------------\n\
 1 - Consultar fecha y hora\n\
-2 - Registrar/Eliminar checkpoints\n\
+2 - Registrar checkpoints\n\
 3 - Configurar distancia requerida al checkpoint\n\
 4 - Listar checkpoints configurados\n\
 5 - Configurar ID de participante\n\
 6 - Configurar rango de ritmo cardiaco normal\n\
-7 - Configurar tiempo de inactividad\n \
+7 - Configurar tiempo de inactividad\n\
+8 - Eliminar mensajes de texto\n\
+9 - Guardar y salir\n\
 >>" );
 	// Mandamos el buffer a la interfaz a usar
 	enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket);
@@ -249,251 +253,84 @@ void printFechaHora ( enum tipoUI interfazAUsar, struct tm* pFechaHora, char* pb
 void MENU_pedirDatosCheckpoint( enum tipoUI interfazAUsar, CHECKPOINT *p_Checkpoint, char* pbuffer, tcp_Socket* pun_tcp_socket );
 /*** EndHeader */
 void MENU_pedirDatosCheckpoint( enum tipoUI interfazAUsar, CHECKPOINT *p_Checkpoint, char* pbuffer, tcp_Socket* pun_tcp_socket ){
-	
+
 	int int_opcion;
-	
+	char lat_degrees[3], lon_degrees[3], lat_minutes[8], lon_minutes[8], lat_direction, lon_direction;
+
 	ClearScreen( interfazAUsar );
-	
+
 	// Metemos en el pbuffer el texto formateado
 	sprintf( pbuffer, "\n\n-------- AGREGAR CHECKPOINT --------------" );
 	// Mandamos el pbuffer a la interfaz a usar
 	enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
-	
+
 	// Metemos en el pbuffer el texto formateado
-	sprintf( pbuffer, "\nID Checkpoint (1-9): ");
+	sprintf( pbuffer, "\nID Checkpoint (1-6): ");
 	// Mandamos el pbuffer a la interfaz a usar
 	enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
 	// Obtenemos la opcion de la UI deseada
 	obtener_de_ui( interfazAUsar, pbuffer, pun_tcp_socket);
-	
+
 	// Convertimos a int
 	int_opcion = atoi( pbuffer );
 	// Validacion de id de checkpoint
-	if ( int_opcion < 1 || int_opcion > 9 ){
+	if ( int_opcion < 1 || int_opcion > 6 ){
 		// MENSAJE DE ERROR
 		// Metemos en el pbuffer el texto formateado
-		sprintf( pbuffer, "\nERROR: Debe elegir valor entre 1 y 9. Volver a ingresar\n" );
+		sprintf( pbuffer, "\nERROR: Debe elegir valor entre 1 y 6. Volver a ingresar\n" );
 		// Mandamos el pbuffer a la interfaz a usar
 		enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket  );
 	}
 	else{
 		// Fijo el tipo de evento
-		p_Checkpoint->id = pbuffer[0];
-		
+		p_Checkpoint->id = int_opcion;
+
 		// PIDO EL PROXIMO DATO. LAT
 		// Metemos en el pbuffer el texto formateado
-		sprintf( pbuffer, "\nIngrese LATITUD(-90,+90): ");
+		sprintf( pbuffer, "\nIngrese LATITUD(formato ddmm,ssss - dd=grados, mm=minutos, ssss=segundos): ");
 		// Mandamos el pbuffer a la interfaz a usar
 		enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
 		// Obtenemos la opcion de la UI deseada
 		obtener_de_ui( interfazAUsar, pbuffer, pun_tcp_socket);
 
-		// Convertimos a int
-		int_opcion = atoi( pbuffer );
+
 		// Validacion de LATITUD
-		if ( int_opcion < (-90) || int_opcion > 90){
+		if ( strlen(pbuffer) != 9 ){
 			// Metemos en el pbuffer el texto formateado
-			sprintf( pbuffer,"\nERROR: Debe elegir un numero entre -90 y +90. Volver a ingresar\n");
+			sprintf( pbuffer,"\nERROR: Debe elegir un numero con formato ddmm,ssss - dd=grados, mm=minutos, ssss=segundos. Volver a ingresar\n");
 			// Mandamos el pbuffer a la interfaz a usar
 			enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
 		}
 		else{
 			// Fijo LATITUD
-			p_Checkpoint->lat = pbuffer[0];
-			
+			strncpy(lat_degrees, pbuffer, 2);
+			p_Checkpoint->gpsPosition.lat_degrees = atoi(lat_degrees);
+			strncpy(lat_minutes, pbuffer + 2, 7);
+			p_Checkpoint->gpsPosition.lat_minutes = atof(lat_minutes);
+			p_Checkpoint->gpsPosition.lat_direction = 'S';
+
 			// PIDO EL SIGUIENTE DATO. LONGITUD
 			// Metemos en el pbuffer el texto formateado
-			sprintf( pbuffer, "\nIngrese LONGITUD(-180,+180): ");
+			sprintf( pbuffer, "\nIngrese LONGITUD(formato ddmm,ssss - dd=grados, mm=minutos, ssss=segundos): ");
 			// Mandamos el pbuffer a la interfaz a usar
 			enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
 			// Obtenemos la opcion de la UI deseada
 			obtener_de_ui( interfazAUsar, pbuffer, pun_tcp_socket);
 
-			// Convertimos a int
-			int_opcion = atoi( pbuffer );
 			// Validacion de LONGITUD
-			if ( int_opcion < (-180) || int_opcion > 180){
+			if ( strlen(pbuffer) != 9 ){
 				// Metemos en el pbuffer el texto formateado
-				sprintf( pbuffer,"\nERROR: Debe elegir un numero entre -180 y +180. Volver a ingresar\n");
+				sprintf( pbuffer,"\nERROR: Debe elegir un numero con formato ddmm,ssss - dd=grados, mm=minutos, ssss=segundos. Volver a ingresar\n");
 				// Mandamos el pbuffer a la interfaz a usar
 				enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
 			}
 			else{
 				// Fijo LONGITUD
-				p_Checkpoint->lon = pbuffer[0];
-				
-				// PIDO EL SIGUIENTE DATO. ALTURA
-				// Metemos en el pbuffer el texto formateado
-				sprintf( pbuffer, "\nIngrese ALTURA(-180,+1800): ");
-				// Mandamos el pbuffer a la interfaz a usar
-				enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
-				// Obtenemos la opcion de la UI deseada
-				obtener_de_ui( interfazAUsar, pbuffer, pun_tcp_socket);
-	
-				// Convertimos a int
-				int_opcion = atoi( pbuffer );
-				// Validacion de ALTURA
-				if ( int_opcion < (-180) || int_opcion > 1800){
-					// Metemos en el pbuffer el texto formateado
-					sprintf( pbuffer,"\nERROR: Debe elegir un numero entre -180 y +1800. Volver a ingresar\n");
-					// Mandamos el pbuffer a la interfaz a usar
-					enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
-				}
-				else{
-					// Fijo ALTURA
-					p_Checkpoint->alt = pbuffer[0];
-					return;
-				}
-			}
-		}
-	}
-}
-
-
-
-/*** BeginHeader MENU_eliminarCheckpoint */
-int MENU_eliminarCheckpoint( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket );
-/*** EndHeader */
-int MENU_eliminarCheckpoint( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket ){
-
-	int int_numCheckpoint;
-
-	ClearScreen( interfazAUsar );
-
-	while(1){
-		// Metemos en el pbuffer el texto formateado
-		sprintf( pbuffer,"\n\n-------- ELIMINAR CHECKPOINT -------\n\nPara eliminar ingrese numero de checkpoint (0 para listar los checkpoints): \n");
-		// Mandamos el pbuffer a la interfaz a usar
-		enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket);
-		// Obtenemos la opcion de la UI deseada
-		obtener_de_ui( interfazAUsar, pbuffer, pun_tcp_socket );
-
-		// Convertimos a int
-		int_numCheckpoint = atoi( pbuffer );
-		if ( int_numCheckpoint == OPCION_0 ){
-			MENU_printCheckpoints( interfazAUsar, pbuffer, pun_tcp_socket);
-		}
-		else{
-			if ( int_numCheckpoint > 0 && int_numCheckpoint <= MAX_CHECKPOINTS ){ // Si es un id correcto, lo devilvemos
-				int_numCheckpoint = int_numCheckpoint - 1;
-#ifdef DEBUG
-			printf( "\nDEBUG: MENU_eliminarEvento int a devolver: %d", int_numCheckpoint );
-#endif
-				return int_numCheckpoint;
-			}
-			else{
-				// Metemos en el pbuffer el texto formateado
-				sprintf( pbuffer,"\nNumero de Checkpoint incorrecto");
-				// Mandamos el pbuffer a la interfaz a usar
-				enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket);
-				OSTimeDlyHMSM( 0, 0, 3, 0 );
-			}
-		}
-	}
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*** BeginHeader MENU_pedirDatosEvento */
-void MENU_pedirDatosEvento( enum tipoUI interfazAUsar, Event *p_Evento, struct tm *pFechaHora, char* pbuffer, tcp_Socket* pun_tcp_socket );
-/*** EndHeader */
-void MENU_pedirDatosEvento( enum tipoUI interfazAUsar, Event *p_Evento, struct tm *pFechaHora, char* pbuffer, tcp_Socket* pun_tcp_socket ){
-
-	int int_opcion;
-	unsigned long timestamp;
-	char stop[2];
-
-	ClearScreen( interfazAUsar );
-
-	// Metemos en el pbuffer el texto formateado
-	sprintf( pbuffer, "\n\n-------- AGREGAR EVENTO --------------" );
-	// Mandamos el pbuffer a la interfaz a usar
-	enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
-
-	while(1){
-		// Metemos en el pbuffer el texto formateado
-		sprintf( pbuffer, "\nTipo de Evento (1-Encender o 2-Apagar): ");
-		// Mandamos el pbuffer a la interfaz a usar
-		enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
-		// Obtenemos la opcion de la UI deseada
-		obtener_de_ui( interfazAUsar, pbuffer, pun_tcp_socket);
-
-		// Convertimos a int
-		int_opcion = atoi( pbuffer );
-		// Validacion de tipo evento
-		if ( int_opcion < 1 || int_opcion > 2 ){
-			// MENSAJE DE ERROR
-			// Metemos en el pbuffer el texto formateado
-			sprintf( pbuffer, "\nERROR: Debe elegir 1 o 2. Volver a ingresar\n" );
-			// Mandamos el pbuffer a la interfaz a usar
-			enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket  );
-		}
-		else{
-			// Fijo el tipo de evento
-			p_Evento->command = pbuffer[0];
-
-			// PIDO EL PROXIMO DATO. NRO DE LED
-			// Metemos en el pbuffer el texto formateado
-			sprintf( pbuffer, "\nLed a Encender(0-7): ");
-			// Mandamos el pbuffer a la interfaz a usar
-			enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
-			// Obtenemos la opcion de la UI deseada
-			obtener_de_ui( interfazAUsar, pbuffer, pun_tcp_socket);
-
-			// Convertimos a int
-			int_opcion = atoi( pbuffer );
-			// Validacion de nro de led
-			if ( int_opcion < 0 || int_opcion > 7){
-				// Metemos en el pbuffer el texto formateado
-				sprintf( pbuffer,"\nERROR: Debe elegir un numero entre 0 y 7. Volver a ingresar\n");
-				// Mandamos el pbuffer a la interfaz a usar
-				enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
-			}
-			else{
-				// Fijo el nro de led
-				p_Evento->param = pbuffer[0];
-
-				// PIDO EL SIGUIENTE DATO. FECHA Y HORA
-				MENU_pedirFechaHora( interfazAUsar, pFechaHora, pbuffer, pun_tcp_socket );
-				printFechaHora( interfazAUsar, pFechaHora, pbuffer, pun_tcp_socket );
-				timestamp = mktime( pFechaHora );
-				p_Evento->time = timestamp;
-				if (interfazAUsar == CONSOLA){
-					gets(stop);
-				}
+				strncpy(lon_degrees, pbuffer, 2);
+				p_Checkpoint->gpsPosition.lon_degrees = atoi(lon_degrees);
+				strncpy(lon_minutes, pbuffer + 2, 7);
+				p_Checkpoint->gpsPosition.lon_minutes = atof(lon_minutes);
+				p_Checkpoint->gpsPosition.lon_direction = 'W';
 				return;
 			}
 		}
@@ -502,136 +339,120 @@ void MENU_pedirDatosEvento( enum tipoUI interfazAUsar, Event *p_Evento, struct t
 
 
 
-/*** BeginHeader MENU_consultarEventos */
-void MENU_consultarEventos( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket );
+/*** BeginHeader MENU_solicitarDistanciaCheckpoint */
+void MENU_solicitarDistanciaCheckpoint( enum tipoUI interfazAUsar, int* pradio, char* pbuffer, tcp_Socket* pun_tcp_socket );
 /*** EndHeader */
-void MENU_consultarEventos( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket ){
+void MENU_solicitarDistanciaCheckpoint( enum tipoUI interfazAUsar, int* pradio, char* pbuffer, tcp_Socket* pun_tcp_socket ){
+
+	int int_opcion;
 
 	ClearScreen( interfazAUsar );
 
 	// Metemos en el pbuffer el texto formateado
-	sprintf( pbuffer, "\n\n-------- LISTAR EVENTOS -------" );
+	sprintf( pbuffer, "\n\n-------- CONFIGURAR DISTANCIA AL CHECKPOINT --------------" );
 	// Mandamos el pbuffer a la interfaz a usar
 	enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
+
+	while(1){
+		// Metemos en el pbuffer el texto formateado
+		sprintf( pbuffer, "\nIngrese la distancia en metros al checkpoint para considerar valido(1-50): ");
+		// Mandamos el pbuffer a la interfaz a usar
+		enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
+		// Obtenemos la opcion de la UI deseada
+		obtener_de_ui( interfazAUsar, pbuffer, pun_tcp_socket);
+
+		// Convertimos a int
+		int_opcion = atoi( pbuffer );
+		// Validacion de radio seleccionado
+		if ( int_opcion < 1 || int_opcion > 50 ){
+			// MENSAJE DE ERROR
+			// Metemos en el pbuffer el texto formateado
+			sprintf( pbuffer, "\nERROR: Debe elegir un valor entre 1 y 50. Volver a ingresar\n" );
+			// Mandamos el pbuffer a la interfaz a usar
+			enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket  );
+		}
+		else{
+			// Devuelvo en el puntero el radio seleccionado por el usuario
+			*pradio = int_opcion;
+			return;
+		}
+	}
 }
 
 
 
-/*** BeginHeader MENU_printEventos */
-void MENU_printEventos ( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket );
+/*** BeginHeader MENU_listarCheckpoints */
+void MENU_listarCheckpoints( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket );
 /*** EndHeader */
-void MENU_printEventos ( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket ){
+void MENU_listarCheckpoints( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket ){
 
 	struct tm FechaHora;
 	auto int i;
-	auto INT8U Error;
-	char stop[2];
 
-	// Nos aseguramos que tenemos el recurso para nosotros
-	OSSemPend(pSemaforoEventos, 0, &Error);
-		for ( i=0; i<MAX_EVENTS; i++ ){
-			if ( eventos[i].command != 0xFF ){
-				sprintf( pbuffer, "\n------------------------------\nNum Evento: %u \nCommand: %c\nParam: %c\nTime: ", i+1, eventos[i].command, eventos[i].param)   ;
-				enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
-				mktm( &FechaHora, eventos[i].time );
-				printFechaHora( interfazAUsar, &FechaHora, pbuffer, pun_tcp_socket );
-			}
+	ClearScreen( interfazAUsar );
+
+	// Metemos en el pbuffer el texto formateado
+	sprintf( pbuffer, "\n\n-------- LISTAR CHECKPOINTS -------" );
+	// Mandamos el pbuffer a la interfaz a usar
+	enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
+
+	for ( i=0; i<MAX_CHECKPOINTS; i++ ){
+		if ( checkpoints[i].visitado != 0xFF ){
+			sprintf( pbuffer, "\n------------------------------\n\
+			Num checkpoint: %u \n\
+			Coordenadas:\n\
+			Latitud: %u%.4f\n\
+			Longitud: %u%.4f\n\
+			Visitado: %u\n\
+			Fecha visitado: ", i+1, checkpoints[i].gpsPosition.lat_degrees, checkpoints[i].gpsPosition.lat_minutes,checkpoints[i].gpsPosition.lon_degrees, checkpoints[i].gpsPosition.lon_minutes,checkpoints[i].visitado);
+			enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
+			mktm( &FechaHora, checkpoints[i].FechaHoraVisitado );
+			printFechaHora( interfazAUsar, &FechaHora, pbuffer, pun_tcp_socket );
 		}
-	// Devolvemos el recurso
-	OSSemPost(pSemaforoEventos);
-	if (interfazAUsar == CONSOLA){
-		gets(stop);
 	}
+   return;
 }
 
 
 
-/*** BeginHeader MENU_eliminarEvento */
-int MENU_eliminarEvento( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket );
+/*** BeginHeader MENU_configurarIDParticipante */
+void MENU_configurarIDParticipante( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket );
 /*** EndHeader */
-int MENU_eliminarEvento( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket ){
+void MENU_configurarIDParticipante( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket ){
 
-	int int_numEvento;
-
-	ClearScreen( interfazAUsar );
+	// Metemos en el pbuffer el texto formateado
+	sprintf( pbuffer, "\n\n-------- CONFIGURAR ID PARTICIPANTE --------------" );
+	// Mandamos el pbuffer a la interfaz a usar
+	enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
 
 	while(1){
 		// Metemos en el pbuffer el texto formateado
-		sprintf( pbuffer,"\n\n-------- ELIMINAR EVENTO -------\n\nPara eliminar ingrese numero de evento (0 para listar los eventos): \n");
+		sprintf( pbuffer, "\nIngrese el ID del participante (32 chars max): ");
 		// Mandamos el pbuffer a la interfaz a usar
-		enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket);
+		enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
 		// Obtenemos la opcion de la UI deseada
-		obtener_de_ui( interfazAUsar, pbuffer, pun_tcp_socket );
+		obtener_de_ui( interfazAUsar, pbuffer, pun_tcp_socket);
 
-		// Convertimos a int
-		int_numEvento = atoi( pbuffer );
-		if ( int_numEvento == OPCION_0 ){
-			MENU_printEventos( interfazAUsar, pbuffer, pun_tcp_socket);
-		}
-		else{
-			if ( int_numEvento > 0 && int_numEvento <= MAX_EVENTS ){ // Si es un id correcto, lo devilvemos
-				int_numEvento = int_numEvento - 1;
-#ifdef DEBUG
-			printf( "\nDEBUG: MENU_eliminarEvento int a devolver: %d", int_numEvento );
-#endif
-				return int_numEvento;
-			}
-			else{
-				// Metemos en el pbuffer el texto formateado
-				sprintf( pbuffer,"\nNumero de Evento Incorrecto");
-				// Mandamos el pbuffer a la interfaz a usar
-				enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket);
-				OSTimeDlyHMSM( 0, 0, 3, 0 );
-			}
-		}
-	}
-}
-
-
-
-/*** BeginHeader MENU_pedirEntradaAnalogica */
-void MENU_pedirEntradaAnalogica( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket *pun_tcp_socket );
-/*** EndHeader */
-void MENU_pedirEntradaAnalogica( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket *pun_tcp_socket ){
-
-	char stop[2];
-
-	ClearScreen( interfazAUsar );
-
-	while(1){
-		// Metemos en el pbuffer el texto formateado
-		sprintf( pbuffer,"\n\n-------- Entrada Analogica -------\n\n\nIngrese entrada analogica (0 o 1): \n");
-		// Mandamos el pbuffer a la interfaz a usar
-		enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket);
-		// Obtenemos la opcion de la UI deseada
-		obtener_de_ui(interfazAUsar, pbuffer, pun_tcp_socket );
-		if ( *pbuffer == '0' || *pbuffer == '1' ){
+		// Validacion de camanio de ID
+		if ( strlen(pbuffer) > 1 ){
+			strncpy(ID_PARTICIPANTE, pbuffer, 32);
 			return;
 		}
-		sprintf( pbuffer,"\n\n-- Valor incorrecto, ingrese nuevamente --\n\n");
-		enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
-	}
-	if (interfazAUsar == CONSOLA){
-		gets(stop);
-	}
+   }
 }
 
 
 
-/*** BeginHeader MENU_mostrarEntradaAnalogica */
-void MENU_mostrarEntradaAnalogica( enum tipoUI interfazAUsar, int *pint_Analog_Value, char* pbuffer, tcp_Socket *pun_tcp_socket );
+/*** BeginHeader MENU_configurarRC */
+void MENU_configurarRC( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket );
 /*** EndHeader */
-void MENU_mostrarEntradaAnalogica( enum tipoUI interfazAUsar, int *pint_Analog_Value, char* pbuffer, tcp_Socket *pun_tcp_socket ){
+void MENU_configurarRC( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket ){
 
-	char stop[2];
+}
 
-	//ClearScreen( interfazAUsar );
+/*** BeginHeader MENU_configurarInactividad */
+void MENU_configurarInactividad( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket );
+/*** EndHeader */
+void MENU_configurarInactividad( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket ){
 
-	// Metemos en el buffer el texto formateado
-	sprintf( pbuffer,"\n\nEl valor de la entrada analogica es: %u\n", *pint_Analog_Value);
-	// Mandamos el buffer a la interfaz a usar
-	enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket);
-	if (interfazAUsar == CONSOLA){
-		gets(stop);
-	}
 }

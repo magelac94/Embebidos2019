@@ -12,7 +12,7 @@ void TCP1_tarea_interfaz_tcp(void* pdata){
 	char buffer[TAMANIO_BUFFER_LE];
 	tcp_Socket* pun_tcp_socket;
 	CHECKPOINT unCheckpoint;
-	auto int int_opcion_menu, int_id_checkpoint;
+	auto int int_opcion_menu, int_id_checkpoint, radio;
 	auto INT8U Error;
 
 	pun_tcp_socket = (tcp_Socket*)pdata;
@@ -25,7 +25,7 @@ void TCP1_tarea_interfaz_tcp(void* pdata){
 #endif
 		}
 		// Inicializamos buffer para sacar la basura
-		memset(buffer, " ", sizeof(buffer));
+		memset(buffer, 0, sizeof(buffer));
 
       // Le damos un tiempo para que el socket quede pronto
 		OSTimeDlyHMSM(0,0,0,500);
@@ -68,41 +68,42 @@ void TCP1_tarea_interfaz_tcp(void* pdata){
 						CHECKPOINT_agregarCheckpoint( &unCheckpoint );
 						break;
 
-					case ( OPCION_3 ):
-						// ELIMINAR UN CHECKPOINT (ES DE 1 EN adelante segun posicion en el array))
-						int_id_checkpoint = MENU_eliminarCheckpoint( TCP, buffer, pun_tcp_socket );
-						CHECKPOINT_eliminarCheckpoint( int_id_checkpoint );
+					case( OPCION_3 ):
+						// CONFIGURAR DISTANCIA AL CHECKPOINT
+						MENU_solicitarDistanciaCheckpoint( TCP, &radio, buffer, pun_tcp_socket );
+						CHECKPOINT_configurarDistancia( &radio );
 						break;
 
 					case( OPCION_4 ):
-						// CONFIGURAR DISTANCIA AL CHECKPOINT
-						MENU_configurarDistanciaCheckpoint( TCP, buffer, pun_tcp_socket );
-						CHECKPOINT_configurarDistancia();
-						break;
-					
-					case( OPCION_5 ):
 						// LISTAR CHECKPOINTS CONFIGURADOS
 						MENU_listarCheckpoints( TCP, buffer, pun_tcp_socket );
 						break;
-					
-					case( OPCION_6 ):
+
+					case( OPCION_5 ):
 						// CONFIGURAR ID DE PARTICIPANTE
 						MENU_configurarIDParticipante( TCP, buffer, pun_tcp_socket );
-						//ACA una funcion que setee ese valor GLOBAL
 						break;
-						
-					case( OPCION_7 ):
+
+					case( OPCION_6 ):
 						// CONFIGURAR RANGO DE RITMO CARDIACO
 						MENU_configurarRC( TCP, buffer, pun_tcp_socket );
-						//ACA Alguna funcion del la libreria SALUD
 						break;
-					
-					case( OPCION_8 ):
+
+					case( OPCION_7 ):
 						// CONFIGURAR TIEMPO DE INACTIVIDAD
 						MENU_configurarInactividad( TCP, buffer, pun_tcp_socket );
 						//ACA Alguna funcion del la libreria SALUD
 						break;
+
+					case( OPCION_8 ):
+						// BORRAR TODOS LOS MENSAJES DE TEXTO
+						GPRS_DeleteAllSmss();
+						break;
 						
+					case( OPCION_9 ):
+						// GUARDAR Y SALIR
+						break;
+
 					default:
 						// OPCION INCORRECTA
 						printf("\nA IMPLEMENTAR: Mandar este mensaje a la interfaz correcta: Opcion DEFAULT: %d \n", int_opcion_menu);

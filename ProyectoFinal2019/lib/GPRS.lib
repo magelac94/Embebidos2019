@@ -5,11 +5,13 @@
 
 enum CodMsg {
 	PRUEBA = 0,
-	MENSAJE1
+	MENSAJE1,
+	RITMO
 };
 
 const static char mensajes[][] = { "Mensaje de texto 0",
-							"Mensaje de texto 1"};
+							"Mensaje de texto 1"
+							};
 /*** EndHeader */
 
 /*

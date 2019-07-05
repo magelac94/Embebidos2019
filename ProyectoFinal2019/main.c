@@ -9,8 +9,8 @@
 #define OS_Q_POST_EN			1		// Enable posting messages to queue
 #define OS_MAX_EVENTS			2		// MAX_TCP_SOCKET_BUFFERS + 0 Mbox + 1 Queue + 0 Semaforos
 #define STACK_CNT_256			2		// tarea_Led_Red + idle
-#define STACK_CNT_512			4		// main() + GPRS_tarea_encender_modem + CONSOLA_tarea_comandos_a_mano
-#define STACK_CNT_2K			2		// 1 Tareas TCP (MAX_TCP_SOCKET_BUFFERS)
+#define STACK_CNT_512			3		// main() + GPRS_tarea_encender_modem + CONSOLA_tarea_comandos_a_mano
+#define STACK_CNT_2K			1		// 1 Tareas TCP (MAX_TCP_SOCKET_BUFFERS)
 
 /* TCP/IP configuration */
 #define TCPCONFIG 0
@@ -31,19 +31,22 @@
 #use IO.lib
 #use LED.lib
 #use GPRS.lib
+#use CHECKPOINT.lib
 #use CONSOLA.lib
+#use TCP1.lib
 #use Utilities.lib
 
 #memmap xmem
 #use "ucos2.lib"
 #use "dcrtcp.lib"
+#use MENU.lib
 
 /* Definicion de semaforos, mbox y queues. GLOBALES*/
 OS_EVENT *SmsQ;
 void* SmsQStorage[5]; // La queue tiene para guardar 5 mensajes pendientes.
 
 /* Definicion de otras variables. GLOBALES*/
-char id_participante[32];
+char ID_PARTICIPANTE[33];
 
 main(){
 
@@ -51,10 +54,15 @@ main(){
 	auto INT8U Error;
 	static tcp_Socket un_tcp_socket[MAX_TCP_SOCKET_BUFFERS];
 	char* tramaGPS;
+
 	// Inicializa el hardware de la placa
 	HW_init();
+
 	// Inicializa la estructura de datos interna del sistema operativo uC/OS-II
 	OSInit();
+
+	// Inicializacion de Checkpoints
+	CHECKPOINT_Checkpoints_init();
 
 	// Iniciamos el stack TCP/IP
 #ifdef DEBUG
@@ -64,6 +72,7 @@ main(){
 #ifdef DEBUG
 	printf("\nDEBUG: Socket Iniciados\n");
 #endif
+
 
 // Deshabilitamos el scheduling mientras se crean las tareas
 	OSSchedLock();
