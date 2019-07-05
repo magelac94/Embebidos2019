@@ -3,13 +3,14 @@
 /* uCOS configuration */
 #define OS_MAX_TASKS				10		// Cantidad maxima de tareas que se pueden crear, sin contar STAT e IDLE
 #define OS_TASK_SUSPEND_EN		1		// Habilitar suspender y resumir tareas
-#define OS_TASK_DEL_EN			1
-#define OS_TIME_DLY_HMSM_EN	1		// Habilitar la funcion de delay para pasar fecha y hora
+#define OS_TASK_DEL_EN			1		// Habilitar eliminacion de tareas
+#define OS_TIME_DLY_HMSM_EN		1		// Habilitar la funcion de delay para pasar fecha y hora
+
 #define OS_Q_EN					1		// Habilitar colas (queues)
 #define OS_Q_POST_EN		  		1		// Enable posting messages to queue
 #define OS_MAX_EVENTS			2		// MAX_TCP_SOCKET_BUFFERS + 0 Mbox + 1 Queue + 0 Semaforos
 #define STACK_CNT_256			2		// tarea_Led_Red + idle
-#define STACK_CNT_512			2		// main() + GPRS_tarea_encender_modem + CONSOLA_tarea_comandos_a_mano
+#define STACK_CNT_512			3		// main() + GPRS_tarea_encender_modem + CONSOLA_tarea_comandos_a_mano
 #define STACK_CNT_2K				3		// 1 Tareas TCP (MAX_TCP_SOCKET_BUFFERS)
 
 /* TCP/IP configuration */
@@ -33,17 +34,22 @@
 #use IO.lib
 #use LED.lib
 #use GPRS.lib
+#use CHECKPOINT.lib
 #use CONSOLA.lib
+#use TCP1.lib
 #use Utilities.lib
 
 #memmap xmem
 #use "ucos2.lib"
 #use "dcrtcp.lib"
+#use MENU.lib
 
 /* Definicion de semaforos, mbox y queues. GLOBALES*/
 OS_EVENT *SmsQ;
 void* SmsQStorage[5]; // La queue tiene para guardar 5 mensajes pendientes.
 
+/* Definicion de otras variables. GLOBALES*/
+char ID_PARTICIPANTE[33];
 
 main(){
 	// Variables
@@ -51,22 +57,26 @@ main(){
 	//static tcp_Socket un_tcp_socket[MAX_TCP_SOCKET_BUFFERS];
 	char* tramaGPS;
 
-	//memset(tramaGPS, 0, sizeof(tramaGPS)); // limpio valones en memoria
-	// Inicializa el hardware de la placa
+  // Inicializa el hardware de la placa
 	HW_init();
+
 	// Inicializa la estructura de datos interna del sistema operativo uC/OS-II
 	OSInit();
 
-	// Iniciamos el stack TCP/IP
-	#ifdef DEBUG
-		printf("\nDEBUG: Iniciando Sockets\n");
-	#endif
-		sock_init();
-	#ifdef DEBUG
-		printf("\nDEBUG: Socket Iniciados\n");
-	#endif
+	// Inicializacion de Checkpoints
+	CHECKPOINT_Checkpoints_init();
 
-  // Deshabilitamos el scheduling mientras se crean las tareas
+	// Iniciamos el stack TCP/IP
+#ifdef DEBUG
+	printf("\nDEBUG: Iniciando Sockets\n");
+#endif
+	sock_init();
+#ifdef DEBUG
+	printf("\nDEBUG: Socket Iniciados\n");
+#endif
+
+
+// Deshabilitamos el scheduling mientras se crean las tareas
 	OSSchedLock();
 
 	//Creacion de semaforos, mbox y queues
@@ -74,12 +84,13 @@ main(){
 
 	//Creacion de tareas
 	Error = OSTaskCreate(LED_tarea_led_red, NULL, 256, 5);
-	Error = OSTaskCreate(GPRS_tarea_modem, NULL, 512, 6);	//INAKI
-//	Error = OSTaskCreate(CONSOLA_tarea_comandos_a_mano, NULL, 512,7);
- //	Error = OSTaskCreate(TCP1_tarea_interfaz_tcp, &un_tcp_socket[0], 2048, 9 ); //INAKI
+	Error = OSTaskCreate(GPRS_tarea_modem, NULL, 512, 6);	//INA
+  //	Error = OSTaskCreate(CONSOLA_tarea_comandos_a_mano, NULL, 512,7);
+  	Error = OSTaskCreate(TCP1_tarea_interfaz_tcp, &un_tcp_socket[0], 2048, 9 );
 
 //	Error = OSTaskCreate(GPS_init, NULL, 2048, 8); // Inicializa Hardware GPS - Ejecuta 1 vez
 //	Error = OSTaskCreate(GPS_gets, tramaGPS,2048 , 9); // Se obtiene datos gps
+  
 //	Error = OSTaskCreate(tarea_config_Reloj, tramaGPS, 2048 , 10 );
 	Error = OSTaskCreate(tarea_salud,NULL, 2048, 11);
 

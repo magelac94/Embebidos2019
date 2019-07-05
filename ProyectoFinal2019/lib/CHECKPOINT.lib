@@ -1,0 +1,62 @@
+/*** BeginHeader */
+// Definicion de macros
+#define MAX_CHECKPOINTS 6
+
+// Definicion de estructuras
+typedef struct {		// Struct de eventos
+	int id;
+	char visitado;
+	unsigned long FechaHoraVisitado;
+	GPSPosition gpsPosition;
+}CHECKPOINT;
+
+// Definicion de variables GLOBALES
+CHECKPOINT checkpoints[MAX_CHECKPOINTS];		// Lista de checkpoints GLOBAL
+int CHKP_RADIO;
+/*** EndHeader */
+
+
+
+/*** BeginHeader CHECKPOINT_Checkpoints_init */
+void CHECKPOINT_Checkpoints_init();
+/*** EndHeader */
+void CHECKPOINT_Checkpoints_init(){
+
+	int i;
+
+	for (i=0;i<MAX_CHECKPOINTS;i++){
+		checkpoints[i].visitado = 0xFF;
+	}
+#ifdef DEBUG
+	printf("\nDEBUG: Eventos iniciados correctamente");
+#endif
+}
+
+
+
+/*** BeginHeader CHECKPOINT_agregarCheckpoint*/
+void CHECKPOINT_agregarCheckpoint(CHECKPOINT *p_tempcheckpoint);
+/*** EndHeader */
+void CHECKPOINT_agregarCheckpoint(CHECKPOINT *p_tempcheckpoint){
+
+	int posicion;
+
+	posicion = (p_tempcheckpoint->id) - 1;
+	checkpoints[posicion].id = p_tempcheckpoint->id;
+   checkpoints[posicion].visitado = 0;
+	checkpoints[posicion].gpsPosition = p_tempcheckpoint->gpsPosition;
+#ifdef DEBUG
+		printf("\nDEBUG: Checkpoint %u AGREGADO correctamente", posicion);
+#endif
+}
+
+
+
+/*** BeginHeader CHECKPOINT_configurarDistancia*/
+void CHECKPOINT_configurarDistancia(int *pradio);
+/*** EndHeader */
+void CHECKPOINT_configurarDistancia(int *pradio){
+
+	CHKP_RADIO = *pradio;
+   return;
+}

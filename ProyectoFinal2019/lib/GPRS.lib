@@ -22,6 +22,7 @@ const static char mensajes[][] = { 	"Mensaje de texto 0",
                            			"HELP"
 								};
 const static char google[] = { "https://www.google.com.uy/maps/?q=-"};
+
 /*** EndHeader */
 
 /*
