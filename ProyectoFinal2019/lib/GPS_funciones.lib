@@ -1,6 +1,10 @@
 // Libreria GPS
+#define T_HORA	300	
 
-
+/* La tarea de configuracion reloj, verifica cada 5 minutos la hora 
+en la placa y la contrasta con la hora real del GPS.
+Si es diferente setea la hora en la placa con la nueva hora.
+Si es igual no se hace nada */
 /*** BeginHeader tarea_config_Reloj */
 void tarea_config_Reloj(void* pdata);
 /*** EndHeader */
@@ -34,7 +38,7 @@ void tarea_config_Reloj(void* pdata){
 				RTC_fijarFechaHora(fechaHoraGPS );
 			}
 		}
-		OSTimeDlyHMSM(0,0,0,10);
+		OSTimeDlySec(T_HORA);
 
 	}
 }
@@ -80,7 +84,8 @@ void tarea_config_Reloj(void* pdata){
 		}
 	}*/
 
-
+/* Dada una Trama GPS, se obtiene la posicion de dicha trama
+Devuelve la posicion en el puntero pasado por parametros */
 /*** BeginHeader obtenerPosicion */
 void obtenerPosicion(char* tramaGPS, GPSPosition *posicion);
 /*** EndHeader */
@@ -98,15 +103,20 @@ void obtenerPosicion(char* tramaGPS, GPSPosition *posicion){
 
 }
 
-
+/* Dada una posicion actual (obtenida del GPS),
+se verifica si esa posicion esta en el radio acordado del checkpoint correspondiente
+pasado por parametro.
+La funcion devuelve 1 si la posicion esta dentro del rango del checkpoint 
+y 0 si no. */
 /*** BeginHeader verificarPosicion */
-int verificarPosicion(char* tramaGPS);
+int verificarPosicion(char* tramaGPS, int numCheckpoint);
 /*** EndHeader */
-int verificarPosicion(char* tramaGPS ){
+int verificarPosicion(char* tramaGPS, int numCheckpoint ){
 	GPSPosition* posicion;
 	CHECKPOINT * chp;
+	chp = CHECKPOINT[numCheckpoint]
 	float distancia;
-	distancia = gps_ground_distance( posicion, chp );
+	distancia = gps_ground_distance( posicion, chp ); // calcula la distancia entre ambos puntos en KM.
 	if (distancia <= RADIO){
 		return 1
 	}else{
@@ -115,7 +125,7 @@ int verificarPosicion(char* tramaGPS ){
 }
 
 
-
+/* Dada una posicion la imprime por consola */
 /*** BeginHeader imprimirPoscion */
 void imprimirPoscion(GPSPosition *pos);
 /*** EndHeader */
@@ -130,6 +140,7 @@ void imprimirPoscion(GPSPosition *pos){
 	printf("%d\n", longrados );
 }
 
+/* Data una posicion, devuelve una cadena con la longitud y la latitud */
 /*** BeginHeader stringPosicion */
 void stringPosicion(GPSPosition *pos, char* stringpos);
 /*** EndHeader */

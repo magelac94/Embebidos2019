@@ -9,6 +9,7 @@ enum CodMsg {
 	CHECKPOINT,
 	RITMOCARDIACO,
 	KEEPALIVE,
+	NO_KEEPALIVE,
 	HELP
 
 };
@@ -16,7 +17,8 @@ enum CodMsg {
 const static char mensajes[][] = { 	"Mensaje de texto 0",
                            			"CHECK POINT",
                            			"RITMO CARDIACO",
-                           			"KEEP ALIVE",
+                           			"KEEPALIVE",
+                           			"NO KEEPALIVE",
                            			"HELP"
 								};
 const static char google[] = { "https://www.google.com.uy/maps/?q=-"};
