@@ -2,7 +2,6 @@
 #define PINSIM		"1234"
 #define CODPROV		"74801"
 #define CELNUM		"\"095465669\""
-//#define CELNUM		"\"099948442\""
 
 enum CodMsg {
 	PRUEBA = 0,

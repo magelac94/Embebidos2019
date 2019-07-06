@@ -89,45 +89,6 @@ void GPSFUNCIONES_tarea_config_Reloj(void* pdata){
 
 
 
-
-/*	while(1){  // Configurar reloj cada 1 minuto o mas0
-
-		//memset(tramaGPS, 0, sizeof(p_str)); // limpio valones en memoria
-	//	memset(tramaGPS, 0, sizeof(tramaGPS)); // limpio valones en memoria
-
-		//resultado = GPS_gets(tramaGPS);
-		printf("resultado gets gps trama: %s\n", resultado );
-
-		//Imprimo Trama Completa
-		printf("\n TRAMA1: %s ", tramaGPS);
-
-
-		// Obtengo Fecha del GPS
-		Error = gps_get_utc( fechaHoraGPS, tramaGPS);		// ver si esta hora es de donde estoy ubicado
-
-		if (Error = 0){	// Si el resultado es correcto  sigo
-			// Convierto la fecha en timestamp
-			timestampGPS = mktime( fechaHoraGPS );
-
-			// Obtengo Fecha Placa
-			timestampRabbit = RTC_leerTimestamp();
-			RTC_leerFechaHora(fechaHoraRTC);
-
-			// Imprimir Fecha Placa
-			printf("\nHoy es: %02d/%02d/%d\n", fechaHoraRTC->tm_mday, fechaHoraRTC->tm_mon, 1900+fechaHoraRTC->tm_year);
-
-			// Evaluo si la fecha obtenida es igual a la que ya esta configurada
-			if (timestampGPS != timestampRabbit){
-
-				// Si no es igual la configuro con la fecha del GPS
-				RTC_fijarFechaHora(fechaHoraGPS );
-			}
-		}else{
-			printf("ERROR al leer get utc\n");
-			OSTimeDlyHMSM(0,0,1,100);
-		}
-	}*/
-
 /* Dada una Trama GPS, se obtiene la posicion de dicha trama
 Devuelve la posicion en el puntero pasado por parametros */
 /*** BeginHeader obtenerPosicion */
