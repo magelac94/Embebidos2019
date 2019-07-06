@@ -5,48 +5,52 @@
 #define BTN_IsPRESSED(x)	((BTN_GET(x)==0)?1:0)
 
 #define M_KEEPALIVE 	10		// Son los minutos de keepalive que la persona debe presionar algun bonton.
-#define S_KEEPALIVE (T_KEEPALIVE*60)  // Son los segundos de keepalive que la persona debe presionar algun boton.
+#define S_KEEPALIVE (M_KEEPALIVE*60)  // Son los segundos de keepalive que la persona debe presionar algun boton.
 unsigned long ULTIMO_KEEPALIVE; // Contiene el ultimo timestamp donde se presiono algun boton.
 /*** EndHeader */
 
 /*  Tarea que verifica en todo momento si algun boton es presionado.
 	Si alguno se presiona se realizan las acciones correspondientes
 	al boton seleccionado */
-/*** BeginHeader tarea_botones */
-void tarea_botones(void* trama);
+/*** BeginHeader CONTROLBOTONES_tarea_botones */
+void CONTROLBOTONES_tarea_botones(void* pdata);
 /*** EndHeader */
-void tarea_botones(void* trama){
+void CONTROLBOTONES_tarea_botones(void* pdata){
+	
 	int i;
+	
 	i = 0;
+	ULTIMO_KEEPALIVE = RTC_leerTimestamp();
+	OSTaskSuspend(OS_PRIO_SELF);
 	while(1)
 	{
 		for( i=0; i<8; i++ )
-		{ 
+		{
 			if( BTN_IsPRESSED(i) )
 			{
 				switch( i ){
 					case( 0 ):
-						botonesPosicion(trama, i);
+						botonesPosicion(tramaGPS, i);
 						break;
 					case( 1 ):
-						botonesPosicion(trama, i);
+						botonesPosicion(tramaGPS, i);
 						break;
 					case( 2 ):
-						botonesPosicion(trama, i);
+						botonesPosicion(tramaGPS, i);
 						break;
 					case( 3 ):
-						botonesPosicion(trama, i);
+						botonesPosicion(tramaGPS, i);
 						break;
 					case( 4 ):
-						botonesPosicion(trama, i);
+						botonesPosicion(tramaGPS, i);
 						break;
 					case( 5 ):
-						botonesPosicion(trama, i);
+						botonesPosicion(tramaGPS, i);
 						break;
 					case( 6 ):
 						botonKeepAlive();
 						break;
-					case( 7 ):						
+					case( 7 ):
 						botonAyuda();
 						break;
 				}
@@ -57,8 +61,8 @@ void tarea_botones(void* trama){
 	}
 }
 
-/* 	Cuando un boton es presionado y la accion es correcta, 
-	el led correspondiente. */ 
+/* 	Cuando un boton es presionado y la accion es correcta,
+	el led correspondiente. */
 /*** BeginHeader indicadorLed */
 void indicadorLed();
 /*** EndHeader */
@@ -66,9 +70,9 @@ void indicadorLed(int i){
 	LED_SET(i);
 }
 
-/* Recibe una trama y verifica si la posicion del GPS 
+/* Recibe una trama y verifica si la posicion del GPS
    se encuentra dentro del checkpoint configurado
-   si lo es enciende un led y envia un mensaje al 
+   si lo es enciende un led y envia un mensaje al
    organizador */
 /*** BeginHeader botonesPosicion */
 void botonesPosicion(char* tramaGPS, int i);
@@ -76,14 +80,14 @@ void botonesPosicion(char* tramaGPS, int i);
 void botonesPosicion(char* tramaGPS, int i){
 	int verificarPos;
 	ULTIMO_KEEPALIVE = RTC_leerTimestamp();
-	verificarPos = verificarPosicion(tramaGPS);
+	verificarPos = verificarPosicion(tramaGPS, i);
 	if(verificarPos == 1){
 		indicadorLed(i);
-		GPRS_sendsms(CHECKPOINT);
+		GPRS_sendsms(CHKPNT);
 	}
 }
 
-/* Boton KeepAlive la persona debe presionar 
+/* Boton KeepAlive la persona debe presionar
    el boton keepalive si no ha presionado ningun otro boton
    durante 10 minutos */
 /*** BeginHeader botonKeepAlive */
@@ -110,11 +114,11 @@ void verificar_keepalive();
 /*** EndHeader */
 void verificar_keepalive(){
 	unsigned long ts_hora_actual;
-	unsigned long diferencia;
+	unsigned long inactividad;
 
 	ts_hora_actual = RTC_leerTimestamp();
-	inactividad = ts_hora_actual - ULTIMO_KEEPALIVE
+	inactividad = ts_hora_actual - ULTIMO_KEEPALIVE;
 	if (inactividad > S_KEEPALIVE ){
-		GPRS_sendsms(NO_KEEPALIVE);	
-	}	
+		GPRS_sendsms(NO_KEEPALIVE);
+	}
 }

@@ -1,17 +1,17 @@
 #define DEBUG			// activo para imprimir mensajes de DEBUG
+//#define GPSDEBUG		// al activarlo imprime las tramas que llegan
 
 /* uCOS configuration */
-#define OS_MAX_TASKS				10		// Cantidad maxima de tareas que se pueden crear, sin contar STAT e IDLE
+#define OS_MAX_TASKS			9		// Cantidad maxima de tareas que se pueden crear, sin contar STAT e IDLE
 #define OS_TASK_SUSPEND_EN		1		// Habilitar suspender y resumir tareas
 #define OS_TASK_DEL_EN			1		// Habilitar eliminacion de tareas
 #define OS_TIME_DLY_HMSM_EN		1		// Habilitar la funcion de delay para pasar fecha y hora
-
 #define OS_Q_EN					1		// Habilitar colas (queues)
-#define OS_Q_POST_EN		  		1		// Enable posting messages to queue
+#define OS_Q_POST_EN		  	1		// Enable posting messages to queue
 #define OS_MAX_EVENTS			2		// MAX_TCP_SOCKET_BUFFERS + 0 Mbox + 1 Queue + 0 Semaforos
 #define STACK_CNT_256			2		// tarea_Led_Red + idle
-#define STACK_CNT_512			3		// main() + GPRS_tarea_encender_modem + CONSOLA_tarea_comandos_a_mano
-#define STACK_CNT_2K				3		// 1 Tareas TCP (MAX_TCP_SOCKET_BUFFERS)
+#define STACK_CNT_512			7		// main() + GPRS_tarea_encender_modem + CONSOLA_tarea_comandos_a_mano
+#define STACK_CNT_2K			2		// 1 Tareas TCP (MAX_TCP_SOCKET_BUFFERS)
 
 /* TCP/IP configuration */
 #define TCPCONFIG 0
@@ -26,15 +26,15 @@
 #define STDIO_ENABLE_LONG_STRING
 
 /* Incluimos las librerias luego de los define para sobre escribir los macros deseados */
-#use controlBotones.lib
 #use TSalud.lib
 #use RTC.lib
 #use GPS_Custom.lib
-#use GPS_funciones.LIB
 #use IO.lib
 #use LED.lib
-#use GPRS.lib
 #use CHECKPOINT.lib
+#use GPRS.lib
+#use GPS_funciones.LIB
+#use controlBotones.lib
 #use CONSOLA.lib
 #use TCP1.lib
 #use Utilities.lib
@@ -44,6 +44,16 @@
 #use "dcrtcp.lib"
 #use MENU.lib
 
+enum prioridadTareas{
+	TAREA_LED = 5,
+	TAREA_MODEM,
+	TAREA_TCP,
+	TAREA_GPSINIT,
+	TAREA_GPS,
+	TAREA_RELOJ,
+	TAREA_SALUD,
+	TAREA_BOTONES
+};
 /* Definicion de semaforos, mbox y queues. GLOBALES*/
 OS_EVENT *SmsQ;
 void* SmsQStorage[5]; // La queue tiene para guardar 5 mensajes pendientes.
@@ -54,8 +64,7 @@ char ID_PARTICIPANTE[33];
 main(){
 	// Variables
 	auto INT8U Error;
-	//static tcp_Socket un_tcp_socket[MAX_TCP_SOCKET_BUFFERS];
-	char* tramaGPS;
+	static tcp_Socket un_tcp_socket[MAX_TCP_SOCKET_BUFFERS];
 
   // Inicializa el hardware de la placa
 	HW_init();
@@ -83,18 +92,14 @@ main(){
  	SmsQ = OSQCreate(&SmsQStorage[0], 5); // Crear una cola donde poner los mensajes a enviar
 
 	//Creacion de tareas
-	Error = OSTaskCreate(LED_tarea_led_red, NULL, 256, 5);
-	Error = OSTaskCreate(GPRS_tarea_modem, NULL, 512, 6);	//INA
-  //	Error = OSTaskCreate(CONSOLA_tarea_comandos_a_mano, NULL, 512,7);
-  	Error = OSTaskCreate(TCP1_tarea_interfaz_tcp, &un_tcp_socket[0], 2048, 9 );
-
-//	Error = OSTaskCreate(GPS_init, NULL, 2048, 8); // Inicializa Hardware GPS - Ejecuta 1 vez
-//	Error = OSTaskCreate(GPS_gets, tramaGPS,2048 , 9); // Se obtiene datos gps
-  
-//	Error = OSTaskCreate(tarea_config_Reloj, tramaGPS, 2048 , 10 );
-	Error = OSTaskCreate(tarea_salud,NULL, 2048, 11);
-
-	Error = OSTaskCreate(tarea_botones,tramaGPS, 2048, 12);
+	Error = OSTaskCreate(LED_tarea_led_red, NULL, 256, TAREA_LED);
+	Error = OSTaskCreate(GPRS_tarea_modem, NULL, 512, TAREA_MODEM);
+  	Error = OSTaskCreate(TCP1_tarea_interfaz_tcp, &un_tcp_socket[0], 2048, TAREA_TCP );
+	Error = OSTaskCreate(GPS_init, NULL, 512, TAREA_GPSINIT); // Inicializa Hardware GPS - Ejecuta 1 vez
+	Error = OSTaskCreate(GPSFUNCIONES_tarea_obtenertrama, NULL, 512 , TAREA_GPS); // Se obtiene datos gps
+	Error = OSTaskCreate(GPSFUNCIONES_tarea_config_Reloj, NULL, 512 , TAREA_RELOJ );
+	Error = OSTaskCreate(TSALUD_tarea_salud,NULL, 512, TAREA_SALUD);
+	Error = OSTaskCreate(CONTROLBOTONES_tarea_botones,NULL, 512, TAREA_BOTONES);
 
  // Re-habilitamos scheduling
 	OSSchedUnlock();

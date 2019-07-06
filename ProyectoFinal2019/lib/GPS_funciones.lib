@@ -1,41 +1,85 @@
 // Libreria GPS
-#define T_HORA	300	
+/*** BeginHeader */
+#define T_HORA	300
 
-/* La tarea de configuracion reloj, verifica cada 5 minutos la hora 
+char tramaGPS[GPS_MAX_BUF_SIZE];
+
+/*** EndHeader */
+
+/*** BeginHeader GPSFUNCIONES_tarea_obtenertrama */
+void GPSFUNCIONES_tarea_obtenertrama( void* pdata );
+/*** EndHeader */
+void GPSFUNCIONES_tarea_obtenertrama( void* pdata ){
+
+	int status, tareareloj;
+	char temp_tramaGPS[GPS_MAX_BUF_SIZE];
+
+	tareareloj = 1;
+
+	while (1){
+		status = GPS_gets(temp_tramaGPS);
+		if (status == 1){
+			strcpy(tramaGPS, temp_tramaGPS);
+			if(tareareloj){
+				tareareloj = 0;
+				OSTaskResume(TAREA_RELOJ);
+			}
+		#ifdef GPSDEBUG
+			printf("Respuesta del GPS: Trama correcta\n");
+			printf("data:\n%s\n", tramaGPS);
+		#endif
+		}else{
+		#ifdef GPSDEBUG
+			printf("Respuesta del GPS: ERROR: Trama incompleta\n");
+			printf("data:\n%s\n", temp_tramaGPS);
+		#endif
+		}
+	OSTimeDlyHMSM(0,0,1,500);
+	}
+}
+
+/* La tarea de configuracion reloj, verifica cada 5 minutos la hora
 en la placa y la contrasta con la hora real del GPS.
 Si es diferente setea la hora en la placa con la nueva hora.
 Si es igual no se hace nada */
-/*** BeginHeader tarea_config_Reloj */
-void tarea_config_Reloj(void* pdata);
+/*** BeginHeader GPSFUNCIONES_tarea_config_Reloj */
+void GPSFUNCIONES_tarea_config_Reloj(void* pdata);
 /*** EndHeader */
-void tarea_config_Reloj(void* pdata){
-	struct tm* fechaHoraGPS;
-	struct tm* fechaHoraRTC;
+void GPSFUNCIONES_tarea_config_Reloj(void* pdata){
+	struct tm fechaHoraGPS;
+	struct tm fechaHoraRTC;
 	unsigned long timestampGPS;
 	unsigned long timestampRabbit;
 	auto INT8U Error;
-
-	char* p_str;
-	char* tramaGPS;
-	int resultado;
-
+	int resultado, tareasalud;
+	
+	tareasalud = 1;
+	
+	OSTaskSuspend(OS_PRIO_SELF);
 	while(1){
-		printf("TRAMA: %s\n", pdata);
-		Error = gps_get_utc( fechaHoraGPS, pdata);
+		printf("TRAMA: %s\n", tramaGPS);
+		Error = gps_get_utc( &fechaHoraGPS, tramaGPS);
 
-		RTC_leerFechaHora(fechaHoraRTC);
-		printf("\nHoy es: %02d/%02d/%d\n", fechaHoraRTC->tm_mday, fechaHoraRTC->tm_mon, 1900+fechaHoraRTC->tm_year);
+		RTC_leerFechaHora(&fechaHoraRTC);
+		printf("\nHoy es: %02d/%02d/%d\n", fechaHoraRTC.tm_mday, fechaHoraRTC.tm_mon, 1900+fechaHoraRTC.tm_year);
 
 
 		if (Error == 0){
-			timestampGPS = mktime( fechaHoraGPS );
-
+			timestampGPS = mktime( &fechaHoraGPS );
+			timestampGPS = (timestampGPS - 108000); // restar al timestamp 3 horas
 			timestampRabbit = RTC_leerTimestamp();
 
 			if (timestampGPS != timestampRabbit){
 
 				// Si no es igual la configuro con la fecha del GPS
-				RTC_fijarFechaHora(fechaHoraGPS );
+				RTC_fijarFechaHora(&fechaHoraGPS);
+				RTC_leerFechaHora(&fechaHoraRTC);
+				printf("\nHoy es: %02d/%02d/%d\n", fechaHoraRTC.tm_mday, fechaHoraRTC.tm_mon, 1900+fechaHoraRTC.tm_year);
+				if(tareasalud){
+					tareasalud = 0;
+					OSTaskResume(TAREA_SALUD);
+					OSTaskResume(TAREA_BOTONES);
+				}
 			}
 		}
 		OSTimeDlySec(T_HORA);
@@ -106,19 +150,20 @@ void obtenerPosicion(char* tramaGPS, GPSPosition *posicion){
 /* Dada una posicion actual (obtenida del GPS),
 se verifica si esa posicion esta en el radio acordado del checkpoint correspondiente
 pasado por parametro.
-La funcion devuelve 1 si la posicion esta dentro del rango del checkpoint 
+La funcion devuelve 1 si la posicion esta dentro del rango del checkpoint
 y 0 si no. */
 /*** BeginHeader verificarPosicion */
 int verificarPosicion(char* tramaGPS, int numCheckpoint);
 /*** EndHeader */
 int verificarPosicion(char* tramaGPS, int numCheckpoint ){
-	GPSPosition* posicion;
-	CHECKPOINT * chp;
-	chp = CHECKPOINT[numCheckpoint]
+
 	float distancia;
-	distancia = gps_ground_distance( posicion, chp ); // calcula la distancia entre ambos puntos en KM.
-	if (distancia <= RADIO){
-		return 1
+   GPSPosition* posicion;
+
+   distancia = gps_ground_distance( posicion, &checkpoints[numCheckpoint].gpsPosition ); // calcula la distancia entre ambos puntos en KM.
+
+   if (distancia <= CHKP_RADIO){
+		return 1;
 	}else{
 		return 0;
 	}

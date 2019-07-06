@@ -1,17 +1,18 @@
 /*** BeginHeader */
 #define RIT_MAX		3000
 #define RIT_MIN		1000
-#define T_CONTROL	300	   	//Tiempo en SEGUNDOS, en los que se chequea el ritmo cardiaco
+#define T_CONTROL	10	   	//Tiempo en SEGUNDOS, en los que se chequea el ritmo cardiaco
 
 /*** EndHeader */
 
-/*** BeginHeader tarea_salud */
-void tarea_salud(int* pdata);
+/*** BeginHeader TSALUD_tarea_salud */
+void TSALUD_tarea_salud(int* pdata);
 /*** EndHeader */
-void tarea_salud(int* pdata){
+void TSALUD_tarea_salud(int* pdata){
 	int ritmo_cardiaco;
 	char* mensaje;
-
+	
+	OSTaskSuspend(OS_PRIO_SELF);
 	while(1){
    	ritmo_cardiaco = 3000;
    	OSTimeDlySec(T_CONTROL);

@@ -49,43 +49,41 @@ int GPS_gets( char* p_str );
 /*** EndHeader */
 int GPS_gets( char* p_str ){
 
-  char data[GPS_MAX_BUF_SIZE];
-  char* start;
-  char* end;
-while(1){
-  serBrdFlush();
-  OSTimeDlyHMSM(0,0,1,500); // Espero a recibir por lo menos una trama
+	char data[GPS_MAX_BUF_SIZE];
+	char* start;
+	char* end;
 
-  if (serBrdUsed() == 0)
-  {
-    return -1;
-  }
+	serBrdFlush();
+	OSTimeDlyHMSM(0,0,1,500); // Espero a recibir por lo menos una trama
+	if (serBrdUsed() == 0){
+		return -1;
+	}
 
-  serBread(data, GPS_MAX_BUF_SIZE, 1);
+	serBread(data, GPS_MAX_BUF_SIZE, 1);
 
-  start = strchr(data, '$');
-  if(start == NULL)
-  {
-    return -2;
-  }
+	start = strchr(data, '$');
+	if(start == NULL){
+		return -2;
+	}
 
-  end = strchr(start, '*');
-  if(end == NULL)
-  {
-    return -3;
-  }
-  *(end+3) = 0;
+	end = strchr(start, '*');
+	if(end == NULL){
+		return -3;
+	}
+	*(end+3) = 0;
 
-  if(memcmp( start, "$GPRMC", strlen("$GPRMC") ) == 0)
-  {	//Si la trama es del tipo RMC la leo, sino, la ignoro
-     strcpy(p_str, start);
-     return 1;
-  }
-  else
-  {
-    return 0;
-  }
-
-}
+	if(memcmp( start, "$GPRMC", strlen("$GPRMC") ) == 0){
+		//Si la trama es del tipo RMC la leo, sino, la ignoro
+		if( *(start + GPS_VALID_DATA_IDX) == GPS_VALID_DATA){
+			strcpy(p_str, start);
+			return 1;
+		}else{
+         strcpy(p_str, start);
+			return -4;
+		}
+	}
+	else{
+		return 0;
+	}
 
 }
