@@ -1,8 +1,5 @@
 /*** BeginHeader */
-#define RIT_MAX		3000
-#define RIT_MIN		1000
-#define T_CONTROL	10	   	//Tiempo en SEGUNDOS, en los que se chequea el ritmo cardiaco
-
+int RIT_MAX, RIT_MIN, T_CONTROL; //Tiempo en SEGUNDOS, en los que se chequea el ritmo cardiaco
 /*** EndHeader */
 
 /*** BeginHeader TSALUD_tarea_salud */
@@ -13,6 +10,7 @@ void TSALUD_tarea_salud(int* pdata){
 	char* mensaje;
 	
 	OSTaskSuspend(OS_PRIO_SELF);
+	
 	while(1){
    	ritmo_cardiaco = 3000;
    	OSTimeDlySec(T_CONTROL);
@@ -24,4 +22,46 @@ void TSALUD_tarea_salud(int* pdata){
 			printf("OK %u\n",ritmo_cardiaco );
 		}
 	}
+}
+
+
+
+/*** BeginHeader TSALUD_configurarRC */
+//int TSALUD_configurarRC( int constantesRC[] );
+/*** EndHeader */
+/*
+int TSALUD_configurarRC( int constantesRC[] ){
+	int status;
+	
+	status = 0;
+	
+	RIT_MAX = constantesRC[0];
+	RIT_MIN = constantesRC[1];
+#ifdef DEBUG
+	printf("\nDEBUG: TSALUD_configurarRC: RIT_MAX = %u; RIT_MIN = %u\n", RIT_MAX, RIT_MIN);
+#endif	
+	// chequear que esten bien seteadas
+	if (1){
+		status = 1;
+	}
+	return status;
+}
+*/
+/*** BeginHeader TSALUD_configurarInactividad */
+int TSALUD_configurarInactividad( int* pinactividad );
+/*** EndHeader */
+int TSALUD_configurarInactividad( int* pinactividad ){
+	int status;
+	
+	status = 0;
+
+	T_CONTROL = *pinactividad;
+#ifdef DEBUG
+	printf("\nDEBUG: TSALUD_configurarInactividad: T_CONTROL = %u\n", T_CONTROL);
+#endif		
+	// chequear que esten bien seteadas
+	if (1){
+		status = 1;
+	}
+	return status;	
 }

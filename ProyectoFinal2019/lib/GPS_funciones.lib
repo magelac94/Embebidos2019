@@ -52,9 +52,10 @@ void GPSFUNCIONES_tarea_config_Reloj(void* pdata){
 	unsigned long timestampRabbit;
 	auto INT8U Error;
 	int resultado, tareasalud;
-	
+   GPSPosition unaPos;
+
 	tareasalud = 1;
-	
+
 	OSTaskSuspend(OS_PRIO_SELF);
 	while(1){
 		printf("TRAMA: %s\n", tramaGPS);
@@ -63,6 +64,12 @@ void GPSFUNCIONES_tarea_config_Reloj(void* pdata){
 		RTC_leerFechaHora(&fechaHoraRTC);
 		printf("\nHoy es: %02d/%02d/%d\n", fechaHoraRTC.tm_mday, fechaHoraRTC.tm_mon, 1900+fechaHoraRTC.tm_year);
 
+      gps_get_position(&unaPos, tramaGPS);
+      printf( "\n--------------------------------------\n\
+			Coordenadas:\n\
+			Latitud: %u%.4f\n\
+			Longitud: %u%.4f\n\
+			", unaPos.lat_degrees, unaPos.lat_minutes,unaPos.lon_degrees, unaPos.lon_minutes);
 
 		if (Error == 0){
 			timestampGPS = mktime( &fechaHoraGPS );

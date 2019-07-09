@@ -61,6 +61,10 @@ void* SmsQStorage[5]; // La queue tiene para guardar 5 mensajes pendientes.
 /* Definicion de otras variables. GLOBALES*/
 char ID_PARTICIPANTE[33];
 
+/* Array para almacenar datos de config en el UserBlock*/
+void* save_data[6];
+unsigned int save_lens[6];
+
 main(){
 	// Variables
 	auto INT8U Error;
@@ -69,11 +73,33 @@ main(){
   // Inicializa el hardware de la placa
 	HW_init();
 
-	// Inicializa la estructura de datos interna del sistema operativo uC/OS-II
-	OSInit();
-
 	// Inicializacion de Checkpoints
 	CHECKPOINT_Checkpoints_init();
+
+	// Inicializacion de otras Variables
+	strcpy(ID_PARTICIPANTE," ");
+	CHKP_RADIO = 0;
+	RIT_MAX = 0;
+	RIT_MIN = 0;
+	T_CONTROL = 0;
+
+	// Leemos si hay config guardada en UserBlock
+	save_data[0] = checkpoints;
+	save_lens[0] = sizeof(checkpoints);
+	save_data[1] = &CHKP_RADIO;
+	save_lens[1] = sizeof(CHKP_RADIO);
+	save_data[2] = ID_PARTICIPANTE;
+	save_lens[2] = sizeof(ID_PARTICIPANTE);
+	save_data[3] = &RIT_MAX;
+	save_lens[3] = sizeof(RIT_MAX);
+	save_data[4] = &RIT_MIN;
+	save_lens[4] = sizeof(RIT_MIN);
+	save_data[5] = &T_CONTROL;
+	save_lens[5] = sizeof(T_CONTROL);
+	readUserBlockArray(save_data, save_lens, 6, 0);
+
+	// Inicializa la estructura de datos interna del sistema operativo uC/OS-II
+	OSInit();
 
 	// Iniciamos el stack TCP/IP
 #ifdef DEBUG
@@ -98,8 +124,8 @@ main(){
 	Error = OSTaskCreate(GPS_init, NULL, 512, TAREA_GPSINIT); // Inicializa Hardware GPS - Ejecuta 1 vez
 	Error = OSTaskCreate(GPSFUNCIONES_tarea_obtenertrama, NULL, 512 , TAREA_GPS); // Se obtiene datos gps
 	Error = OSTaskCreate(GPSFUNCIONES_tarea_config_Reloj, NULL, 512 , TAREA_RELOJ );
-	Error = OSTaskCreate(TSALUD_tarea_salud,NULL, 512, TAREA_SALUD);
-	Error = OSTaskCreate(CONTROLBOTONES_tarea_botones,NULL, 512, TAREA_BOTONES);
+//	Error = OSTaskCreate(TSALUD_tarea_salud,NULL, 512, TAREA_SALUD);
+//	Error = OSTaskCreate(CONTROLBOTONES_tarea_botones,NULL, 512, TAREA_BOTONES);
 
  // Re-habilitamos scheduling
 	OSSchedUnlock();

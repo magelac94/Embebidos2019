@@ -12,7 +12,7 @@ void TCP1_tarea_interfaz_tcp(void* pdata){
 	char buffer[TAMANIO_BUFFER_LE];
 	tcp_Socket* pun_tcp_socket;
 	CHECKPOINT unCheckpoint;
-	auto int int_opcion_menu, int_id_checkpoint, radio;
+	auto int int_opcion_menu, int_id_checkpoint, radio, inactividad,constantesRC[2];
 	auto INT8U Error;
 
 	pun_tcp_socket = (tcp_Socket*)pdata;
@@ -45,7 +45,7 @@ void TCP1_tarea_interfaz_tcp(void* pdata){
 			printf("\nDEBUG: Conexion establecida\n");
 #endif
 			sock_mode(pun_tcp_socket, TCP_MODE_ASCII);
-			do {
+			while(tcp_tick(pun_tcp_socket)) {
 
 				// Se muestra menu y se espera opcion
 				MENU_mostrarMenuPrincipal( TCP, buffer, pun_tcp_socket );
@@ -91,17 +91,15 @@ void TCP1_tarea_interfaz_tcp(void* pdata){
 
 					case( OPCION_7 ):
 						// CONFIGURAR TIEMPO DE INACTIVIDAD
-						MENU_configurarInactividad( TCP, buffer, pun_tcp_socket );
-						//ACA Alguna funcion del la libreria SALUD
+						MENU_configurarInactividad( TCP, &inactividad,buffer, pun_tcp_socket );
+						TSALUD_configurarInactividad(&inactividad);
 						break;
 
 					case( OPCION_8 ):
 						// BORRAR TODOS LOS MENSAJES DE TEXTO
 						GPRS_DeleteAllSmss();
-						break;
-						
-					case( OPCION_9 ):
 						// GUARDAR Y SALIR
+						MENU_guardar(TCP, buffer, pun_tcp_socket);
 						break;
 
 					default:
@@ -111,7 +109,7 @@ void TCP1_tarea_interfaz_tcp(void* pdata){
 						OSTimeDlyHMSM(0,0,0,500);
 				}
 				OSTimeDlyHMSM(0,0,0,500);
-			} while(tcp_tick(pun_tcp_socket));
+			}
 		}
 #ifdef DEBUG
 		printf("\nDEBUG: Conexion finalizada....\n");

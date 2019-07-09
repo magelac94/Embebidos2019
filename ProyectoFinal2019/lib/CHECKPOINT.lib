@@ -42,8 +42,9 @@ void CHECKPOINT_agregarCheckpoint(CHECKPOINT *p_tempcheckpoint){
 	int posicion;
 
 	posicion = (p_tempcheckpoint->id) - 1;
+	
 	checkpoints[posicion].id = p_tempcheckpoint->id;
-   checkpoints[posicion].visitado = 0;
+	checkpoints[posicion].visitado = 0;
 	checkpoints[posicion].gpsPosition = p_tempcheckpoint->gpsPosition;
 #ifdef DEBUG
 		printf("\nDEBUG: Checkpoint %u AGREGADO correctamente", posicion);
@@ -58,5 +59,8 @@ void CHECKPOINT_configurarDistancia(int *pradio);
 void CHECKPOINT_configurarDistancia(int *pradio){
 
 	CHKP_RADIO = *pradio;
-   return;
+#ifdef DEBUG
+	printf("\nDEBUG: Distancia al  heckpoint configurada correctamente: %u", CHKP_RADIO);
+#endif
+	return;
 }

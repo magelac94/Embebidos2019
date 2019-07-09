@@ -70,7 +70,7 @@ int GPS_gets( char* p_str ){
 	if(end == NULL){
 		return -3;
 	}
-	*(end+3) = 0;
+	*(end+3) = '\0';
 
 	if(memcmp( start, "$GPRMC", strlen("$GPRMC") ) == 0){
 		//Si la trama es del tipo RMC la leo, sino, la ignoro
@@ -78,7 +78,6 @@ int GPS_gets( char* p_str ){
 			strcpy(p_str, start);
 			return 1;
 		}else{
-         strcpy(p_str, start);
 			return -4;
 		}
 	}
