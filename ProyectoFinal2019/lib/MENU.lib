@@ -512,13 +512,14 @@ void MENU_configurarInactividad( enum tipoUI interfazAUsar, int *pinactividad, c
 	enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
 
 
-	sprintf( pbuffer, "\nIngrese Timpo de Checkeo de Ritmo Cardiaco (en minutos de 1 a 9): ");
+	sprintf( pbuffer, "\nIngrese Timpo de Checkeo de Ritmo Cardiaco (en segundos): ");
 	enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
 	obtener_de_ui( interfazAUsar, pbuffer, pun_tcp_socket);
 	int_opcion = atoi( pbuffer );
 
    if ( int_opcion > 1 && int_opcion <5000 ){
 		T_CONTROL = int_opcion;
+  //		enviar_a_ui( interfazAUsar, T_CONTROL, pun_tcp_socket );
 		}
 }
 
