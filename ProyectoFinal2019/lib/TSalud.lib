@@ -1,5 +1,5 @@
 /*** BeginHeader */
-int RIT_MAX, RIT_MIN, T_CONTROL; //Tiempo en SEGUNDOS, en los que se chequea el ritmo cardiaco
+int RIT_MAX, RIT_MIN, T_CONTROL; //Tiempo en MINUTOS, en los que se chequea el ritmo cardiaco
 /*** EndHeader */
 
 /*** BeginHeader TSALUD_tarea_salud */
@@ -15,7 +15,7 @@ void TSALUD_tarea_salud(int* pdata){
    	#endif
 	while(1){
    	ritmo_cardiaco = 3000;
-   	OSTimeDlySec(T_CONTROL);
+   	OSTimeDlySec(T_CONTROL); // paso el valor pasado (minutos) a segundos
 		ritmo_cardiaco = IO_getAnalogInput(1);
 		if(ritmo_cardiaco < RIT_MIN || ritmo_cardiaco > RIT_MAX)
 		{

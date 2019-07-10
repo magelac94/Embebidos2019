@@ -130,7 +130,7 @@ main(){
 	Error = OSTaskCreate(GPSFUNCIONES_tarea_obtenertrama, NULL, 512 , TAREA_GPS); // 5
 	Error = OSTaskCreate(GPSFUNCIONES_tarea_config_Reloj, NULL, 512 , TAREA_RELOJ ); // 6
 	Error = OSTaskCreate(TSALUD_tarea_salud,NULL, 512, TAREA_SALUD); // 7
-	Error = OSTaskCreate(CONTROLBOTONES_tarea_botones,NULL, 2048, TAREA_BOTONES); // 8
+	Error = OSTaskCreate(CONTROLBOTONES_tarea_botones,NULL, 512, TAREA_BOTONES); // 8
 
  	// Re-habilitamos scheduling
 	OSSchedUnlock();

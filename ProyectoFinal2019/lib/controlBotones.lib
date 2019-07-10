@@ -113,7 +113,7 @@ void botonesPosicion(char* tramaGPS, int num_checkpoint){
 	}else{
 		indicadorLed(num_checkpoint);	// prende led correpondiente
 		OSTimeDlySec(1);
-		LED_RESET(num_checkpoint);
+		LED_RESET(num_checkpoint);		// lo apaga para indicar que no ha llegado a la posicion
 		OSTimeDlySec(1);
 	}
 }

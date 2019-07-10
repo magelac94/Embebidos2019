@@ -179,22 +179,14 @@ void stringPosicion(GPSPosition pos, char* stringpos){
 
 	int latgrados,longrados;
 	float minlat, minlon;
-  	char latgradoss[2], longradoss[2], minlats[6],minlons[6];
 
 	latgrados = pos.lat_degrees;
 	longrados = pos.lon_degrees;
 	minlat = pos.lat_minutes;
 	minlon = pos.lon_minutes;
 
-   itoa(latgrados, latgradoss);
-   itoa(longrados, longradoss);
-//   itoa(minlat, minlats);
-//   itoa(minlon, minlons);
 	memset(stringpos, 0, sizeof(stringpos));
-	sprintf(stringpos, "%s-%s",latgradoss,longradoss);
-
-
-	//stringpos = latgradoss + "-" + longradoss ;
+	sprintf(stringpos, "%u%f-%u%f",latgrados,minlat,longrados,minlon);
 
 	#ifdef GPSDEBUG
 			printf("\n String Posicion: %s\n", stringpos);

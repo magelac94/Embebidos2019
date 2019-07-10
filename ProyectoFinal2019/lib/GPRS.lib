@@ -476,9 +476,10 @@ int GPRS_modem_sendsms(char mensaje[]){
 	return status;
 }
 
-// Funcion a ser utilizada por otros componentes del sistema para poder enviar mensajes
-// En este momento la funcion es un prototipo que retorna siempre 1
-/*
+/* 	Funcion a ser utilizada por otros componentes del sistema para poder enviar mensajes
+	La funcion obtiene la ultima posicion valida y la envia en un mensaje de texto indicando
+	el tipo de mensaje, el id del participante y la posicion donde se encuentra
+
 PARAMETROS:
 	id_mensaje - Un enum que indica cual de los mensajes precargados se desea enviar
 RETORNA:
@@ -497,18 +498,18 @@ int GPRS_sendsms(enum CodMsg id_mensaje){
 
 	status = 0;
 
-	obtenerPosicion(unaPos);
-	stringPosicion(unaPos, string );
-	printf(string);
+	obtenerPosicion(unaPos);			// de la ultima trama valida obtiene una posicion (GPS Position)
+	stringPosicion(unaPos, string );	// se obtiene un string de la posicion pasada por parametros
+	printf(string);						// imprimo a modo de debug
 
 	memset(mensaje, 0, sizeof(mensaje));  // limpio mensaje
 
 	sprintf(mensaje, "ID:%s - %s - %s%s", ID_PARTICIPANTE, mensajes[id_mensaje],google,string); // formato mensaje a enviar
 	#ifdef GPRSDEBUG
-		printf(mensaje);
+		printf(mensaje);		// imprimo mensaje a enviar a modo de debug
 	#endif
 
-	ERROR = OSQPost(SmsQ, (void *)&mensaje);
+	ERROR = OSQPost(SmsQ, (void *)&mensaje);	// mensaje en la cola
 
 	if ( ERROR == OS_NO_ERR){
 		status = 1;

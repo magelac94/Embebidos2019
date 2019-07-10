@@ -420,7 +420,7 @@ void MENU_configurarIDParticipante( enum tipoUI interfazAUsar, char* pbuffer, tc
 void MENU_configurarIDParticipante( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket ){
 
 	int int_opcion;
-	
+
 	// Metemos en el pbuffer el texto formateado
 	sprintf( pbuffer, "\n\n-------- CONFIGURAR ID PARTICIPANTE ------------" );
 	// Mandamos el pbuffer a la interfaz a usar
@@ -448,14 +448,14 @@ void MENU_configurarIDParticipante( enum tipoUI interfazAUsar, char* pbuffer, tc
 void MENU_configurarRC( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket );
 /*** EndHeader */
 void MENU_configurarRC( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket ){
-	
+
 	int int_opcion;
-	
+
 	// Metemos en el pbuffer el texto formateado
 	sprintf( pbuffer, "\n\n--- CONFIGURAR RITMO CARDIACO ---" );
 	// Mandamos el pbuffer a la interfaz a usar
 	enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
-	
+
 	while(1){
 		// Metemos en el pbuffer el texto formateado
 		sprintf( pbuffer, "\nIngrese el Ritmo cardiaco MAXIMO: ");
@@ -463,7 +463,7 @@ void MENU_configurarRC( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pu
 		enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
 		// Obtenemos la opcion de la UI deseada
 		obtener_de_ui( interfazAUsar, pbuffer, pun_tcp_socket);
-		
+
 		// Convertimos a int
 		int_opcion = atoi( pbuffer );
 		// Validacion de RIT_MAX
@@ -475,7 +475,7 @@ void MENU_configurarRC( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pu
 			enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
 			// Obtenemos la opcion de la UI deseada
 			obtener_de_ui( interfazAUsar, pbuffer, pun_tcp_socket);
-			
+
 			// Convertimos a int
 			int_opcion = atoi( pbuffer );
 			// Validacion de RIT_MAX
@@ -505,23 +505,32 @@ void MENU_configurarRC( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pu
 void MENU_configurarInactividad( enum tipoUI interfazAUsar, int *pinactividad, char* pbuffer, tcp_Socket* pun_tcp_socket );
 /*** EndHeader */
 void MENU_configurarInactividad( enum tipoUI interfazAUsar, int *pinactividad, char* pbuffer, tcp_Socket* pun_tcp_socket ){
-	
+	int int_opcion;
 	// Metemos en el pbuffer el texto formateado
 	sprintf( pbuffer, "\n\n--- CONFIGURAR INACTIVIDAD ---" );
 	// Mandamos el pbuffer a la interfaz a usar
 	enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
 
+
+	sprintf( pbuffer, "\nIngrese Timpo de Checkeo de Ritmo Cardiaco (en minutos de 1 a 9): ");
+	enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
+	obtener_de_ui( interfazAUsar, pbuffer, pun_tcp_socket);
+	int_opcion = atoi( pbuffer );
+
+   if ( int_opcion > 1 && int_opcion <5000 ){
+		T_CONTROL = int_opcion;
+		}
 }
 
 /*** BeginHeader MENU_guardar */
 int MENU_guardar( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket );
 /*** EndHeader */
 int MENU_guardar( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_socket ){
-	
+
 	int status, i;
-	
+
 	status = 0;
-	
+
 	// Revisar que todos los checkpoints estan configurados
 	for (i=0;i<MAX_CHECKPOINTS;i++){
 		if (checkpoints[i].visitado == 0xFF){
@@ -533,7 +542,7 @@ int MENU_guardar( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_
 			return status;
 		}
 	}
-	
+
 	// Revisar CHKP_RADIO este configurado
 	if ( !CHKP_RADIO ){
 		status = 3;
@@ -541,7 +550,7 @@ int MENU_guardar( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_
 		sprintf( pbuffer, "\nERROR: MENU_guardar: CHKP_RADIO: Radio no ingresado" );
 		// Mandamos el pbuffer a la interfaz a usar
 		enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
-		return status;		
+		return status;
 	}
 	// Revisar ID_PARTICIPANTE este configurado
 	if ( ID_PARTICIPANTE == " " ){
@@ -550,7 +559,7 @@ int MENU_guardar( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_
 		sprintf( pbuffer, "\nERROR: MENU_guardar: ID_PARTICIPANTE: ID Participante no ingresado" );
 		// Mandamos el pbuffer a la interfaz a usar
 		enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
-		return status;		
+		return status;
 	}
 	// Revisar RIT_MAX, RIT_MIN esten configurados
 	if ( !RIT_MAX || !RIT_MIN ){
@@ -559,21 +568,21 @@ int MENU_guardar( enum tipoUI interfazAUsar, char* pbuffer, tcp_Socket* pun_tcp_
 		sprintf( pbuffer, "\nERROR: MENU_guardar: RIT_MAX,RIT_MIN: Ritmo cardiaco MAX o MIN no ingresado" );
 		// Mandamos el pbuffer a la interfaz a usar
 		enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
-		return status;		
-	}	
-	// Revisar T_CONTROL este configurado
+		return status;
+	}
+	// Revisar T_CONTROL este configurado, el el tiempo de control de ritmo cardiaco
 	if ( !T_CONTROL ){
 		status = 6;
 		// Metemos en el pbuffer el texto formateado
 		sprintf( pbuffer, "\nERROR: MENU_guardar: T_CONTROL: Tiempo de control no ingresado" );
 		// Mandamos el pbuffer a la interfaz a usar
 		enviar_a_ui( interfazAUsar, pbuffer, pun_tcp_socket );
-		return status;		
-	}	
+		return status;
+	}
 	// Guardar al USERBLOCK
-	
+
 	/* Save the data to the user block */
 	writeUserBlockArray(0, save_data, save_lens, 6);
 	status = 1;
-	return status;	
+	return status;
 }
