@@ -16,11 +16,11 @@ void TCP1_tarea_interfaz_tcp(void* pdata){
 	auto INT8U Error;
 
 	pun_tcp_socket = (tcp_Socket*)pdata;
-
+	
 	while(1) {
 		// Ponemos el socket en estado de escucha
 		if (!tcp_listen(pun_tcp_socket, LPORT, 0, 0, NULL, 0)){
-#ifdef DEBUG
+#ifdef TCPDEBUG
 		printf("\nDEBUG: Error al abrir el socket\n");
 #endif
 		}
@@ -29,9 +29,12 @@ void TCP1_tarea_interfaz_tcp(void* pdata){
 
       // Le damos un tiempo para que el socket quede pronto
 		OSTimeDlyHMSM(0,0,0,500);
-#ifdef DEBUG
+#ifdef TCPDEBUG
 		printf("\nDEBUG: Escuchando en puerto %u por conexiones\n", LPORT );
 #endif
+		#ifdef DEBUG
+		printf("\nTarea 3 Iniciada - Interfaz TCP");
+   		#endif
 		// Esperamos por la conexion y si no esta establecida y pronta, suspende por 500ms.
 		while( !sock_established(pun_tcp_socket) ) { // && sock_bytesready(pun_tcp_socket)==-1
 			tcp_tick(pun_tcp_socket);
@@ -41,7 +44,7 @@ void TCP1_tarea_interfaz_tcp(void* pdata){
 		OSTimeDlyHMSM(0,0,0,500);
 
 		if (sock_established(pun_tcp_socket)){
-#ifdef DEBUG
+#ifdef TCPDEBUG
 			printf("\nDEBUG: Conexion establecida\n");
 #endif
 			sock_mode(pun_tcp_socket, TCP_MODE_ASCII);

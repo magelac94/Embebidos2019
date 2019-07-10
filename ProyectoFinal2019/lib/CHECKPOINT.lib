@@ -27,7 +27,7 @@ void CHECKPOINT_Checkpoints_init(){
 	for (i=0;i<MAX_CHECKPOINTS;i++){
 		checkpoints[i].visitado = 0xFF;
 	}
-#ifdef DEBUG
+#ifdef TCPDEBUG
 	printf("\nDEBUG: Eventos iniciados correctamente");
 #endif
 }
@@ -46,7 +46,7 @@ void CHECKPOINT_agregarCheckpoint(CHECKPOINT *p_tempcheckpoint){
 	checkpoints[posicion].id = p_tempcheckpoint->id;
 	checkpoints[posicion].visitado = 0;
 	checkpoints[posicion].gpsPosition = p_tempcheckpoint->gpsPosition;
-#ifdef DEBUG
+#ifdef CHECKDEBUG
 		printf("\nDEBUG: Checkpoint %u AGREGADO correctamente", posicion);
 #endif
 }

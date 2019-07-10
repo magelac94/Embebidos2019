@@ -1,4 +1,12 @@
-// Libreria Lectura de Botones
+// Libreria Lectura de Botones //
+
+/* Tiene la tarea de control de botones que verifica constantemente
+Si algun boton es presionado.
+Si alguno es apretado se ejecutan las acciones dependiendo del boton:
+Botones del 0-5 ->son marcas de checkpoint, la persona debe presionar el boton indicado para el checkpoint correspondiente.
+Boton 7 -> es un KeepAlive, la persona debe presionarlo cada 10 minutos para indicar que esta bien.
+Boton 8 -> es un boton de Ayuda, la persona debe presionarlo si se encuentra en problemas.
+*/
 
 /*** BeginHeader */
 #define BTN_GET(x)			IO_getInput( (x>3)?PORT_F:PORT_B, (x>3)?x:(x+2) )
@@ -16,48 +24,54 @@ unsigned long ULTIMO_KEEPALIVE; // Contiene el ultimo timestamp donde se presion
 void CONTROLBOTONES_tarea_botones(void* pdata);
 /*** EndHeader */
 void CONTROLBOTONES_tarea_botones(void* pdata){
-	
+
 	int i;
-	
+
 	i = 0;
 	ULTIMO_KEEPALIVE = RTC_leerTimestamp();
-	OSTaskSuspend(OS_PRIO_SELF);
+
+	OSTaskSuspend(OS_PRIO_SELF);			// Se suspende ni bien inicia, ya que para funcionar necesita
+
+	#ifdef DEBUG
+		printf("\nTarea 8 Iniciada - Botones");
+   	#endif
+   											// tener todos los parametros configurados como los checkpoints
 	while(1)
 	{
 		for( i=0; i<8; i++ )
 		{
-			if( BTN_IsPRESSED(i) )
+			if( BTN_IsPRESSED(i) )		// Verifica si boton esta presionado
 			{
 				switch( i ){
-					case( 0 ):
+					case( 0 ):			// Boton 0	- CHECKPOINT 0
 						botonesPosicion(tramaGPS, i);
 						break;
-					case( 1 ):
+					case( 1 ):			// Boton 1	- CHECKPOINT 1
 						botonesPosicion(tramaGPS, i);
 						break;
-					case( 2 ):
+					case( 2 ):			// Boton 2  - CHECKPOINT 2
 						botonesPosicion(tramaGPS, i);
 						break;
-					case( 3 ):
+					case( 3 ):			// Boton 3  - CHECKPOINT 3
 						botonesPosicion(tramaGPS, i);
 						break;
-					case( 4 ):
+					case( 4 ):			// Boton 4  - CHECKPOINT 4
 						botonesPosicion(tramaGPS, i);
 						break;
-					case( 5 ):
+					case( 5 ):			// Boton 5  - CHECKPOINT 5
 						botonesPosicion(tramaGPS, i);
 						break;
-					case( 6 ):
+					case( 6 ):			// Boton keepalive - avisar que esta vivo
 						botonKeepAlive();
 						break;
-					case( 7 ):
+					case( 7 ):			// Boton ayuda - solicitar ayuda
 						botonAyuda();
 						break;
 				}
 				OSTimeDlyHMSM(0,0,0,500);
 			}
 		}
-		verificar_keepalive();
+		verificar_keepalive();			// Verificar si no se a presionado ningun boton durante 10 min
 	}
 }
 
@@ -66,8 +80,9 @@ void CONTROLBOTONES_tarea_botones(void* pdata){
 /*** BeginHeader indicadorLed */
 void indicadorLed();
 /*** EndHeader */
-void indicadorLed(int i){
-	LED_SET(i);
+void indicadorLed(int num_led){
+	LED_RESET(num_led);
+	LED_SET(num_led);
 }
 
 /* Recibe una trama y verifica si la posicion del GPS
@@ -75,15 +90,27 @@ void indicadorLed(int i){
    si lo es enciende un led y envia un mensaje al
    organizador */
 /*** BeginHeader botonesPosicion */
-void botonesPosicion(char* tramaGPS, int i);
+void botonesPosicion(char* tramaGPS, int num_checkpoint);
 /*** EndHeader */
-void botonesPosicion(char* tramaGPS, int i){
+void botonesPosicion(char* tramaGPS, int num_checkpoint){
 	int verificarPos;
+	#ifdef BOTONESDEBUG
+		printf("\nCheckpoint Presionado %u",num_checkpoint);
+	#endif
+	// seteo variable keepalive - esta vivo porque presiono un boton
 	ULTIMO_KEEPALIVE = RTC_leerTimestamp();
-	verificarPos = verificarPosicion(tramaGPS, i);
-	if(verificarPos == 1){
-		indicadorLed(i);
-		GPRS_sendsms(CHKPNT);
+
+	// Verifico si posicion llego al checkpoint correspondiente
+	verificarPos = verificarPosicion(num_checkpoint);
+	if(verificarPos == 1){				// posicion correcta
+		GPRS_sendsms(CHKPNT);			// envia mensaje
+		indicadorLed(num_checkpoint);	// prende led correpondiente
+		checkpoints[num_checkpoint].visitado = 1; 		// coloco el checkpoint como visitado
+		writeUserBlockArray(0, save_data, save_lens, 6); // guardo datos en memoria flash
+		#ifdef BOTONESDEBUG
+			printf("\nCheckpoint Verificado %u",num_checkpoint);
+		#endif
+
 	}
 }
 
@@ -94,15 +121,29 @@ void botonesPosicion(char* tramaGPS, int i){
 void botonKeepAlive();
 /*** EndHeader */
 void botonKeepAlive(){
+	// seteo variable keepalive - esta vivo porque presiono un boton
 	ULTIMO_KEEPALIVE = RTC_leerTimestamp();
 	GPRS_sendsms(KEEPALIVE);
+	indicadorLed(6);	// prende led correpondiente
+	OSTimeDlySec(1);
+	LED_RESET(6);
+	OSTimeDlySec(1);
+	#ifdef BOTONESDEBUG
+		printf("\nKeepAlive Presionado");
+	#endif
 }
 /*** BeginHeader botonAyuda */
 void botonAyuda();
 /*** EndHeader */
 void botonAyuda(){
+
+	// seteo variable keepalive - esta vivo porque presiono un boton
 	ULTIMO_KEEPALIVE = RTC_leerTimestamp();
 	GPRS_sendsms(HELP);
+	indicadorLed(7);	// prende led correpondiente
+	#ifdef BOTONESDEBUG
+		printf("\nAyuda Presionado");
+	#endif
 }
 
 /* Compara la fecha actual con la fecha que toco el boton por ultima vez

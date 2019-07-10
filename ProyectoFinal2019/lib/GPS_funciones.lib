@@ -1,11 +1,19 @@
 // Libreria GPS
+// Contiene las funciones relacionadas al GPS
+// Tambien esta definida la tarea correpondiente a la configuracion del reloj
+// que utiliza el GPS para sincronizarse. Y la tarea para acceder a la trama del GPS.
+
 /*** BeginHeader */
-#define T_HORA	300
+#define T_HORA	300 		// Cada 5 minutos chequea la hora en el GPS, si es distinta a la de la placa, la reconfigura
 
 char tramaGPS[GPS_MAX_BUF_SIZE];
 
 /*** EndHeader */
 
+/*La tarea de obtener trama, chequea con el GPS una trama y verifica si es valida.
+En ese caso la guarda en una variable global. De otra forma sigue intentando.
+La primera vez que consigue una trama valida, habilita a la tarea de configurar
+reloj para continuar con el seteo del hora */
 /*** BeginHeader GPSFUNCIONES_tarea_obtenertrama */
 void GPSFUNCIONES_tarea_obtenertrama( void* pdata );
 /*** EndHeader */
@@ -15,14 +23,17 @@ void GPSFUNCIONES_tarea_obtenertrama( void* pdata ){
 	char temp_tramaGPS[GPS_MAX_BUF_SIZE];
 
 	tareareloj = 1;
-
+	#ifdef DEBUG
+		printf("\nTarea 5 Iniciada - Obtener TRAMA GPS");
+   	#endif
 	while (1){
-		status = GPS_gets(temp_tramaGPS);
+		status = GPS_gets(temp_tramaGPS);		// Obtiene trama del GPS
 		if (status == 1){
-			strcpy(tramaGPS, temp_tramaGPS);
+			strcpy(tramaGPS, temp_tramaGPS);	// Se copia a la variable Global que almacena ultima Trama valida
 			if(tareareloj){
 				tareareloj = 0;
-				OSTaskResume(TAREA_RELOJ);
+				OSTaskResume(TAREA_RELOJ);		// Una vez obtenida la primer trama podemos habilitar la tarea de configur reloj
+												// ya que sino da error. A este if solo va a ingresar cuando inicia el programa.
 			}
 		#ifdef GPSDEBUG
 			printf("Respuesta del GPS: Trama correcta\n");
@@ -52,24 +63,26 @@ void GPSFUNCIONES_tarea_config_Reloj(void* pdata){
 	unsigned long timestampRabbit;
 	auto INT8U Error;
 	int resultado, tareasalud;
-   GPSPosition unaPos;
 
 	tareasalud = 1;
 
 	OSTaskSuspend(OS_PRIO_SELF);
+
+	#ifdef DEBUG
+				printf("\nTarea 6 Iniciada - Configuracion de Reloj");
+   	#endif
+
 	while(1){
-		printf("TRAMA: %s\n", tramaGPS);
+		#ifdef GPSDEBUG
+			printf("TRAMA: %s\n", tramaGPS);
+		#endif
 		Error = gps_get_utc( &fechaHoraGPS, tramaGPS);
 
 		RTC_leerFechaHora(&fechaHoraRTC);
-		printf("\nHoy es: %02d/%02d/%d\n", fechaHoraRTC.tm_mday, fechaHoraRTC.tm_mon, 1900+fechaHoraRTC.tm_year);
 
-      gps_get_position(&unaPos, tramaGPS);
-      printf( "\n--------------------------------------\n\
-			Coordenadas:\n\
-			Latitud: %u%.4f\n\
-			Longitud: %u%.4f\n\
-			", unaPos.lat_degrees, unaPos.lat_minutes,unaPos.lon_degrees, unaPos.lon_minutes);
+		#ifdef GPSDEBUG
+			printf("\nHoy es: %02d/%02d/%d\n", fechaHoraRTC.tm_mday, fechaHoraRTC.tm_mon, 1900+fechaHoraRTC.tm_year);
+   		#endif
 
 		if (Error == 0){
 			timestampGPS = mktime( &fechaHoraGPS );
@@ -81,7 +94,10 @@ void GPSFUNCIONES_tarea_config_Reloj(void* pdata){
 				// Si no es igual la configuro con la fecha del GPS
 				RTC_fijarFechaHora(&fechaHoraGPS);
 				RTC_leerFechaHora(&fechaHoraRTC);
-				printf("\nHoy es: %02d/%02d/%d\n", fechaHoraRTC.tm_mday, fechaHoraRTC.tm_mon, 1900+fechaHoraRTC.tm_year);
+
+				#ifdef GPSDEBUG
+					printf("\nHoy es: %02d/%02d/%d\n", fechaHoraRTC.tm_mday, fechaHoraRTC.tm_mon, 1900+fechaHoraRTC.tm_year);
+   				#endif
 				if(tareasalud){
 					tareasalud = 0;
 					OSTaskResume(TAREA_SALUD);
@@ -99,20 +115,19 @@ void GPSFUNCIONES_tarea_config_Reloj(void* pdata){
 /* Dada una Trama GPS, se obtiene la posicion de dicha trama
 Devuelve la posicion en el puntero pasado por parametros */
 /*** BeginHeader obtenerPosicion */
-void obtenerPosicion(char* tramaGPS, GPSPosition *posicion);
+int obtenerPosicion(GPSPosition unaPos);
 /*** EndHeader */
-void obtenerPosicion(char* tramaGPS, GPSPosition *posicion){
-  //	GPSPosition *posicion;
+int obtenerPosicion(GPSPosition unaPos){
 	int latgrados,longrados;
 	auto INT8U Error;
 
-	Error = gps_get_position(posicion,tramaGPS);
+	Error = gps_get_position(&unaPos,tramaGPS);
 	if (Error == 0){	// Resultado correcto
-		imprimirPoscion(posicion);
+		printf("-");
 	}else{	// Trama o resultado incorrecto
 		OSTimeDlyHMSM(0,0,1,0);
+		return Error;
 	}
-
 }
 
 /* Dada una posicion actual (obtenida del GPS),
@@ -121,16 +136,20 @@ pasado por parametro.
 La funcion devuelve 1 si la posicion esta dentro del rango del checkpoint
 y 0 si no. */
 /*** BeginHeader verificarPosicion */
-int verificarPosicion(char* tramaGPS, int numCheckpoint);
+int verificarPosicion(int numCheckpoint);
 /*** EndHeader */
-int verificarPosicion(char* tramaGPS, int numCheckpoint ){
-
+int verificarPosicion(int numCheckpoint ){
 	float distancia;
-   GPSPosition* posicion;
+   	GPSPosition posicion;
 
-   distancia = gps_ground_distance( posicion, &checkpoints[numCheckpoint].gpsPosition ); // calcula la distancia entre ambos puntos en KM.
+   	// Verificar posicion actual
+   	obtenerPosicion(posicion);
 
-   if (distancia <= CHKP_RADIO){
+   	// calcula la distancia entre ambos puntos en KM.
+   	distancia = gps_ground_distance( &posicion, &checkpoints[numCheckpoint].gpsPosition );
+
+   	// Verifico si la distancia calculada es mayor al radio establecido como parametro
+   	if (distancia <= CHKP_RADIO){
 		return 1;
 	}else{
 		return 0;
@@ -139,30 +158,45 @@ int verificarPosicion(char* tramaGPS, int numCheckpoint ){
 
 
 /* Dada una posicion la imprime por consola */
-/*** BeginHeader imprimirPoscion */
-void imprimirPoscion(GPSPosition *pos);
+/*** BeginHeader imprimirPosicion */
+void imprimirPosicion(GPSPosition unaPos);
 /*** EndHeader */
-void imprimirPoscion(GPSPosition *pos){
+void imprimirPosicion(GPSPosition unaPos){
 
-	int latgrados,longrados;
+	printf( "\n--------------------------------------\n\
+			Coordenadas:\n\
+			Latitud: %u%.4f\n\
+			Longitud: %u%.4f\n\
+			", unaPos.lat_degrees, unaPos.lat_minutes,unaPos.lon_degrees, unaPos.lon_minutes);
 
-	latgrados = pos->lat_degrees;
-	longrados = pos->lon_degrees;
-
-	printf("%d\n", latgrados );
-	printf("%d\n", longrados );
 }
 
 /* Data una posicion, devuelve una cadena con la longitud y la latitud */
 /*** BeginHeader stringPosicion */
-void stringPosicion(GPSPosition *pos, char* stringpos);
+void stringPosicion(GPSPosition pos, char* stringpos);
 /*** EndHeader */
-void stringPosicion(GPSPosition *pos, char* stringpos){
+void stringPosicion(GPSPosition pos, char* stringpos){
 
 	int latgrados,longrados;
+	float minlat, minlon;
+  	char latgradoss[2], longradoss[2], minlats[6],minlons[6];
 
-	latgrados = pos->lat_degrees;
-	longrados = pos->lon_degrees;
+	latgrados = pos.lat_degrees;
+	longrados = pos.lon_degrees;
+	minlat = pos.lat_minutes;
+	minlon = pos.lon_minutes;
 
-	stringpos = latgrados + "-" + longrados
+   itoa(latgrados, latgradoss);
+   itoa(longrados, longradoss);
+//   itoa(minlat, minlats);
+//   itoa(minlon, minlons);
+	memset(stringpos, 0, sizeof(stringpos));
+	sprintf(stringpos, "%s-%s",latgradoss,longradoss);
+
+
+	//stringpos = latgradoss + "-" + longradoss ;
+
+	#ifdef GPSDEBUG
+			printf("\n String Posicion: %s\n", stringpos);
+	#endif
 }

@@ -37,7 +37,9 @@ void GPRS_tarea_modem(void* pdata){
 	char* mensaje;
 	void* msg;
 	INT8U ERROR;
-
+	#ifdef DEBUG
+		printf("\nTarea 2 Iniciada - Configuracion Modem");
+   	#endif
 	while(1){
 
 		/*
@@ -45,7 +47,7 @@ void GPRS_tarea_modem(void* pdata){
 			y que acciones se deberian tomar (1-OK, 0-ERROR).
 		*/
 
-      status = GPRS_modem_pwrstatus();
+      	status = GPRS_modem_pwrstatus();
 
 		// Encender modem
 		status = GPRS_modem_on();
@@ -82,7 +84,6 @@ void GPRS_tarea_modem(void* pdata){
 				// Mandar mensaje de texto
 				status = GPRS_modem_sendsms( (char*)msg );
 			}
-			// Aca tengo que crear una funcion que revise si seguimos registrados a la red y guardarlo en STATUS
 		}
 	}
 
@@ -95,8 +96,6 @@ char GPRS_modem_pwrstatus(){
 
 	char status;
 
-	// Aca podriamos tirar algun comando AT para ver si responde bien.
-	// Asi como esta solo dice si esta prendido.
 	status = IO_getInput(PORT_E, BIT_1);
 
 	return status;
@@ -104,7 +103,6 @@ char GPRS_modem_pwrstatus(){
 
 // Prende el modem
 // Devuelve el status
-// Para sumarle robustez deberiamos ponerle un timeout para que no quede trancado en el while.
 /*** BeginHeader GPRS_modem_on*/
 int GPRS_modem_on();
 /*** EndHeader */
@@ -112,11 +110,11 @@ int GPRS_modem_on(){
 
 	int status;
 
-	//Atenicion funciones de serial no reentrantes
+	//Funciones de serial no reentrantes
 	serDrdFlush();
 	serDwrFlush();
 	/*
-	Prener el modem. Esto lo hacemos
+	Prender el modem. Esto lo hacemos
 	configurando el pin que conecta el KEY como salida, esperamos y
 	luego lo configuramos como entrada y esperamos nuevamente.
 	*/
@@ -158,12 +156,12 @@ int GPRS_modem_off(){
 
 	if ( dataRx != "" ){
 		status = 1;
-	#ifdef DEBUG
+	#ifdef GPRSDEBUG
 		printf("Respuesta del modem al intento de apagarse: APAGANDO...\n");
 		printf("dataRx:\n%s\n", dataRx);
    #endif
    } else {
-	#ifdef DEBUG
+	#ifdef GPRSDEBUG
 		printf("Respuesta del modem al intento de apagarse: NO SE PUDO APAGAR\n");
 		printf("dataRx:\n%s\n", dataRx);
    #endif
@@ -199,7 +197,7 @@ int GPRS_modem_baudrate(){
 
 	if ( dataRx != "" ){
 		status = 1;
-	#ifdef DEBUG
+	#ifdef GPRSDEBUG
 		printf("Respuesta del modem:\n");
 		printf("dataRx:\n%s\n", dataRx);
 		printf("Estamos prontos para enviar y recibir comandos...\n");
@@ -240,7 +238,7 @@ int GPRS_modem_pinsim(){
 	serDread(dataRx, sizeof(dataRx), GPRS_COM_TIMEOUT); // Leemos el buffer serial D
 
 	if ( strstr(dataRx, "OK") == (void*)0 ){
-   #ifdef DEBUG
+   #ifdef GPRSDEBUG
 		printf("Estado del pin de la sim: Ingrese PIN\n");
 		printf("Respuesta:\n%s\n", dataRx);
 	#endif
@@ -260,7 +258,7 @@ int GPRS_modem_pinsim(){
 		// Si la respuesta no es OK entonces retornamos 1 para indicarlo.
 		if (strstr(dataRx, "OK") != (void*)0){
 			status = 1;
-   	#ifdef DEBUG
+   	#ifdef GPRSDEBUG
 			printf("Estado del pin de la sim: PIN ingresado correctamente\n");
 			printf("Respuesta:\n%s\n", dataRx);
 		#endif
@@ -268,7 +266,7 @@ int GPRS_modem_pinsim(){
 	} else {
    // El sim no tiene pin
    	status = 1;
-   #ifdef DEBUG
+   #ifdef GPRSDEBUG
 		printf("Estado del pin de la sim: SIM sin PIN\n");
 		printf("Respuesta:\n%s\n", dataRx);
 	#endif
@@ -303,7 +301,7 @@ int GPRS_modem_netreg(){
 	serDread(dataRx, sizeof(dataRx), GPRS_COM_TIMEOUT);
 
 	if ( strstr(dataRx, "OK") == (void*)0 ){
-	#ifdef DEBUG
+	#ifdef GPRSDEBUG
 		printf("Estado del registro en la red: No registrado\n");
 		printf("Respuesta:\n%s\n", dataRx);
 	#endif
@@ -323,12 +321,12 @@ int GPRS_modem_netreg(){
 		// Si salio bien el registro, poner el status en 1
 		if ( strstr(dataRx, "OK") != (void*)0 ){
 			status = 1;
-		#ifdef DEBUG
+		#ifdef GPRSDEBUG
 			printf("Estado del registro en la red: Registrado OK\n");
 			printf("Respuesta:\n%s\n", dataRx);
 		#endif
 		} else {
-      #ifdef DEBUG
+      #ifdef GPRSDEBUG
 			printf("Estado del registro en la red: ERROR de registro\n");
 			printf("Respuesta:\n%s\n", dataRx);
 		#endif
@@ -336,7 +334,7 @@ int GPRS_modem_netreg(){
 	} else {
    	// Ya estabamos registrados
    	status = 1;
-   #ifdef DEBUG
+   #ifdef GPRSDEBUG
 		printf("Estado del registro en la red: Ya estabamos registrados\n");
 		printf("Respuesta:\n%s\n", dataRx);
 	#endif
@@ -371,12 +369,12 @@ int GPRS_modem_modesms(){
 
 	if ( strstr(dataRx, "OK") != (void*)0 ){
 		status = 1;
-	#ifdef DEBUG
+	#ifdef GPRSDEBUG
 		printf("Estado de modem modo texto: Seteo OK\n");
 		printf("dataRx:\n%s\n", dataRx);
 	#endif
 	} else {
-	#ifdef DEBUG
+	#ifdef GPRSDEBUG
 		printf("Estado de modem modo texto: Ocurrio un ERROR\n");
 		printf("dataRx:\n%s\n", dataRx);
 	#endif
@@ -413,12 +411,12 @@ int GPRS_modem_setdest(){
 
 	if ( strstr(dataRx, ">") != (void*)0 ){
 		status = 1;
-	#ifdef DEBUG
+	#ifdef GPRSDEBUG
 		printf("Respuesta del modem asetear celuar de envio: Estamos prontos \">\"\n");
 		printf("dataRx:\n%s\n", dataRx);
 	#endif
 	} else {
-	#ifdef DEBUG
+	#ifdef GPRSDEBUG
 		printf("Respuesta del modem asetear celuar de envio: No devolvio un \">\"\n");
 		printf("dataRx:\n%s\n", dataRx);
 	#endif
@@ -465,12 +463,12 @@ int GPRS_modem_sendsms(char mensaje[]){
 	*/
 	if ( strstr(dataRx, "OK") != (void*)0 ){
 		status = 1;
-	#ifdef DEBUG
+	#ifdef GPRSDEBUG
 		printf("Respuesta del modem luego de mandar mensaje: Mensaje enviado\n");
 		printf("dataRx:\n%s\n", dataRx);
 	#endif
 	} else {
-	#ifdef DEBUG
+	#ifdef GPRSDEBUG
 		printf("Respuesta del modem luego de mandar mensaje: El mensaje no fue enviado\n");
 		printf("dataRx:\n%s\n", dataRx);
 	#endif
@@ -491,25 +489,22 @@ RETORNA:
 int GPRS_sendsms(enum CodMsg id_mensaje);
 /*** EndHeader */
 int GPRS_sendsms(enum CodMsg id_mensaje){
-
+	GPSPosition unaPos;
+	char string[15];
 	int status;
-
-	char *lat;
-	char *lon;
-	char *id;
-   char mensaje[100];
-
-
+	char mensaje[100];
 	INT8U ERROR;
+
 	status = 0;
-	lat = "latitud";
-	lon = "longitud";
-	id = "24D";
+
+	obtenerPosicion(unaPos);
+	stringPosicion(unaPos, string );
+	printf(string);
 
 	memset(mensaje, 0, sizeof(mensaje));  // limpio mensaje
 
-	sprintf(mensaje, "ID:%s - %s - %s%s,-%s", id, mensajes[id_mensaje],google,lat,lon); // formato mensaje a enviar
-	#ifdef DEBUG
+	sprintf(mensaje, "ID:%s - %s - %s%s", ID_PARTICIPANTE, mensajes[id_mensaje],google,string); // formato mensaje a enviar
+	#ifdef GPRSDEBUG
 		printf(mensaje);
 	#endif
 
@@ -517,11 +512,11 @@ int GPRS_sendsms(enum CodMsg id_mensaje){
 
 	if ( ERROR == OS_NO_ERR){
 		status = 1;
-	#ifdef DEBUG
+	#ifdef GPRSDEBUG
 		printf("DEBUG: GPRS_sendsms: El mensaje fue encolado\n");
 	#endif
 	} else {
-	#ifdef DEBUG
+	#ifdef GPRSDEBUG
 		printf("DEBUG: GPRS_sendsms: ERROR: El mensaje no fue encolado\n");
 	#endif
 	}
@@ -564,12 +559,12 @@ int GPRS_listSmssToDelete(){
 
 	if ( strstr(dataRx, "OK") != (void*)0 ){
 		status = 1;
-	#ifdef DEBUG
+	#ifdef GPRSDEBUG
 		printf("DEBUG: GPRS_listSmssToDelete: listar SMS para borrar:\n");
 		printf("dataRx:\n%s\n", dataRx);
 	#endif
 	} else {
-	#ifdef DEBUG
+	#ifdef GPRSDEBUG
 		printf("DEBUG: GPRS_listSmssToDelete: ERROR al listar\n");
 		printf("dataRx:\n%s\n", dataRx);
 	#endif
@@ -613,12 +608,12 @@ int GPRS_DeleteAllSmss(){
 
 	if ( strstr(dataRx, "OK") != (void*)0 ){
 		status = 1;
-	#ifdef DEBUG
+	#ifdef GPRSDEBUG
 		printf("DEBUG: GPRS_DeleteAllSmss: Todos eliminados:\n");
 		printf("dataRx:\n%s\n", dataRx);
 	#endif
 	} else {
-	#ifdef DEBUG
+	#ifdef GPRSDEBUG
 		printf("DEBUG: GPRS_DeleteAllSmss: ERROR\n");
 		printf("dataRx:\n%s\n", dataRx);
 	#endif

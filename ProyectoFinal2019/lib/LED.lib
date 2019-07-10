@@ -1,7 +1,10 @@
 /*** BeginHeader */
+/* LIBRERIA LED
+contiene macros para encender y apagar un led especifico
+contiene la tarea que enciende el led rojo y lo deja parpadenado 
+usandolo para verificar que la placa esta ok */
 
-#use IO.LIB
-
+// Macros
 #define LED_PORT		PORT_A
 #define LED_OFF			0
 #define LED_ON			1
@@ -11,9 +14,9 @@
 #define LED_RED_RESET()	IO_setOutput( PORT_E, BIT_5, LED_OFF)
 /*** EndHeader */
 
-/* Tarea 1 - Prende y apaga el led. Cuando espera se suspende.
-  Por eso le daremos una prioridad alta. Es nuestro test para ver que todo corre.
- Le asignaremos un stack de 256. */
+/* 	Tarea 1 - Prende y apaga el led. Cuando espera se suspende.
+  	Por eso le daremos una prioridad alta. Es nuestro test para ver que todo corre.
+ 	Le asignaremos un stack de 256. */
 /*** BeginHeader LED_tarea_led_red */
 void LED_tarea_led_red(void* pdata);
 /*** EndHeader */

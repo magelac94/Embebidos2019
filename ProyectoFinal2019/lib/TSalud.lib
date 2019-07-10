@@ -10,7 +10,9 @@ void TSALUD_tarea_salud(int* pdata){
 	char* mensaje;
 	
 	OSTaskSuspend(OS_PRIO_SELF);
-	
+	#ifdef DEBUG
+				printf("Tarea 7 Iniciada - Salud - Chequeo de RITMOCARDIACO");
+   	#endif
 	while(1){
    	ritmo_cardiaco = 3000;
    	OSTimeDlySec(T_CONTROL);

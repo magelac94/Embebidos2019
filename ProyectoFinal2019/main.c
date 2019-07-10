@@ -1,5 +1,11 @@
 #define DEBUG			// activo para imprimir mensajes de DEBUG
-//#define GPSDEBUG		// al activarlo imprime las tramas que llegan
+#define GPSDEBUG		// al activarlo imprime las tramas que llegan
+//#define GPRSDEBUG
+//#define TCPDEBUG
+#define BOTONESDEBUG
+//#define MENUDEBUG
+//#define CHECKDEBUG
+
 
 /* uCOS configuration */
 #define OS_MAX_TASKS			9		// Cantidad maxima de tareas que se pueden crear, sin contar STAT e IDLE
@@ -25,7 +31,7 @@
 #define TAMANIO_BUFFER_LE 		512      			// Este es el tamanio que le damos a nuestros buffers para leer y enviar al socket
 #define STDIO_ENABLE_LONG_STRING
 
-/* Incluimos las librerias luego de los define para sobre escribir los macros deseados */
+/* Incluimos las librerias luego de los define para sobre-escribir los macros deseados */
 #use TSalud.lib
 #use RTC.lib
 #use GPS_Custom.lib
@@ -35,7 +41,6 @@
 #use GPRS.lib
 #use GPS_funciones.LIB
 #use controlBotones.lib
-#use CONSOLA.lib
 #use TCP1.lib
 #use Utilities.lib
 
@@ -70,7 +75,7 @@ main(){
 	auto INT8U Error;
 	static tcp_Socket un_tcp_socket[MAX_TCP_SOCKET_BUFFERS];
 
-  // Inicializa el hardware de la placa
+  	// Inicializa el hardware de la placa
 	HW_init();
 
 	// Inicializacion de Checkpoints
@@ -102,32 +107,32 @@ main(){
 	OSInit();
 
 	// Iniciamos el stack TCP/IP
-#ifdef DEBUG
+#ifdef TCPDEBUG
 	printf("\nDEBUG: Iniciando Sockets\n");
 #endif
 	sock_init();
-#ifdef DEBUG
+#ifdef DEBUGTCP
 	printf("\nDEBUG: Socket Iniciados\n");
 #endif
 
 
-// Deshabilitamos el scheduling mientras se crean las tareas
+	// Deshabilitamos el scheduling mientras se crean las tareas
 	OSSchedLock();
 
-	//Creacion de semaforos, mbox y queues
+	// Creacion de semaforos, mbox y queues
  	SmsQ = OSQCreate(&SmsQStorage[0], 5); // Crear una cola donde poner los mensajes a enviar
 
 	//Creacion de tareas
-	Error = OSTaskCreate(LED_tarea_led_red, NULL, 256, TAREA_LED);
-	Error = OSTaskCreate(GPRS_tarea_modem, NULL, 512, TAREA_MODEM);
-  	Error = OSTaskCreate(TCP1_tarea_interfaz_tcp, &un_tcp_socket[0], 2048, TAREA_TCP );
-	Error = OSTaskCreate(GPS_init, NULL, 512, TAREA_GPSINIT); // Inicializa Hardware GPS - Ejecuta 1 vez
-	Error = OSTaskCreate(GPSFUNCIONES_tarea_obtenertrama, NULL, 512 , TAREA_GPS); // Se obtiene datos gps
-	Error = OSTaskCreate(GPSFUNCIONES_tarea_config_Reloj, NULL, 512 , TAREA_RELOJ );
-//	Error = OSTaskCreate(TSALUD_tarea_salud,NULL, 512, TAREA_SALUD);
-//	Error = OSTaskCreate(CONTROLBOTONES_tarea_botones,NULL, 512, TAREA_BOTONES);
+	Error = OSTaskCreate(LED_tarea_led_red, NULL, 256, TAREA_LED); // 1
+	Error = OSTaskCreate(GPRS_tarea_modem, NULL, 512, TAREA_MODEM); // 2
+  	Error = OSTaskCreate(TCP1_tarea_interfaz_tcp, &un_tcp_socket[0], 2048, TAREA_TCP ); // 3
+	Error = OSTaskCreate(GPS_init, NULL, 512, TAREA_GPSINIT); // 4
+	Error = OSTaskCreate(GPSFUNCIONES_tarea_obtenertrama, NULL, 512 , TAREA_GPS); // 5
+	Error = OSTaskCreate(GPSFUNCIONES_tarea_config_Reloj, NULL, 512 , TAREA_RELOJ ); // 6
+	Error = OSTaskCreate(TSALUD_tarea_salud,NULL, 512, TAREA_SALUD); // 7
+	Error = OSTaskCreate(CONTROLBOTONES_tarea_botones,NULL, 2048, TAREA_BOTONES); // 8
 
- // Re-habilitamos scheduling
+ 	// Re-habilitamos scheduling
 	OSSchedUnlock();
 
 	// Iniciamos el sistema operativo comenzando por la tarea en estado "ready" de mayor prioridad
